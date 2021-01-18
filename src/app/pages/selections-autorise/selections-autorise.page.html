@@ -1,0 +1,22 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="transparent">
+    <ion-title>Matières à refaire</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item *ngFor="let item of items">
+      <ion-label>{{item.title}}</ion-label>
+      <p>
+        {{item.description}}
+      </p>
+      <ion-buttons slot="end">
+        <ion-button (click)="onClick()">
+          <ion-icon slot="end" name="bell"></ion-icon>
+          confirmer
+        </ion-button>
+      </ion-buttons>
+    </ion-item>
+  </ion-list>
+</ion-content>

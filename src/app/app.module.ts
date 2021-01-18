@@ -2,24 +2,42 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { IonicModule, IonicRouteStrategy, NavParams } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { HTTP } from '@ionic-native/http/ngx';
+import { Network } from '@ionic-native/network/ngx';
+import { CallNumber } from '@ionic-native/call-number/ngx';
+import { IonicStorageModule } from '@ionic/storage';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { Camera } from '@ionic-native/camera/ngx';
+import { FileChooser } from '@ionic-native/file-chooser/ngx';
+import { Crop } from '@ionic-native/crop/ngx';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { SMS } from '@ionic-native/sms/ngx';
+import { SmsRetriever } from '@ionic-native/sms-retriever/ngx';
+// import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { OneSignal } from '@ionic-native/onesignal/ngx';
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
+  exports: [HttpClientModule],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
-    AppRoutingModule
+    AppRoutingModule,
+    IonicStorageModule.forRoot(), FormsModule
   ],
   providers: [
-    StatusBar,
-    SplashScreen,
+    StatusBar, Camera, Crop, InAppBrowser, SMS, SmsRetriever,
+    SplashScreen, HTTP, NavParams, Network, CallNumber, FileTransfer, FileChooser,
+    OneSignal,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

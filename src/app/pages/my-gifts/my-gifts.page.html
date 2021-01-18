@@ -1,0 +1,20 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="transparent">
+    <ion-title>Cadeaux</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let item of cadeaux">
+      <ion-avatar>
+        <img [src]="item.img" />
+      </ion-avatar>
+      <ion-label>{{item.title}}</ion-label>
+      <ion-label>{{item.sender}}</ion-label>
+      <p>
+        {{item.prix}}
+      </p>
+    </ion-item>
+  </ion-list>
+</ion-content>

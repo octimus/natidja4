@@ -1,0 +1,111 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="transparent">
+      <ion-buttons slot="start">
+          <ion-back-button></ion-back-button>
+      </ion-buttons>
+    <ion-title>Candidat</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-text-center" color="transparent">
+
+  <div class="nums-container" *ngIf="appropriate_nums?.length>0">
+      <h5 color="primary" >Vos candidats</h5>
+      <form class="form-signin" *ngFor="let item of appropriate_nums">
+          <div class="div">
+              <ion-item>
+                  <ion-label>Examen</ion-label>
+                  <ion-select name="exam" [(ngModel)]="item.exam" disabled>
+                      <ion-select-option value="BAC">
+                          BAC
+                      </ion-select-option>
+                      <ion-select-option value="BEPC">
+                          BEPC
+                      </ion-select-option>
+                      <ion-select-option value="SIXIEME">
+                          SIXIÈME
+                      </ion-select-option>
+                  </ion-select>
+              </ion-item>
+
+              <ion-item>
+                  <ion-label>Ile</ion-label>
+                  <ion-select [(ngModel)]="item.ile" name="ile" disabled>
+                      <ion-select-option *ngFor="let item of iles;let index=index" value="{{item}}" class="ile">
+                          {{item}}
+                      </ion-select-option>
+                  </ion-select>
+              </ion-item>
+              <ion-item>
+                  <ion-label>Année</ion-label>
+                  <ion-select [(ngModel)]="item.year" name="annee" disabled>
+                      <ion-select-option *ngFor="let year of years;let index=index" value="{{year}}" class="year">
+                          {{year}}
+                      </ion-select-option>
+                  </ion-select>
+              </ion-item>
+              <ion-item>
+                  <ion-label fixed>Numéro</ion-label>
+                  <ion-input type="text" class="ion-text-right" name="num" [(ngModel)]="item.num" disabled></ion-input>
+              </ion-item>
+              <br>
+              
+              <ion-button color="primary" (click)="openPaymentPage(item)" size="medium" shape="round" fill="outline" *ngIf="item.payed==0">
+                <ion-icon slot="start" name="card"></ion-icon>  
+                Activer le relever
+              </ion-button>
+              <ion-button color="warning" size="medium" (click)="navCtrl.navigateForward('candidat-edit', {queryParams: {item:item}})"*ngIf="item.payed==1" shape="round" fill="outline">
+                  <ion-icon slot="icon-only" name="brush"></ion-icon>
+              </ion-button>
+              <ion-button color="danger" (click)="delete(item.id)" shape="round" fill="outline" size="medium">
+                  <ion-icon slot="icon-only" name="trash"></ion-icon>
+              </ion-button>
+          </div>
+      </form>
+  </div>
+  <form class="form-signin" *ngIf="step==0">
+      <h5 color="primary">Nouveau</h5>
+      <div class="div">
+          <ion-item>
+              <ion-label>Examen</ion-label>
+              <ion-select name="exam" [(ngModel)]="exam">
+                  <ion-select-option value="BAC">
+                      BAC
+                  </ion-select-option>
+                  <ion-select-option value="BEPC">
+                      BEPC
+                  </ion-select-option>
+                  <ion-select-option value="SIXIEME">
+                      SIXIÈME
+                  </ion-select-option>
+              </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label>Ile</ion-label>
+            <ion-select [(ngModel)]="ile" name="ile">
+                <ion-select-option *ngFor="let item of iles;let index=index" value="{{item}}" class="ile">
+                    {{item}}
+                </ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item *ngIf="years.length > 1">
+              <ion-label>Année</ion-label>
+              <ion-select [(ngModel)]="annee" name="annee">
+                  <ion-select-option *ngFor="let year of years;let index=index" value="{{year}}" class="year">
+                      {{year}}
+                  </ion-select-option>
+              </ion-select>
+          </ion-item>
+          
+          <ion-item>
+              <ion-label floating>Numéro</ion-label>
+              <ion-input type="text" name="num" [(ngModel)]="numero"></ion-input>
+          </ion-item>
+          <br>
+          <ion-button color="primary" (click)="next()">
+              Continuer
+              <ion-icon name="airplane-outline" slot="end"></ion-icon>
+          </ion-button>
+      </div>
+  </form>
+</ion-content>

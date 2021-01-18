@@ -1,0 +1,52 @@
+<!--
+  Generated template for the ExamSelectPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+</ion-header>
+
+
+<ion-content class="ion-text-center">
+    <div class="exams">
+        <h5>Veuillez choisir un plan</h5> <br>
+        <ion-buttons top>
+            <ion-grid fixed>
+                <ion-row>
+                    <div class="btn" (click)="navCtrl.back(); navCtrl.navigateForward('code-premium', {queryParams:{reason:'premium', montant:500}});" clickable>
+                        <div class="icon" item-left>
+                            <img class="clock" src="assets/clock.svg">
+                        </div>
+                        <h2 class="gold">
+                            PREMIUM
+                        </h2>
+                        <p>
+                            Rapide comme l'éclair. <br> 500 KMF/3 mois
+                        </p>
+                    </div>
+                </ion-row>
+                <ion-row>
+                    <div class="btn" (click)="select(0)">
+                        <div class="icon">
+                            <img src="assets/snail.svg">
+                        </div>
+                        <h2 color="primary">
+                            NORMAL
+                        </h2>
+                        <p>
+                            Peut bugger en cas de saturation. <br> 0 KMF/mois
+                        </p>
+                    </div>
+                </ion-row>
+            </ion-grid>
+            
+            
+            <!-- <p class="info-p">
+                Solution mise en place à cause du problème qu'a eu lieu le 26 suite au surcharge de nos serveurs.
+            </p> -->
+
+        </ion-buttons>
+    </div>
+</ion-content>

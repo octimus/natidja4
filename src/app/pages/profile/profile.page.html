@@ -1,0 +1,28 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="transparent">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding ion-text-center">
+  <ion-item>
+    <ion-label position="floating">Nom</ion-label>
+    <ion-input type="text" [value]="nom" disabled></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Téléphone</ion-label>
+    <ion-input type="text" [value]="telephone" disabled></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Domicile</ion-label>
+    <ion-input type="text" [value]="domicile" disabled></ion-input>
+  </ion-item>
+  <br>
+  <ion-button (click)="changePassword()" shape="round">
+    <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
+    Changer votre mot de passe
+  </ion-button>
+</ion-content>

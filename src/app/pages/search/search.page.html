@@ -1,0 +1,154 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="transparent">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Recherche avancée</ion-title>
+    <ion-buttons slot="end">
+      <ion-select [(ngModel)]="annee" interface="popover">
+          <ion-select-option *ngFor="let year of years;let index=index" value="{{year}}" class="year">
+              {{year}}
+          </ion-select-option>
+      </ion-select>
+  </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-text-center">
+  <!-- <h3>BAC 2017</h3> -->
+  <!-- <button ion-button icon-right outline small (click)="lecture('Direct');">
+          <ion-icon name="megaphone"></ion-icon>  Lire
+      </button> -->
+      <ion-item>
+          <ion-label>Examen</ion-label>
+          <ion-select [(ngModel)]="examen">
+              <ion-select-option selected value="BAC">
+                  BAC
+              </ion-select-option>
+              <ion-select-option value="BEPC">
+                  BEPC
+              </ion-select-option>
+              <ion-select-option value="SIXIEME">
+                  SIXIÈME
+              </ion-select-option>
+              <ion-select-option value="BACORAL">
+                  BAC (épreuves orales)
+              </ion-select-option>
+              <ion-select-option value="BEPCORAL">
+                  BEPC (épreuves orales)
+              </ion-select-option>
+          </ion-select>
+      </ion-item>
+      <ion-item>
+          <ion-label>Ile</ion-label>
+          <ion-select [(ngModel)]="ile" (ionChange)="filtrer();loadEtablissement(true)">
+              <ion-select-option selected value="tout">
+                  Tout
+              </ion-select-option>
+              <ion-select-option *ngFor="let item of iles" value="{{item}}">
+                  {{item}}
+              </ion-select-option>
+          </ion-select>
+      </ion-item>
+      <ion-item (ionClick)="loadEtablissement()" *ngIf="etablissements.length">
+          <ion-label>Etablissement</ion-label>
+          <ion-select (ionClick)="loadEtablissement();" [(ngModel)]="etablissement" (ionChange)="filtrer();">
+              <ion-select-option selected value="tout">
+                  Tout
+              </ion-select-option>
+              <ion-select-option *ngFor="let item of etablissements" value="{{item}}">
+                  {{item}}
+              </ion-select-option>
+          </ion-select>
+      </ion-item>
+      <ion-item>
+          <ion-label>Série</ion-label>
+          <ion-select [(ngModel)]="serie" (ionChange)="filtrer();">
+              <ion-select-option selected value="tout">
+                  Tout
+              </ion-select-option>
+              <ion-select-option value="C">
+                  C
+              </ion-select-option>
+              <ion-select-option value="D">
+                  D
+              </ion-select-option>
+              <ion-select-option value="A">
+                  A
+              </ion-select-option>
+          </ion-select>
+      </ion-item>
+      <ion-item>
+          <ion-label>Mention</ion-label>
+          <ion-select [(ngModel)]="mention" (ionChange)="filtrer();">
+              <ion-select-option selected value="tout">
+                  Tout
+              </ion-select-option>
+              <ion-select-option value="Passable">
+                  Passable
+              </ion-select-option>
+              <ion-select-option value="Assez bien">
+                  Assez bien
+              </ion-select-option>
+              <ion-select-option value="Bien">
+                  Bien
+              </ion-select-option>
+              <ion-select-option value="Très bien">
+                  Très bien
+              </ion-select-option>
+          </ion-select>
+      </ion-item>
+      <form (submit)="filtrer()">
+        <ion-searchbar placeholder="Nom, prénom ou numéro" [(ngModel)]="recherche" name="search">
+        </ion-searchbar>
+        <ion-button (click)="filtrer()" shape="round">
+            <ion-icon slot="start" name="search"></ion-icon>
+            Rechercher
+        </ion-button>
+      </form>
+  <p *ngIf="loading" class="loader" class="text-center" style="width:100px;margin:auto;">
+      <!-- <ion-icon name="heart" color="danger" meddium></ion-icon> -->
+      <img src="assets/icon/loader.svg" />
+  </p>
+  <ion-list>
+      <ion-item (click)="openItem(item)" *ngFor="let item of etudiants">
+        <ion-label slot="start">
+            <p><b>#{{item.numero}}</b> {{item.nom}} {{item.prenom}}</p>
+            <ion-note *ngIf="item.mension">{{item.mension}}</ion-note>
+        </ion-label>
+        <ion-label slot="end">
+            <ion-badge *ngIf="item.decision=='Admis'" color="success" item-right>{{item.decision}}</ion-badge>
+            <ion-badge *ngIf="item.decision=='Autorise'" color="warning" item-right>{{item.decision}}</ion-badge>
+            <ion-badge *ngIf="item.decision=='Refuse'" color="danger" item-right>{{item.decision}}</ion-badge>
+        </ion-label>
+      </ion-item>
+  </ion-list>
+  <!-- <ion-card color="danger" *ngIf="etudiants.length==0 && loaded">
+      <ion-card-header>
+          <ion-card-title>
+              Aucun résultat
+          </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+          Veuillez verifier votre recherche.
+      </ion-card-content>
+  </ion-card> -->
+  <!-- <button ion-button secondary menuToggle>Toggle Menu</button> -->
+  <div class="sliders-container" *ngIf="slidesPub.length>0">
+      <ion-slides pager autoplay="5000" loop="true" speed="500">
+
+          <ion-slide *ngFor="let item of slidesPub" class="slide">
+              <a href="{{item.url}}">
+                  <img src="{{item.src}}" alt="{{item.src}}" class="slide-img" />
+              </a>
+          </ion-slide>
+
+      </ion-slides>
+  </div>
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="filtrer(false, $event)" *ngIf="etudiants.length > 10">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Chargement...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

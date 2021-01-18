@@ -1,0 +1,58 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="transparent">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>bulletin</ion-title>
+  </ion-toolbar>
+</ion-header>
+<!-- ClickDesk Live Chat Service for websites -->
+<script type='text/javascript'>
+  var _glc =_glc || []; _glc.push('all_ag9zfmNsaWNrZGVza2NoYXRyEgsSBXVzZXJzGICA4Oztp7UIDA');
+  if(document.location.hostname != 'localhost'){
+    var glcpath = (('https:' == document.location.protocol) ? 'https://my.clickdesk.com/clickdesk-ui/browser/' : 
+    'http://my.clickdesk.com/clickdesk-ui/browser/');
+    var glcp = (('https:' == document.location.protocol) ? 'https://' : 'http://');
+  }else{
+    var glcpath = 'http://localhost:8888/clickdesk-ui/browser/';
+    var glcp = 'http://';
+  }
+  var glcspt = document.createElement('script'); glcspt.type = 'text/javascript'; 
+  glcspt.async = true; glcspt.src = glcpath + 'livechat-cloud-new.js';
+  var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(glcspt, s);
+  </script>
+  <!-- End of ClickDesk -->
+  
+
+<ion-content>
+  <ion-card *ngIf="item.notes">
+    <h1 class="ion-text-center" style="text-transform: capitalize;margin-top:12px;">Bulletin</h1>
+    <ion-card-content>
+      <p *ngIf="msgStart" class="ion-padding">
+        {{msgStart}}
+      </p>
+      <ion-item *ngFor="let note of notes; let i=index;">
+        <ion-label>
+          {{note.matiere}}
+        </ion-label>
+        <ion-checkbox slot="start"  *ngIf="autorise" [(ngModel)]="notes[i].isChecked" [disabled]="!canChange"></ion-checkbox>
+        <ion-badge slot="end" [color]="+note.valeur >= 10 ? 'success' : 'danger'">
+          <ion-label>
+            {{note.valeur}}
+          </ion-label> 
+          <span *ngIf="note.coef" class="ion-text-right">
+            <ion-badge color="secondary">Coef.{{note.coef}}</ion-badge>
+          </span>
+        </ion-badge>
+      </ion-item>
+      <p class="ion-padding ion-text-center" *ngIf="autorise">
+        <strong *ngIf="msgEnd" class="ion-padding">
+          {{msgEnd}}
+        </strong> <br>
+        <ion-button (click)="save()" fill="solid" shape="round" *ngIf="canChange">
+          Envoyer la sélection
+        </ion-button>
+      </p>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

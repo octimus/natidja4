@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>candidat-edit</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+  <ion-card>
+      <ion-card-content>
+          <div class="entete" class="ion-text-center">
+              <a class="circle">
+                  <img src="{{item.photo}}" (error)="defaultImg($event.target, 'assets/img/default-user.png')" alt="{{item.photo}}" />
+                  <!-- <ion-icon color="fourth" name="camera"></ion-icon> -->
+              </a>
+              <div>
+                  <ion-button color="warning" (click)="getImage()" fill="outline" shape="round">
+                      <ion-icon name="camera" slot="start"></ion-icon>
+                      Modifier
+                  </ion-button>
+              </div>
+
+              <!-- <h2>{{userProfile.displayName}}</h2> -->
+              <!-- <ion-note>{{userProfile.email}}</ion-note><br> -->
+              <!-- <ion-note>{{userProfile.telephone}}</ion-note> -->
+          </div>
+          <h2 text-center ion-title style="text-transform: capitalize;">{{item.nom}}</h2>
+          <br>
+          <form class="edit-form">
+              <ion-item no-padding>
+                  <ion-label floating>Pseudo</ion-label>
+                  <ion-input type="text" name="pseudo" [(ngModel)]="item.nom"></ion-input>
+              </ion-item>
+              <ion-item no-padding>
+                  <ion-label floating>Origine</ion-label>
+                  <ion-input type="text" name="origine" [(ngModel)]="item.origine"></ion-input>
+              </ion-item>
+              <ion-item no-padding>
+                  <ion-label floating>Établissement</ion-label>
+                  <ion-input type="text" name="etablissement" [(ngModel)]="item.etablissement"></ion-input>
+              </ion-item>
+              <br>
+              <div class="ion-text-center">
+                  <ion-button (click)="save()" shape="round" fill="outline" icon-left class='btn-send'>
+                      <ion-icon ios="save" slot="start" md="md-save"></ion-icon>
+                      Enregistrer
+                  </ion-button>
+              </div>
+              <p *ngIf="loading" class="loader" class="text-center" style="width:100px;margin:auto;">
+                  <!-- <ion-icon name="heart" color="danger" meddium></ion-icon> -->
+                  <img src="assets/icon/loader.svg" />
+              </p>
+          </form>
+      </ion-card-content>
+  </ion-card>
+</ion-content>

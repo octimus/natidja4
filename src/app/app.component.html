@@ -1,10 +1,17 @@
 <ion-app>
   <ion-split-pane contentId="main-content">
     <ion-menu contentId="main-content" type="overlay">
-      <ion-content>
+      <ion-content class="ion-padding-top">
         <ion-list id="inbox-list">
-          <ion-list-header>Inbox</ion-list-header>
-          <ion-note>hi@ionicframework.com</ion-note>
+          <!-- <ion-list-header>
+            <a class="circle" (click)="openModalExam(1)" *ngIf="userProfile.photo != 'default.png'">
+              <img src="{{userProfile.photo}}" *ngIf="examen=='BAC'" (error)="defaultImg($event.target, 'assets/student-bac.svg')" alt="{{userProfile.photo}}" />
+              <img src="{{userProfile.photo}}" *ngIf="examen=='BEPC'" (error)="defaultImg($event.target, 'assets/student-girl.svg')" alt="{{userProfile.photo}}" />
+              <img src="{{userProfile.photo}}" *ngIf="examen=='SIXIEME'" (error)="defaultImg($event.target, 'assets/student-boy.svg')" alt="{{userProfile.photo}}" />
+          </a>
+            {{userProfile.displayName}}
+          </ion-list-header> -->
+          <!-- <ion-note>hi@ionicframework.com</ion-note> -->
 
           <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
             <ion-item (click)="selectedIndex = i" routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" [class.selected]="selectedIndex == i">
@@ -15,12 +22,36 @@
         </ion-list>
 
         <ion-list id="labels-list">
-          <ion-list-header>Labels</ion-list-header>
-
-          <ion-item *ngFor="let label of labels" lines="none">
+          <ion-list-header>Compte</ion-list-header>
+          <ion-item *ngIf="!logedIn">
+            <ion-button color="primary" fill="clear" (click)="navCtrl.navigateForward('login');closeSideMenu();">
+              <ion-icon slot="start" name="log-in-outline"></ion-icon>
+              Se connecter
+            </ion-button>
+          </ion-item>
+          <ion-item *ngIf="logedIn">
+            <ion-button color="primary" fill="clear" (click)="navCtrl.navigateForward('profile');closeSideMenu();">
+              <ion-icon color="primary" slot="start" name="person-outline"></ion-icon>
+              Mon profile
+            </ion-button>
+          </ion-item>
+          <!-- <ion-button color="primary" fill="clear" (click)="navCtrl.navigateForward('my-gifts');closeSideMenu();" *ngIf="logedIn">
+            <ion-icon slot="start" name="gift"></ion-icon>
+            Mes cadeaux
+          </ion-button> -->
+          <!-- <ion-button color="primary" fill="clear" (click)="navCtrl.navigateForward('selections-autorise');closeSideMenu();" *ngIf="logedIn">
+            Selections des autorisés
+          </ion-button> -->
+          <ion-item *ngIf="logedIn">
+            <ion-button color="danger" fill="clear" (click)="logout();">
+              <ion-icon color="danger" slot="start" name="log-out-outline"></ion-icon>
+              Déconnexion
+            </ion-button>
+          </ion-item>
+          <!-- <ion-item *ngFor="let label of labels" lines="none">
             <ion-icon slot="start" ios="bookmark-outline" md="bookmark-sharp"></ion-icon>
             <ion-label>{{ label }}</ion-label>
-          </ion-item>
+          </ion-item> -->
         </ion-list>
       </ion-content>
     </ion-menu>

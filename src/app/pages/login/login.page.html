@@ -1,0 +1,48 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="transparent">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Connexion</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg1 ion-padding ion-text-center">
+  <br><br>
+  <img alt="logo" src="assets/octra.svg" class="logo" />
+  <form class="form-login">
+      <!-- <h4>
+    Veuillez vous identifier pour continuer.
+  </h4> -->
+      <ion-item>
+          <ion-label floating>Votre telephone</ion-label>
+          <ion-input type="text" required [(ngModel)]="userLogin.login" name="userLogin"></ion-input>
+      </ion-item>
+      <ion-text [hidden]="userLogin.login!='' || submitted == false" color="danger" padding-left>
+          Ce champ est obligatoir.
+      </ion-text>
+      <ion-item>
+          <ion-label floating>Mot de passe</ion-label>
+          <ion-input required type="password" name="password" [(ngModel)]="userLogin.password"></ion-input>
+      </ion-item>
+      <ion-text [hidden]="userLogin.password!='' || submitted == false" color="danger" padding-left>
+          Ce champ est obligatoir.
+      </ion-text>
+      <br><br>
+      <ion-button type="submit" (click)="login()" shape="round">
+        Se connecter
+    </ion-button>
+
+    <p>
+      <a routerLink="../password-reset">Mot de passe oublié ?</a>
+    </p>
+  </form>
+  <p>Si vous n'avez pas de compte</p>
+  👇🏽👇🏽👇🏽<br><br>
+  <ion-button color="secondary" (click)="signinPage()" shape="round">Créer votre compte</ion-button>
+
+  <!-- <button class="fb-btn ios" ion-button color="secondary" round padding (click)="facebookLogin()">
+  Connecter vous avec Facebook
+</button> -->
+
+</ion-content>

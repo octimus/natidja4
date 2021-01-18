@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Code premium</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-text-center">
+  <form class="form-signin">
+    <div class="div">
+        <p color="primary">Entrer votre code d'accès premium</p>
+          <ion-item>
+              <ion-label floating>code</ion-label>
+              <ion-input type="text" name="num" [(ngModel)]="code"></ion-input>
+          </ion-item>
+          <ion-button color="third" shape="round" fill="outline" (click)="next();">
+              Suivant
+          </ion-button>
+          <ion-button color="gold" fill="clear" (click)="navCtrl.navigateForward('payement', {queryParams:{reason:'premium', montant:500}});">
+            Acheter un code
+          </ion-button>
+      </div>
+      <br>
+  </form>
+</ion-content>

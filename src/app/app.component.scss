@@ -1,7 +1,15 @@
 ion-menu ion-content {
   --background: var(--ion-item-background, var(--ion-background-color, #fff));
 }
-
+ion-header,
+    ion-navbar,
+    ion-content {
+        background-color: #4b4141!important;
+        background-image: url("../assets/photos/pattern.svg")!important;
+        background-size: 100%;
+        background-blend-mode: difference;
+        background-attachment: fixed;
+    }
 ion-menu.md ion-content {
   --padding-start: 8px;
   --padding-end: 8px;

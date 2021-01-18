@@ -1,0 +1,22 @@
+<ion-header>
+
+</ion-header>
+
+
+<ion-content class="ion-text-left ion-padding">
+    <br><br>
+    <div class="ion-text-center ion-padding">
+        <span>Selectionner une classe</span>
+    </div>
+    <ion-list>
+        <ion-item *ngFor="let classe of classes; let i = index;" (click)="select({title:classe.title, id:classe.id})">
+            <span>{{i+1}}.</span>{{classe.title}}
+        </ion-item>
+    </ion-list>
+    <div *ngIf="reessayer" class="ion-text-center">
+        <ion-button (click)="charger()">
+            <ion-icon slot="start" name="refresh"></ion-icon>
+            Actualiser
+        </ion-button>
+    </div>
+</ion-content>

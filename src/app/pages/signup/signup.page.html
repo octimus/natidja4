@@ -1,0 +1,54 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="transparent">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Inscription</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content class="bg1 ion-text-center">
+  <img alt="logo" src="assets/octra.svg" class="logo" />
+  <form class="form-signin">
+      <ion-item *ngIf="typeCompte=='professionnel'">
+          <ion-label floating>Nom de l'entreprise</ion-label>
+          <ion-input type="text" name="nom_entreprise" [(ngModel)]="nom_prenom"></ion-input>
+      </ion-item>
+      <ion-item>
+          <ion-label floating>Nom et prénom</ion-label>
+          <ion-input type="text" name="nom_prenom" [(ngModel)]="nom_prenom"></ion-input>
+      </ion-item>
+      <ion-item>
+          <ion-label floating>Domicile</ion-label>
+          <ion-input type="text" name="ville" [(ngModel)]="ville"></ion-input>
+      </ion-item>
+      <ion-item>
+          <ion-label floating>Telephone</ion-label>
+          <ion-input type="number" name="telephone" [(ngModel)]="telephone"></ion-input>
+      </ion-item>
+      <ion-item [hidden]="true">
+          <ion-label floating>Addresse email(non obligatoire)</ion-label>
+          <ion-input type="text" name="email" [(ngModel)]="email"></ion-input>
+      </ion-item>
+      <ion-item>
+          <ion-label floating>Mot de passe</ion-label>
+          <ion-input type="password" name="password" [(ngModel)]="password"></ion-input>
+      </ion-item>
+      <ion-item>
+          <ion-label floating>Repeter le mot de passe</ion-label>
+          <ion-input type="password" name="confirm_password" [(ngModel)]="confirm_password"></ion-input>
+      </ion-item>
+      <!-- <ion-item>
+      <ion-label>Cocher si vous êtes chez vous</ion-label>
+      <ion-checkbox [(ngModel)]="amIHome" name="amIHome"></ion-checkbox>
+    </ion-item> -->
+      <ion-button color="primary" (click)="inscrire()" fill="solid">
+        S'inscrire
+    </ion-button><br>
+  </form>
+  <!-- <button class="fb-btn ios" ion-button color="secondary" round padding (click)="facebookLogin()">
+    Connecter vous avec Facebook
+  </button> -->
+
+</ion-content>

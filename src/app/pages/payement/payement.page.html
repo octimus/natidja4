@@ -1,0 +1,100 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="transparent">
+      <ion-buttons slot="start">
+          <ion-back-button></ion-back-button>
+      </ion-buttons>
+    <ion-title>Paiement</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card *ngIf="price != null && paymentText" class="ion-text-center ion-padding">
+    <strong>
+        {{paymentText}}
+    </strong>
+    <h3 style="color:rgb(43, 42, 42);" *ngIf="price.all">
+        {{price.all}} KMF
+    </h3>
+  </ion-card>
+  <ion-card class="form-signin ion-text-center ion-padding" *ngIf="notPayed == false && notPayed != undefined">
+      Cet élève a déjà été débloqué.
+      <br><br>
+      <ion-button (click)="navCtrl.back();" expand="block" fill="outline" shape="round">
+          Retour
+      </ion-button>
+  </ion-card>
+  <ion-card class="form-signin ion-text-center" *ngIf="notPayed && price.mvola">
+    <div>
+        <img src="assets/img/mvola.png" style="width:100px;" alt="mvola" class="mvola" (error)="defaultImg($event.target, 'https://natidja.octra.io/assets/img/mvola.png')">
+    </div>
+
+    <ion-item *ngIf="demander_num==1">
+        <ion-label floating>Votre numéro Mvola</ion-label>
+        <ion-input type="text" #sender autofocus name="phoneTransfer" id="senderPhone" [(ngModel)]="senderPhoneNumber"></ion-input>
+    </ion-item>
+    <h3>{{price.mvola}} KMF</h3>
+    <p *ngIf="loading" class="text-center loader">
+        <ion-icon name="heart" color="danger"></ion-icon><br>
+        <ion-text color="primary">chargement...</ion-text>
+    </p>
+    <div>
+        <ion-button color="third" shape="round" fill="outline" (click)="transfer()" [disabled]="!phoneNumber">
+         <ion-icon slot="start" name="phone-portrait-outline"></ion-icon>
+            Payer par Mvola
+        </ion-button><br>
+    </div>
+  </ion-card>
+  <ion-card class="form-signin ion-text-center" *ngIf="notPayed && price.ct">
+    <div class="ion-text-center">
+        <img src="assets/img/ct.png" style="width:100px;" alt="mvola" class="mvola" 
+        (error)="defaultImg($event.target, 'https://natidja.octra.io/assets/img/mvola.png')">
+    </div>
+    <h3>{{price.ct}} KMF</h3>
+    <p *ngIf="loading2" class="text-center loader">
+        <ion-icon name="heart" color="danger"></ion-icon><br>
+        <ion-text color="primary">chargement...</ion-text>
+    </p>
+    <div>
+        <p *ngIf="ct_sms_msg">
+            <strong>{{ct_sms_msg}}</strong>
+        </p>
+        <ion-button color="third" shape="round" fill="outline" (click)="smspay()" *ngIf="ct_sms_btn_show">
+            <ion-icon slot="start" name="chatbubble-ellipses-outline"></ion-icon>
+            {{ct_sms_btn_show}}
+        </ion-button>
+        <ion-card class="form-signin ion-text-center" *ngIf="notPayed">
+          <p *ngIf="loading2" class="text-center loader">
+            <ion-icon name="heart" color="danger"></ion-icon><br>
+            <ion-text color="primary">chargement...</ion-text>
+          </p>
+          <div>
+              <ion-item>
+                  <ion-input type="text" placeholder="Entrer le code ici" [(ngModel)]="codeAchat"></ion-input>
+              </ion-item>
+              <br>
+              <ion-button shape="round" fill="outline" (click)="sendCode()">
+              <ion-icon slot="start" name="save"></ion-icon>
+                Débloquer
+              </ion-button>
+          </div>
+        </ion-card>
+    </div>
+  </ion-card>
+  <ion-card class="form-signin ion-text-center" *ngIf="notPayed && price.card">
+        <div class="ion-text-center">
+        <img src="assets/img/credit-card.png" style="width:100px;" alt="bank card" class="card" (error)="defaultImg($event.target, 'https://natidja.octra.io/assets/img/mvola.png')">
+        </div>
+        <h3>{{price.card}} €</h3>
+        <p *ngIf="loading2" class="loader" class="ion-text-center" style="width:100px;margin:auto;">
+            <!-- <ion-icon name="heart" color="danger" meddium></ion-icon> -->
+            <img src="assets/icon/loader.svg" />
+        </p>
+        <div>
+            <ion-button color="third" shape="round" fill="outline" (click)="openInAppBrowser()">
+            <ion-icon slot="start" name="card"></ion-icon>
+            Payer par carte bancaire
+            </ion-button>
+        </div>
+  </ion-card>
+  <br><br>
+</ion-content>

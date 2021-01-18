@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Platform } from '@ionic/angular';
+import { Platform, IonRouterOutlet, NavController, AlertController, MenuController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { UserDataService } from './services/user-data/user-data.service';
+import { ActivatedRoute } from '@angular/router';
+import { OneSignal } from "@ionic-native/onesignal/ngx";
+
 
 @Component({
   selector: 'app-root',
@@ -11,53 +15,148 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 })
 export class AppComponent implements OnInit {
   public selectedIndex = 0;
+  public userProfile: any = {};
   public appPages = [
     {
-      title: 'Inbox',
-      url: '/folder/Inbox',
-      icon: 'mail'
+      title: 'Accueil',
+      url: 'home',
+      icon: 'home'
     },
     {
-      title: 'Outbox',
-      url: '/folder/Outbox',
-      icon: 'paper-plane'
+      title: 'Statistiques',
+      url: 'stats',
+      icon: 'pie-chart'
     },
     {
-      title: 'Favorites',
-      url: '/folder/Favorites',
-      icon: 'heart'
+      title: 'Recherche avancée',
+      url: '/search',
+      icon: 'search'
     },
     {
-      title: 'Archived',
-      url: '/folder/Archived',
-      icon: 'archive'
+      title: 'À propos',
+      url: '/about',
+      icon: 'help'
     },
     {
-      title: 'Trash',
-      url: '/folder/Trash',
-      icon: 'trash'
-    },
-    {
-      title: 'Spam',
-      url: '/folder/Spam',
-      icon: 'warning'
+      title: 'Politique de confidentialité',
+      url: 'policy',
+      icon: 'receipt'
     }
   ];
+  public logedIn: any = false;
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
 
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
-    private statusBar: StatusBar
+    private statusBar: StatusBar, private userData: UserDataService,
+    public navCtrl: NavController, private oneSignal: OneSignal, 
+    private alertController: AlertController, private menu: MenuController
   ) {
+    this.platform.backButton.subscribeWithPriority(-1, () => {
+      if (window.location.pathname == "/home") {
+        navigator['app'].exitApp();
+      }else{
+        this.navCtrl.navigateRoot("/home");
+        // alert(window.location.pathname)
+      }
+    });
+
+    this.userData.loginState.subscribe(d=>{
+        
+      if(d == 1){
+        this.logedIn = true;
+        this.userData.hasLoggedIn().then((response) => {
+          this.logedIn = true;
+        });
+
+        this.userData.getDomicile().then((reponse)=>{
+          this.userProfile.domicile = reponse;
+        })
+        this.userData.getUsername().then((reponse)=>{
+          this.userProfile.displayName = reponse;
+        })
+
+        this.userData.getPhoto().then((reponse)=>{
+          this.userProfile.photo = reponse;
+        })
+        this.userData.getId().then((reponse)=>{
+          this.userProfile.userId = reponse;
+          console.log(this.userProfile, reponse)
+        })
+      }else{
+        console.log({d: d});
+        
+      }
+    })
+
     this.initializeApp();
   }
 
   initializeApp() {
     this.platform.ready().then(() => {
+
+      this.userData.hasLoggedIn().then((response) => {
+        this.logedIn = response;
+      });
+
+      this.userData.getDomicile().then((reponse)=>{
+        this.userProfile.domicile = reponse;
+      })
+      this.userData.getUsername().then((reponse)=>{
+        this.userProfile.displayName = reponse;
+      })
+
+      this.userData.getPhoto().then((reponse)=>{
+        this.userProfile.photo = reponse;
+      })
+      this.userData.getId().then((reponse)=>{
+        this.userProfile.userId = reponse;
+      })
+
+      try {
+
+        this.oneSignal.startInit('63a027f1-577b-413e-afb0-73556af4a679'
+          , '482029657546');
+
+        this.oneSignal.inFocusDisplaying(this.oneSignal.OSInFocusDisplayOption.InAppAlert);
+
+        this.oneSignal.handleNotificationReceived().subscribe(() => {
+          // do something when notification is received
+        });
+
+        this.oneSignal.handleNotificationOpened().subscribe((donne) => {
+          // do something when a notification is opened
+          this.alertController.create({subHeader:donne.notification.payload.title, message:donne.notification.payload.body, buttons:["OK"]}).then(a=>{
+            a.present();
+          });
+        });
+        this.userData.getId().then(id=>{
+          if(id)
+          this.oneSignal.sendTag("userid", id);
+        })
+        this.oneSignal.endInit();
+        this.statusBar.styleDefault();
+      } catch (error) {
+        alert("Error catched "+error);
+      }
+      this.oneSignal.getIds().then((data)=>{
+        // alert("id onesignal : "+JSON.stringify(data));
+      });
+      this.oneSignal.getTags().then((data)=>{
+        // alert("tag onesignal : "+JSON.stringify(data));
+      })
+      console.log("ready....");
+      
       this.statusBar.styleDefault();
       this.splashScreen.hide();
     });
+  }
+  closeSideMenu(){
+    this.menu.close();
+  }
+  logout(){
+    this.userData.logout();
   }
 
   ngOnInit() {

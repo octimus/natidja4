@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Notes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- {{item.data[0].nom_etudiant}} -->
+  <ion-list *ngIf="notes?.data">
+    <ion-item *ngFor="let item of notes.data">
+      <ion-label>
+        <h3>{{item.matiere}}</h3>
+        <ion-text color="primary" slot="end">{{item.valeur}}/{{item.note_max}}</ion-text> - <small>{{item.date}}</small>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <ion-card *ngIf="!canSee">
+    <ion-item>
+      <ion-icon name="key" slot="start" color="danger"></ion-icon>
+      <ion-label>
+        <ion-button fill="outline" shape="round" 
+        (click)="navCtrl.navigateForward('payement', {queryParams:{item:item, reason: 'eca', id_ecole:ecole.id}});">
+          <ion-icon name="cash" slot="start"></ion-icon>
+          S'abonner
+        </ion-button>
+      </ion-label>
+    </ion-item>
+  
+    <ion-card-content>
+      Vous devez vous abonner à cet élève pour suivre sa vie scolaire.
+    </ion-card-content>
+  </ion-card>
+</ion-content>

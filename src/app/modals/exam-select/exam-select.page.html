@@ -1,0 +1,71 @@
+<ion-content class="ion-text-center ion-padding">
+  <div class="exams">
+      <div>
+              
+              <h4>Quel examen vous interesse ?</h4>
+          <section>
+            <ion-button fill="clear" shape="round" size="small" (click)="select({exam:'BAC'})">
+                <!-- <ion-avatar class="ion-item-left" slot="start">
+                    <img class="icon" style="height: 70%;margin-top:10%;" src="assets/student-bac.svg">
+                </ion-avatar> -->
+                BAC
+            </ion-button>
+            <ion-button fill="clear" shape="round" size="small" (click)="select({exam:'BEPC'})">
+                <!-- <ion-avatar class="ion-item-left">
+                    <img class="icon" style="height: 70%;margin-top:10%;" src="assets/student-girl.svg">
+                </ion-avatar> -->
+                BEPC
+            </ion-button>
+            <ion-button fill="clear" shape="round" size="small" (click)="select({exam:'SIXIEME'})">
+                <!-- <ion-avatar class="ion-item-left">
+                    <img class="icon" style="height: 70%;margin-top:10%;" src="assets/student-boy.svg">
+                </ion-avatar> -->
+                6 ÈME
+            </ion-button>
+            </section>
+        </div>
+      <section>
+          <h4>Ou bien c'est une école ?</h4>
+          <p *ngIf="loading" class="text-center loader">
+              <ion-icon name="heart" color="danger"></ion-icon><br>
+              <ion-text color="primary">chargement...</ion-text>
+          </p>
+          <ion-list>
+              <ion-item *ngFor="let school of schools" (click)="select({exam:'AUTRES', ecole:school})">
+                  <ion-img class="logo" *ngIf="school.url" slot="start" [src]="school.logo" ></ion-img>
+                  <ion-label>{{school.nom}}</ion-label>
+              </ion-item>
+          </ion-list>
+        </section>
+  </div>
+  <div *ngIf="connexionError==1 && btns[0].visible==true" class="ion-padding">
+      {{btns[0].text}} <br>
+      <ion-button (click)="callNum(btns[0].number);" shape="round" fill="outline">{{btns[0].btnText}}</ion-button>
+  </div>
+  <div *ngIf="connexionError==1 && btns[1].visible==true" class="ion-padding">
+      {{btns[1].text}} <br>
+      <ion-button (click)="callNum(btns[1].number);" shape="round" fill="outline">{{btns[1].btnText}}</ion-button>
+  </div>
+  <div class="sliders-container" *ngIf="slidesPub.length>0">
+
+      <div *ngFor="let item of slidesPub" class="slide">
+          <img src="{{item.src}}" alt="{{item.src}}">
+      </div>
+      <ion-slides pager autoplay="5000" loop="true" speed="500">
+
+          <ion-slide *ngFor="let item of slidesPub" class="slide">
+              <img [src]="item.src" alt="{{item.src}}" class="slide-img">
+          </ion-slide>
+
+      </ion-slides>
+  </div>
+</ion-content>
+<ion-footer class="ion-text-center" *ngIf="openFooter==true">
+    <ion-toolbar style="padding: 12px;">
+        <ion-label>
+            En continuant, vous confirmez avoir lu et accepté <br>
+            👇🏽👇🏽👇🏽 <br>
+            <ion-button fill="outline" color="info" shape="round" href="https://natidja.app/conditions">nos conditions d'utilisation.</ion-button>
+        </ion-label>
+    </ion-toolbar>
+</ion-footer>

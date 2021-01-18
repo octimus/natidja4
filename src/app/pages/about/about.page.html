@@ -1,0 +1,46 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="transparent">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>À propos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content class="ion-padding ion-text-center">
+  <h3>Application developpé par Octra</h3>
+  <ion-grid>
+      <ion-row>
+          <ion-col col-6><img src="assets/photos/octra.png" alt=""></ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="12">
+          Maoulida Saïd M'namdji <br>
+          <ion-button fill="outline" shape="round" href="mailto:said@octra.io">said@octra.io</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <div>
+      <h5>Sponsors</h5>
+      <div *ngFor="let item of sponsors">
+        <img src="{{item.picture}}" alt="{{item.alt}}" >
+    </div>
+    </div>
+
+  <div class="ion-text-left">
+    <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0"
+            target="_blank">CC 3.0 BY</a></div>
+    <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0"
+            target="_blank">CC 3.0 BY</a>
+          </div>
+          <div>Icons made by <a href="https://www.flaticon.com/authors/vectors-market" title="Vectors Market">Vectors Market</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+    <div text-center>
+        <a href="https://natidja.octra.io/policy/">Politique de Confidentialité</a>
+    </div>
+    <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0"
+      target="_blank">CC 3.0 BY</a>
+    </div>
+    <div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+  </div>
+</ion-content>

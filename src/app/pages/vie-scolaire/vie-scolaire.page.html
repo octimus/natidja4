@@ -1,0 +1,79 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Vie scolaire</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-text-center ion-padding">
+  <ion-avatar>
+    <img [src]="ecole?.url+'/photos/full/'+item.photo" [alt]="" />
+  </ion-avatar><br>
+  <span>{{item.nom + ' ' + item.prenom}}</span>
+  <!-- <ion-item>
+    <ion-label>Date</ion-label>
+    <ion-datetime display-format="DD/MM/YYYY" [value]="today" ></ion-datetime>
+  </ion-item> -->
+  <div class="ion-text-center">
+    <ion-button (click)="openNotes()" expand="block" fill="outline" shape="round" mode="ios">
+      <ion-icon slot="start" name="thumbs-up-outline"></ion-icon>
+      Voir les Notes
+    </ion-button>
+  </div>
+  <ion-grid position="fixed" *ngIf="vieScolaire?.status!='not payed'">
+    <ion-row>
+      <ion-col size="4">
+        <span>Absences</span>
+        <ion-badge [color]="vieScolaire.nbr_absences > 0 && vieScolaire.nbr_absences <= 3 ? 'warning' : (vieScolaire.nbr_absences > 3 ? 'danger' : 'success')" mode="ios">{{vieScolaire.nbr_absences}}</ion-badge>
+      </ion-col>
+      <ion-col size="4">
+        <span>Retards</span>
+        <ion-badge [color]="vieScolaire.nbr_retards > 0 && vieScolaire.nbr_retards <= 3 ? 'warning' : (vieScolaire.nbr_retards > 3 ? 'danger' : 'success')" mode="ios">{{vieScolaire.nbr_retards}}</ion-badge>
+      </ion-col>
+      <ion-col size="4">
+        <span>Devoirs non faits</span>
+        <ion-badge [color]="vieScolaire.nbr_retards > 0 && vieScolaire.nbr_retards <= 3 ? 'warning' : (vieScolaire.nbr_retards > 3 ? 'danger' : 'success')" mode="ios">{{vieScolaire.nbr_dev_non_faits}}</ion-badge>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="4">
+        <span>Materiels oubliés</span>
+        <ion-badge [color]="vieScolaire.nbr_m_oublie > 0 && vieScolaire.nbr_m_oublie <= 3 ? 'warning' : (vieScolaire.nbr_m_oublie > 3 ? 'danger' : 'success')" mode="ios">{{vieScolaire.nbr_m_oublie}}</ion-badge>
+      </ion-col>
+      <ion-col size="4">
+        <span>Leçons non apprises</span>
+        <ion-badge [color]="vieScolaire.nbr_lecons > 0 && vieScolaire.nbr_lecons <= 3 ? 'warning' : (vieScolaire.nbr_lecons > 3 ? 'danger' : 'success')" mode="ios">{{vieScolaire.nbr_lecons}}</ion-badge>
+      </ion-col>
+      <ion-col size="4">
+        <span>Sorties</span>
+        <ion-badge [color]="vieScolaire.sorties > 0 && vieScolaire.sorties <= 3 ? 'warning' : (vieScolaire.sorties > 3 ? 'danger' : 'success')" mode="ios">{{vieScolaire.sorties}}</ion-badge>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-item *ngFor="let item of vieScolaire.data">
+    <ion-label>
+      {{item.type}}
+      <p>
+        {{item.date}}
+      </p>
+    </ion-label>
+  </ion-item>
+
+  <ion-card *ngIf="vieScolaire?.status=='not payed'">
+    <ion-item>
+      <ion-icon name="key" slot="start" color="danger"></ion-icon>
+      <ion-label>
+        <ion-button slot="end" fill="outline" shape="round" (click)="navCtrl.navigateForward('payement', {queryParams:{item:item, reason: 'eca', id_ecole:ecole.id}});">
+          <ion-icon name="cash" slot="start"></ion-icon>
+          Abonnement
+        </ion-button>
+      </ion-label>
+    </ion-item>
+  
+    <ion-card-content>
+      Vous devez vous abonner à cet élève pour suivre sa vie scolaire.
+    </ion-card-content>
+  </ion-card>
+</ion-content>
