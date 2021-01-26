@@ -23,6 +23,9 @@ import { SMS } from '@ionic-native/sms/ngx';
 import { SmsRetriever } from '@ionic-native/sms-retriever/ngx';
 // import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
+import { ChatService } from './services/chat/chat.service';
+import { CoursService } from './services/cours/cours.service';
+import { PreviewAnyFile } from '@ionic-native/preview-any-file/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -35,7 +38,7 @@ import { OneSignal } from '@ionic-native/onesignal/ngx';
     IonicStorageModule.forRoot(), FormsModule
   ],
   providers: [
-    StatusBar, Camera, Crop, InAppBrowser, SMS, SmsRetriever,
+    StatusBar, Camera, Crop, InAppBrowser, SMS, SmsRetriever, ChatService, CoursService, PreviewAnyFile,
     SplashScreen, HTTP, NavParams, Network, CallNumber, FileTransfer, FileChooser,
     OneSignal,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }

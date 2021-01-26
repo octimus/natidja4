@@ -11,6 +11,7 @@ import { ExamSelectPage } from '../../modals/exam-select/exam-select.page';
 import { ClassSelectPage } from '../../modals/class-select/class-select.page';
 import { ApiService } from 'src/app/services/api/api.service';
 import { Storage } from '@ionic/storage';
+import { ChatService } from 'src/app/services/chat/chat.service';
 
 @Component({
   selector: 'app-home',
@@ -23,6 +24,8 @@ export class HomePage implements OnInit {
  
   public premium:any = false;
   public notifCount:number = 0;
+  public msgCount: number = 0;
+  public coursCount: number = 0;
   public etudiantsOriginal;
   public etudiants: any;
   public recherche = "";
@@ -57,23 +60,29 @@ export class HomePage implements OnInit {
     auotoplay: true,
   };
   kids: any = [];
+  msgCountTimer: NodeJS.Timeout;
 
   constructor(private platform: Platform, private alertCtrl: AlertController, 
     private ngZone: NgZone, private conection: Network, 
     private api: ApiService, private apiSchool: ApiService, public navCtrl: NavController, 
     private modalCtrl:ModalController, 
     public call:CallNumber, public userData:UserDataService, 
-    public logger:EventLoggerService, public settings:SettingsService, private storage: Storage) {
+    public logger:EventLoggerService, public settings:SettingsService, 
+    private storage: Storage, private chatService: ChatService) {
 
     this.platform.ready().then(() => {
       this.settings.getPremium().then((data)=>{
         this.premium = data;
       })
+
       this.settings.getServer().then((data)=>{
         this.charger();
         // this.chargerUrl();          
         this.chargerAutre();
         this.loadBtns();
+        this.userData.getTelephone().then(tel => {
+          this.getCount(tel);
+        });
       })
       // this.ga.startTrackerWithId('UA-102358517-3')
       // .then(() => {
@@ -259,13 +268,7 @@ export class HomePage implements OnInit {
         
       })
   }
-  ionViewDidLoad()
-  {
-    // this.ga.trackView('Home Page')
-    // .then(() => {alert("ok")})
-    // .catch(e => alert(e));
-    
-  }
+
   async loadKids(tel:any, ecole:any, setServer = function(){}){
     
     if(!ecole){
@@ -518,6 +521,19 @@ export class HomePage implements OnInit {
 
     this.annee = this.years[0];
   }
+
+  getCount(tel: any){
+    this.chatService.getCount(tel).subscribe((data) => {
+      
+      let json = JSON.parse(data.data);
+      
+      this.msgCount = json.data.nbr_msg;
+      this.notifCount = json.data.nbr_notifs;
+      this.coursCount = json.data.nbr_cours;
+    });
+    this.msgCountTimer = setTimeout(() => this.getCount(tel), 10000);
+  }
+
   public charger() {
     // this.etudiants = this.etudiantsOriginal.filter((etudiant) => {
     //   return etudiant.nom + " " + etudiant.prenom == this.recherche || etudiant.prenom + " " + etudiant.nom == this.recherche || etudiant.id == this.recherche

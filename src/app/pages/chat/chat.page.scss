@@ -1,0 +1,209 @@
+$userBackgroundColor: #387ef5;
+  $toUserBackgroundColor: #fff;
+
+  ion-content .scroll-content {
+    background-color: #f5f5f5;
+  }
+
+  ion-footer {
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.11);
+    background-color: #fff;
+    height: 255px;
+  }
+
+  .left .product-info
+  {
+    display:block;
+    font-style: italic;
+    background:#baf3cd;
+    border-bottom:1px solid rgba(232, 233, 225, 0.781);
+    // width:110.5%;
+    padding:5px;
+    height:auto;
+    // margin-top:-0.7em;
+    border-radius:5px;
+    // margin-left:-5.5%;
+    z-index: 2;
+    margin-bottom:5px;
+    padding-left:10px;
+
+  }
+  .right .product-info
+  {
+    display:block;
+    font-style: italic;
+    background:#49b0eb;
+    border-bottom:1px solid rgb(74, 176, 179);
+    // width:110.5%;
+    padding:5px;
+    height:auto;
+    // margin-top:-0.7em;
+    border-radius:5px;
+    padding-left:10px;
+    // margin-left:-5.5%;
+    z-index: 2;
+    margin-bottom:5px;
+  }
+  ion-footer ion-row .response-info
+  {
+    font-style: italic;
+    background:#8acdf3;
+    border-bottom:1px solid rgb(74, 176, 179);
+    height:55px;
+    border-radius:5px 5px 0px 0px;
+    // position: absolute;
+    margin-top:-55px;
+    // border-radius:5px;
+    // margin-left:-5.5%;
+    z-index: 2;
+  }
+  ion-footer ion-row .response-info p
+  {
+    padding-left:12px;
+  }
+  .line-breaker {
+    // white-space: pre-line;
+  }
+  .right .triangle
+  {
+    background:#b4f5dc;
+  }
+  .left .triangle
+  {
+    background:#4f84f5;
+  }
+
+  .input-wrap {
+    padding: 0 5px;
+    ion-textarea {
+      position: static;
+
+    }
+    ion-col.col {
+      padding: 0;
+    }
+    button {
+      width: 100%;
+      height: 55px;
+      font-size: 1.3em;
+      margin: 0;
+    }
+    textarea {
+      border-bottom: 1px $userBackgroundColor;
+      border-style: solid;
+    }
+  }
+
+  .message-wrap {
+    padding: 0 10px;
+    .message {
+      position: relative;
+      padding: 7px 0;
+      .user-img {
+        position: absolute;
+        border-radius: 45px;
+        width: 45px;
+        height: 45px;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.36);
+      }
+
+      .msg-detail {
+        width: 100%;
+        display: inline-block;
+        p {
+          margin: 0;
+        }
+        .msg-info {
+          // display:inline-block;
+          position: relative;
+          text-align: right;
+          font-size:80%;
+          margin-right:5px;
+          // color:white;
+
+          // border:1px solid black;
+          p {
+            font-size: .8em;
+            color: rgb(211, 209, 209);
+          }
+        }
+
+        .msg-content {
+          position: relative;
+          margin-top: 5px;
+          border-radius: 5px;
+          padding: 8px;
+          border: 1px solid #ddd;
+          color: #fff;
+          width: auto;
+
+          span.triangle {
+            border-radius: 2px;
+            height: 8px;
+            width: 8px;
+            top: 12px;
+            display: block;
+            border-style: solid;
+            border-color: #edf0ee;
+            border-width: 1px;
+            -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+            position: absolute;
+          }
+        }
+
+      }
+    }
+
+    .message.left {
+      .msg-content {
+        background-color: $toUserBackgroundColor;
+        float: left;
+      }
+      .msg-detail {
+        padding-left: 60px;
+      }
+      .user-img {
+        left: 0;
+      }
+      .msg-content {
+        color: #343434!important;
+        span.triangle {
+          background:#eceaea;
+          z-index: 1;
+          // border:1px solid rgb(51, 50, 50);
+          left: -5px;
+        }
+      }
+
+    }
+
+    .message.right {
+      .msg-detail {
+        padding-right: 60px;
+        .msg-info {
+          text-align: right;
+        }
+      }
+      .user-img {
+        right: 0;
+      }
+      ion-spinner {
+        position: absolute;
+        right: 10px;
+        top: 50px;
+      }
+      .msg-content {
+        background-color: $userBackgroundColor;
+        float: right;
+        span.triangle {
+          background-color: $userBackgroundColor;
+          border-bottom-width: 0;
+          border-left-width: 0;
+          right: -5px;
+        }
+      }
+
+    }
+
+  }

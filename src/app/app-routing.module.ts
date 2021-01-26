@@ -110,6 +110,18 @@ const routes: Routes = [
   {
     path: 'notes',
     loadChildren: () => import('./pages/notes/notes.module').then( m => m.NotesPageModule)
+  },
+  {
+    path: 'chats',
+    loadChildren: () => import('./pages/chats/chats.module').then( m => m.ChatsPageModule)
+  },
+  {
+    path: 'chat',
+    loadChildren: () => import('./pages/chat/chat.module').then( m => m.ChatPageModule)
+  },
+  {
+    path: 'cours',
+    loadChildren: () => import('./pages/cours/cours.module').then( m => m.CoursPageModule)
   }
 ];
 

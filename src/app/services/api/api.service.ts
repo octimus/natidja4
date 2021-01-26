@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HTTP } from '@ionic-native/http/ngx';
 import { HttpClient } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
-import { Platform } from '@ionic/angular';
+import { AlertController, LoadingController, Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
@@ -18,10 +18,12 @@ export class ApiService {
   public native: boolean = true;
   private entete: {} = {};
   public device:any;
+  private loader: HTMLIonLoadingElement;
   
   constructor(private http: HTTP, private httpClient: HttpClient, 
     private platform: Platform, private storage: Storage, 
-    private fileTransfer: FileTransfer, private fileChooser: FileChooser) { 
+    private fileTransfer: FileTransfer, private fileChooser: FileChooser, 
+    private alertCtrl: AlertController, private loadingCtrl: LoadingController) { 
       this.device = this.platform.platforms();
       console.log({platform: this.device});
       // if(this.device.indexOf("mobileweb"))
@@ -165,5 +167,23 @@ export class ApiService {
         headers:entetes
       });
     }
+  }
+
+  async createLder(){
+    this.loader = await this.loadingCtrl.create({
+      message:"Chargement..."
+    });
+  }
+
+  presentLoader(){
+    this.loader?.present();
+  }
+  dissmissLoader(){
+    this.loader?.dismiss();
+  }
+  public alert(msg: string, header: string = null, subHeader: string = null, buttons: any[] = ["ok"]){
+    this.alertCtrl.create({header:header, subHeader: subHeader, message:msg, buttons:buttons}).then(a => {
+      a.present();
+    })
   }
 }

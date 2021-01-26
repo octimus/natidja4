@@ -24,7 +24,6 @@ ion-card.autre-card{
 }
 ion-card{
     --background:rgba(255, 255, 255, .9);
-    margin-top: 2%;
 }
 .btn-check {
     position: absolute;
@@ -66,16 +65,17 @@ ion-card{
 
     // padding-top:5px;
 }
-.btn-notification{
-    position: absolute;
-    top: 2%;
-    font-size: 85%;
-    right: 10px;
+ion-toolbar ion-title ion-select{
+    font-size: 80%;
+    // border: #002a3e solid;
+}
+ion-header ion-buttons ion-button{
+    font-size: 70%;
 
     ion-badge{
-        position:absolute;
-        top:0;
-        left:12px;
+        position: relative;;
+        margin-top:-15px;
+        margin-left:-12px;
     }
 }
 ion-card ion-item{

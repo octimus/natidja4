@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Discussions</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-progress-bar type="determinate" *ngIf="nbrElevesUpdated < nbrEleves" [value]="nbrElevesUpdated/nbrEleves" [buffer]="nbrElevesUpdated/nbrEleves" color="secondary"></ion-progress-bar>
+    <ion-list>
+        <ion-item *ngFor="let item of list" (click)="openChat(item);">
+            <ion-avatar slot="start">
+                <img [src]="item.photo" onerror="this.src='assets/img/default-avatar.png';"/>
+            </ion-avatar>
+            <ion-label>
+                {{item.nom}} <br>
+                <ion-note>{{item.lastMsg}}</ion-note><br>
+                <small color="light">{{item.date | moment : 'DD/MM/YY'}}</small>
+            </ion-label>
+            <ion-badge color="danger" slot="end" *ngIf="item?.nbr" mode="ios">{{item.nbr}}</ion-badge>
+        </ion-item>
+    </ion-list>
+    <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+        <ion-fab-button (click)="openParentModal()">
+            <ion-icon name="chatbubbles"></ion-icon>
+        </ion-fab-button>
+    </ion-fab> -->
+</ion-content>

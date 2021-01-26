@@ -72,6 +72,13 @@ export class UserDataService {
     }
    
   }
+  getPersonId(): Promise<string> {
+    return this.storage.get('id_person').then((value) => {
+      return value;
+    }, (error)=>{
+      alert(JSON.stringify(error))
+    });
+  };
 
   hasFavorite(sessionName: string): boolean {
     return (this._favorites.indexOf(sessionName) > -1);
@@ -105,6 +112,7 @@ export class UserDataService {
         this.alerter(response.data);
         return false;
       }
+      console.log({resultats: resultat});
 
       //création de la session
       if(resultat.status == "ok")
@@ -115,6 +123,7 @@ export class UserDataService {
         this.storage.set('photo', resultat.photo);         
         this.storage.set('email', resultat.email);         
         this.storage.set('domicile', resultat.domicile);     
+        this.storage.set('octicoin', resultat.octicoin);
         this.storage.set('octicoin', resultat.octicoin);
         
         this.storage.set('user_id', resultat.id).then(()=>{
@@ -161,7 +170,6 @@ export class UserDataService {
     } catch (error) {
       alert(error + " : username");
     }
-    
     try {
       
       this.storage.set('telephone', resultat.telephone);         

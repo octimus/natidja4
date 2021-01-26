@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Cours</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-list>
+      <ion-item-sliding *ngFor="let item of cours">
+        <ion-item>
+          <ion-label>
+            {{item.titre}} <br>
+            <small>{{item.classe}}</small>
+          </ion-label>
+          <ion-button (click)="viewFile(item);" fill="clear" color="secondary">
+            <ion-icon slot="icon-only" name="eye-outline"></ion-icon>
+          </ion-button>
+          <ion-button [href]="item.url" fill="clear">
+            <ion-icon slot="icon-only" name="download-outline"></ion-icon>
+          </ion-button>
+        </ion-item>
+        <ion-item-options side="end">
+          <ion-item-option color="primary" (click)="viewFile(item)">
+            <ion-icon slot="start" name="eye-outline"></ion-icon>
+            Ouvrir
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+  </ion-list>
+  <!-- <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="navCtrl.navigateForward('publish-cours')">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab> -->
+</ion-content>
