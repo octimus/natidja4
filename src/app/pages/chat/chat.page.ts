@@ -39,7 +39,7 @@ export class ChatPage implements OnInit {
         this.router.queryParamMap.forEach((i)=>{
             console.debug(i);
             const r = JSON.parse(JSON.stringify(i.get("item")));
-            console.log(r);
+            this.item = r;
             
             this.toUser = {
                 name: r.nom,
@@ -218,7 +218,7 @@ export class ChatPage implements OnInit {
     //         });
     //     })
     // }
-    public defaultImg(element, fallback = "assets/img/default-avatar.png") {
+    public defaultImg(element, fallback = "assets/img/default-user.png") {
         element.src = fallback;
     }
 
@@ -277,15 +277,13 @@ export class ChatPage implements OnInit {
         //     })
         //     this.scrollToBottom();
         // })
-        this.chatService.getMsgList(this.user.id, this.toUser.id, this.msgList.length).subscribe((data)=>{
-            console.log({moi: this.user, him:this.toUser, data:data.data});
+        this.chatService.getMsgList(this.user.id, this.toUser.id, this.msgList.length).then((data)=>{
 
             let initial = this.msgList.length == 0;
             
             let json = JSON.parse(data.data);
             if(json.status == "ok"){
                 json.data = json.data.reverse();
-                console.log(this.msgList);
                 let msgs: ChatMessage[];
                 msgs = this.msgList;
                 
@@ -373,7 +371,7 @@ export class ChatPage implements OnInit {
                 time: Date.now(),
                 message: this.editorMsg,
                 status: 'pending',
-                productId: this.item?.id,
+                productId: this.item?.id_eleve,
                 productName: this.item?.nom,
                 vu: 0,
             };
@@ -453,10 +451,20 @@ export class ChatPage implements OnInit {
      */
     pushNewMsg(msg: ChatMessage) {
         let index;
+        console.clear()
+        console.log({msg:msg})
+        console.log({it:this.item})
+
         this.chatService.sendMsg(msg).subscribe((d)=>{
-            let json = JSON.parse(d.data)
-            this.msgList[index].status = json.status == "ok" ? "success" : "";
-            this.msgList[index].messageId = json.id;
+            try {
+                
+                let json = JSON.parse(d.data)
+                this.msgList[index].status = json.status == "ok" ? "success" : "";
+                this.msgList[index].messageId = json.id;
+            } catch (error) {
+                console.log(d.data);
+                
+            }
         });
         try {
             const userId = this.user.id,

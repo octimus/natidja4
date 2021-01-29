@@ -12,10 +12,10 @@
     <ion-list>
         <ion-item *ngFor="let item of list" (click)="openChat(item);">
             <ion-avatar slot="start">
-                <img [src]="item.photo" onerror="this.src='assets/img/default-avatar.png';"/>
+                <img [src]="item.photo" onerror="this.src='assets/img/default-user.png';"/>
             </ion-avatar>
             <ion-label>
-                {{item.nom}} <br>
+                {{item.nom}} {{item.id_eleve}}<br>
                 <ion-note>{{item.lastMsg}}</ion-note><br>
                 <small color="light">{{item.date | moment : 'DD/MM/YY'}}</small>
             </ion-label>

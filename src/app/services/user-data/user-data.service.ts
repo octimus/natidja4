@@ -72,6 +72,18 @@ export class UserDataService {
     }
    
   }
+  setPersonId(school: any, phoneNumber: string){
+    this.http.post(school.url+"/action_mobile.php",
+     {action:"get_person_id", telephone:phoneNumber, ecole:school.id}, {}).then((data) => {
+       try {
+         const json = JSON.parse(data.data)
+         console.log(json)
+         this.storage.set("id_person", json.data.id);
+       } catch (error) {
+         console.log({in_get_person_id: data.data});
+       }
+     })
+  }
   getPersonId(): Promise<string> {
     return this.storage.get('id_person').then((value) => {
       return value;
@@ -121,7 +133,14 @@ export class UserDataService {
         this.storage.set("username", resultat.username);
         this.storage.set('telephone', resultat.telephone);         
         this.storage.set('photo', resultat.photo);         
-        this.storage.set('email', resultat.email);         
+        this.storage.set('email', resultat.email);
+        this.storage.get("school").then(s => {
+          if(s){
+            console.log({s:s});
+            
+            this.setPersonId(s, resultat.telephone);
+          }
+        })
         this.storage.set('domicile', resultat.domicile);     
         this.storage.set('octicoin', resultat.octicoin);
         this.storage.set('octicoin', resultat.octicoin);

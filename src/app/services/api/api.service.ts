@@ -12,7 +12,7 @@ import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ng
 })
 export class ApiService {
 
-  api_url: string = "https://octra.io/";
+  api_url: string = "https://ecole.natidja.app/";
   api_url2: string = "https://natidja.octra.io/";
   api_url_alt: string = "https://octra.io/";
   public native: boolean = true;

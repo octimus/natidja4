@@ -20,10 +20,10 @@
           <div class="msg-detail">
               
               <div class="msg-content" (press)="pressEvent(msg)">
-                  <span class='product-info' *ngIf="msg.productName && !msg.msgToId">
+                  <!-- <span class='product-info' *ngIf="msg.productName && !msg.msgToId">
                       <strong>Annonce</strong><br>
                       👉 {{msg.productName}}
-                  </span>
+                  </span> -->
                   <span class='product-info' *ngIf="msg.msgToId">
                       <strong>Reponse à</strong><br>
                       👉 {{msg.msgToText}}
@@ -58,12 +58,12 @@
   
   <ion-grid class="input-wrap">
       <ion-row>
-          <ion-col padding class='response-info' *ngIf="item?.id && !respondTo">
+          <!-- <ion-col padding class='response-info' *ngIf="item?.id && !respondTo">
               <p>
                   <strong>Annonce</strong><br>
                   👉 {{item.nom}}
               </p>
-          </ion-col>
+          </ion-col> -->
           <ion-col padding class='response-info' *ngIf="respondTo">
               <p>
                   <strong>Reponse à</strong><br>

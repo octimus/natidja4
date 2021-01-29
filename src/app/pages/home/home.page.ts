@@ -61,6 +61,7 @@ export class HomePage implements OnInit {
   };
   kids: any = [];
   msgCountTimer: NodeJS.Timeout;
+  public msgAccueil: any;
 
   constructor(private platform: Platform, private alertCtrl: AlertController, 
     private ngZone: NgZone, private conection: Network, 
@@ -119,7 +120,6 @@ export class HomePage implements OnInit {
           })
           this.userData.getId().then((reponse)=>{
             this.userProfile.userId = reponse;
-            console.log(this.userProfile, reponse)
           })
         }else{
           console.log({d: d});
@@ -281,7 +281,7 @@ export class HomePage implements OnInit {
     })
     setServer();
     this.api.postData("action_mobile.php", {action:"json_mykids", telephone:tel, ecole:ecole.id}).subscribe((d)=>{
-      console.log(d.data);
+      // console.log({kids_:d.data});
       let k: Object = JSON.parse(d.data.trim());
 
       if(JSON.stringify(k) != JSON.stringify(this.kids)){
@@ -485,7 +485,8 @@ export class HomePage implements OnInit {
   }
   public chargerAutre() {
     this.api.postData("bac/action.php",
-    { action: "charger_autres", ile: this.ile, recherche: this.recherche, examen: this.examen, ecole:this.ecole?.id, classe:this.classe?.id }, {})
+    { action: "charger_autres", ile: this.ile, recherche: this.recherche, examen: this.examen, 
+    ecole:this.ecole?.id, classe:this.classe?.id }, {})
     .subscribe(response => {
       this.connexionError = 0;
       try {
@@ -523,13 +524,19 @@ export class HomePage implements OnInit {
   }
 
   getCount(tel: any){
-    this.chatService.getCount(tel).subscribe((data) => {
+    
+    this.chatService.getCount(tel).then((data) => {
+      try {
+        let json = JSON.parse(data.data);
+        console.log(json)
+        this.msgCount = json.data.nbr_msg;
+        this.notifCount = json.data.nbr_notifs;
+        this.coursCount = json.data.nbr_cours;
+        this.msgAccueil = json.data?.msg_accueil;
+      } catch (error) {
+        console.log(data.data)
+      }      
       
-      let json = JSON.parse(data.data);
-      
-      this.msgCount = json.data.nbr_msg;
-      this.notifCount = json.data.nbr_notifs;
-      this.coursCount = json.data.nbr_cours;
     });
     this.msgCountTimer = setTimeout(() => this.getCount(tel), 10000);
   }

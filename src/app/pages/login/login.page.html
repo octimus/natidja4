@@ -15,14 +15,14 @@
     Veuillez vous identifier pour continuer.
   </h4> -->
       <ion-item>
-          <ion-label floating>Votre telephone</ion-label>
+          <ion-label position="floating">Votre telephone</ion-label>
           <ion-input type="text" required [(ngModel)]="userLogin.login" name="userLogin"></ion-input>
       </ion-item>
       <ion-text [hidden]="userLogin.login!='' || submitted == false" color="danger" padding-left>
           Ce champ est obligatoir.
       </ion-text>
       <ion-item>
-          <ion-label floating>Mot de passe</ion-label>
+          <ion-label position="floating">Mot de passe</ion-label>
           <ion-input required type="password" name="password" [(ngModel)]="userLogin.password"></ion-input>
       </ion-item>
       <ion-text [hidden]="userLogin.password!='' || submitted == false" color="danger" padding-left>

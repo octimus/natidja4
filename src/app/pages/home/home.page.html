@@ -32,9 +32,19 @@
 </ion-header>
 
 <ion-content class="ion-text-center">
-    <div class="ion-padding">
-        <ion-badge *ngIf="examen!='AUTRES'" [color]="disponibility.color" class="" (click)="navCtrl.navigateForward('search', {queryParams:{etablissement:disponibility.etablissement, annee:annee, mention:disponibility.mention, examen:examen, ile:disponibility.ile}})">{{disponibility.text}}</ion-badge>
+    <div class="ion-padding"  *ngIf="examen!='AUTRES'">
+        <ion-badge [color]="disponibility.color" class="" (click)="navCtrl.navigateForward('search', {queryParams:{etablissement:disponibility.etablissement, annee:annee, mention:disponibility.mention, examen:examen, ile:disponibility.ile}})">{{disponibility.text}}</ion-badge>
     </div>
+    <ion-card *ngIf="msgAccueil" href="{{msgAccueil.url || '#'}}" class="ion-text-start" [color]="msgAccueil.color">
+        <img *ngIf="msgAccueil.img" [src]="msgAccueil.img" />
+        <ion-card-header>
+            <ion-card-subtitle *ngIf="msgAccueil?.subtitle">{{msgAccueil.subtitle}}</ion-card-subtitle>
+            <ion-card-title *ngIf="msgAccueil?.title">{{msgAccueil.title}}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content *ngIf="msgAccueil.content">
+            {{msgAccueil.content}}
+        </ion-card-content>
+    </ion-card>
 
   <div id="progress">
 

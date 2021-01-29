@@ -69,5 +69,8 @@ export class VieScolairePage implements OnInit {
   openNotes(){
     this.navCtrl.navigateForward('notes', {queryParams:{item:this.item}});
   }
+  openCours(){
+    this.navCtrl.navigateForward('cours', {queryParams:{item:this.item}});
+  }
 
 }

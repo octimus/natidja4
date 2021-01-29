@@ -37,11 +37,15 @@ export class ChatsPage implements OnInit {
 
   loadDiscussions(){
     this.userService.getPersonId().then(id => {
-    this.chatService.getDiscussionsList(id).subscribe((data) => {
+      console.log({personId: id});
+      
+    this.chatService.getDiscussionsList(id).then((data) => {
       
       let json;
       try {
         json = JSON.parse(data.data);
+        console.log(json);
+        
       } catch (error) {
         console.log(data.data);
         console.error(error)

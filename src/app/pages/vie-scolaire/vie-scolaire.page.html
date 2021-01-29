@@ -17,9 +17,13 @@
     <ion-datetime display-format="DD/MM/YYYY" [value]="today" ></ion-datetime>
   </ion-item> -->
   <div class="ion-text-center">
-    <ion-button (click)="openNotes()" expand="block" fill="outline" shape="round" mode="ios">
+    <ion-button (click)="openNotes()" fill="outline" shape="round" mode="ios">
       <ion-icon slot="start" name="thumbs-up-outline"></ion-icon>
-      Voir les Notes
+      Notes
+    </ion-button>
+    <ion-button (click)="openCours()" fill="outline" shape="round" mode="ios">
+      <ion-icon slot="start" name="flask-outline"></ion-icon>
+      cours
     </ion-button>
   </div>
   <ion-grid position="fixed" *ngIf="vieScolaire?.status!='not payed'">
