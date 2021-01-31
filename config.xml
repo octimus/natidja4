@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="actick.octra.natidja" version="3.3.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="actick.octra.natidja" version="3.3.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Natidja</name>
     <description>Une application pour la suivie de la vie scolaire.</description>
     <author email="said@octra.io" href="https://octra.io">Octra Team</author>

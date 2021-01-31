@@ -128,8 +128,6 @@ export class ExamSelectPage implements OnInit {
     this.api.postData("bac/action.php",
       { action: "charger_ecole_examen_non_scolaire" }, {})
       .subscribe(response => {
-        console.log(JSON.parse(response.data));
-        
         this.connexionError = 0;
         this.loading = false;
         try {

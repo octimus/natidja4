@@ -83,7 +83,7 @@ export class ChatService {
 
   async getCount(tel: any): Promise<any> {
     const school = await this.storage.get("school");
-    const kids: [] = await this.storage.get(`kids${school.id}`);
+    const kids: [] = await this.storage.get(`kids${school?.id}`);
     const personId = await this.userData.getPersonId();
     
     return this.api.postData("action_mobile.php", {action: "all_count", telephone:tel, kids:JSON.stringify(kids), personId: personId, ecole:school}).toPromise();
