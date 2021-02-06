@@ -26,6 +26,7 @@ import { OneSignal } from '@ionic-native/onesignal/ngx';
 import { ChatService } from './services/chat/chat.service';
 import { CoursService } from './services/cours/cours.service';
 import { PreviewAnyFile } from '@ionic-native/preview-any-file/ngx';
+import { File } from '@ionic-native/file/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -39,7 +40,7 @@ import { PreviewAnyFile } from '@ionic-native/preview-any-file/ngx';
   ],
   providers: [
     StatusBar, Camera, Crop, InAppBrowser, SMS, SmsRetriever, ChatService, CoursService, PreviewAnyFile,
-    SplashScreen, HTTP, NavParams, Network, CallNumber, FileTransfer, FileChooser,
+    SplashScreen, HTTP, NavParams, Network, CallNumber, FileTransfer, FileChooser, File,
     OneSignal,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],

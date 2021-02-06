@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, NavController } from '@ionic/angular';
+import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { ApiService } from 'src/app/services/api/api.service';
 import { CoursService } from 'src/app/services/cours/cours.service';
 import { PreviewAnyFile } from '@ionic-native/preview-any-file/ngx';
+import { Storage } from '@ionic/storage';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-cours',
@@ -11,15 +13,24 @@ import { PreviewAnyFile } from '@ionic-native/preview-any-file/ngx';
 })
 export class CoursPage implements OnInit {
 
+  public eleve: any = null;
   public cours: any[] = [];
   constructor(private api: ApiService, public navCtrl: NavController, 
-    private coursService: CoursService, public alertCtrl: AlertController, private preview: PreviewAnyFile) { }
+    private coursService: CoursService, public alertCtrl: AlertController, 
+    private preview: PreviewAnyFile,
+    private loadCtrl: LoadingController, private storage: Storage, private router: ActivatedRoute) { }
 
   ngOnInit() {
+    this.router.queryParams.forEach(e => {
+      console.log(e);
+      console.log(e.item);
+      
+      this.eleve = e.item?.id;
+    })
+    this.load(this.eleve);
   }
 
   ionViewDidEnter(){
-    this.load();
   }
   delete(item:any){
     this.alertCtrl.create({header:"Voulez-vous vraiment supprimer ce cours ?", 
@@ -37,32 +48,49 @@ export class CoursPage implements OnInit {
     })
   }
 
-  load(){
-    this.coursService.getList().then((cours) => {
-      cours.subscribe((data)=>{
-        
-        const json = JSON.parse(data.data);
-        console.log(json);
-  
-        if(json.status == "ok"){
-          this.cours = json.data;
-        }
-      })
+  load(eleve:any){
+    this.storage.get("school").then(s => {
+      this.storage.get(`cours${s.id}`).then(c => this.cours = c);
+      this.coursService.getList(s.id, eleve).then((cours) => {
+        cours.subscribe((data)=>{
+
+          try {
+            const json = JSON.parse(data.data);
+            console.log(json.request);
+            console.log(json.post)
+            
       
+            if(json.status == "ok"){
+              this.cours = json.data;
+              this.storage.set(`cours${s.id}`, json.data);
+            }
+          } catch (error) {
+            console.error(error)
+            console.log(data.data);
+            
+          }
+        })
+        
+      })
     })
   }
+  public image:any = "";
+  async viewFile(item){
+    // console.log(item)
+    let loader: HTMLIonLoadingElement = await this.loadCtrl.create({message:"chargement..."});
 
-  viewFile(item){
-    console.log(item)
     this.preview.preview(item.url).then((d) => {
+      loader.dismiss();
       console.log({after_preview: d});
-    }, (err) => console.error(err)).catch((err) => {
+    }, (err) => {
+      loader.dismiss();
       console.error(err);
     })
+    // this.vPlayer.play(item.url).then((data) => console.log({finished: data})).catch(err => console.log(err));
   }
 
-  download(item:any){
-
+  download(url:string, titre: string){
+    this.api.downloadFileAndStore(url, titre.replace(" ", "")+".jpg").then((i) => this.image = i.nativeURL);
   }
 
 }

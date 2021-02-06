@@ -9,7 +9,7 @@
 
 <ion-content class="ion-text-center ion-padding">
   <ion-avatar>
-    <img [src]="ecole?.url+'/photos/full/'+item.photo" [alt]="" />
+    <img [src]="ecole?.url+'/photos/full/'+item.photo" onerror="this.src='assets/img/default-user.png'" />
   </ion-avatar><br>
   <span>{{item.nom + ' ' + item.prenom}}</span>
   <!-- <ion-item>
@@ -21,10 +21,12 @@
       <ion-icon slot="start" name="thumbs-up-outline"></ion-icon>
       Notes
     </ion-button>
+    <ion-badge color="danger" mode="ios" class="notification" *ngIf="notesCount>0">{{notesCount}}</ion-badge>
     <ion-button (click)="openCours()" fill="outline" shape="round" mode="ios">
       <ion-icon slot="start" name="flask-outline"></ion-icon>
       cours
     </ion-button>
+    <ion-badge color="danger" mode="ios" *ngIf="coursCount>0" class="notification">{{coursCount}}</ion-badge>
   </div>
   <ion-grid position="fixed" *ngIf="vieScolaire?.status!='not payed'">
     <ion-row>

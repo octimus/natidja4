@@ -191,7 +191,7 @@ export class HomePage implements OnInit {
           this.examen = "AUTRES";
           this.apiSchool.setServer(this.ecole?.url+"/");
           this.userData.getTelephone().then(tel=>{
-            this.loadKids(tel, this.ecole);
+            this.loadKids(tel);
           })
         }
       });
@@ -269,19 +269,19 @@ export class HomePage implements OnInit {
       })
   }
 
-  async loadKids(tel:any, ecole:any, setServer = function(){}){
-    
-    if(!ecole){
-      ecole = await this.storage.get("school");
+  async loadKids(tel:any){
+    let ecole = this.ecole;
+    if(!ecole?.id){
+      console.error({ecole: ecole})
+      return;
     }
     this.kids = [];
-    
-    this.storage.get(`kids${this.ecole.id}`).then(k=>{
+
+    this.storage.get(`kids${this.ecole?.id}`).then(k=>{
       this.kids = k ?? [];
     })
-    setServer();
     this.api.postData("action_mobile.php", {action:"json_mykids", telephone:tel, ecole:ecole.id}).subscribe((d)=>{
-      // console.log({kids_:d.data});
+      console.log({kids_:d.data});
       let k: Object = JSON.parse(d.data.trim());
 
       if(JSON.stringify(k) != JSON.stringify(this.kids)){
@@ -301,8 +301,10 @@ export class HomePage implements OnInit {
     }
     if(this.kids.length == 0){
       this.userData.getTelephone().then(t => {
-        if(t)
-          this.loadKids(t, this.ecole, () => this.apiSchool.setServer(this.ecole?.url+"/"));
+        if(t){
+          this.apiSchool.setServer(this.ecole?.url+"/")
+          this.loadKids(t);
+        }
       })
     }
   }
@@ -367,7 +369,7 @@ export class HomePage implements OnInit {
         {
           this.ecole = data.ecole;
           this.storage.set("school", this.ecole);
-          this.loadKids(this.userProfile.telephone, this.ecole.id)
+          this.loadKids(this.userProfile.telephone)
           // this.openModalClass(0, data.ecole);
         }
         this.loadBtns2();

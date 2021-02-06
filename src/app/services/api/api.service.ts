@@ -6,6 +6,7 @@ import { AlertController, LoadingController, Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+import { File } from '@ionic-native/file/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class ApiService {
   constructor(private http: HTTP, private httpClient: HttpClient, 
     private platform: Platform, private storage: Storage, 
     private fileTransfer: FileTransfer, private fileChooser: FileChooser, 
-    private alertCtrl: AlertController, private loadingCtrl: LoadingController) { 
+    private alertCtrl: AlertController, private loadingCtrl: LoadingController, private file: File) { 
       this.device = this.platform.platforms();
       console.log({platform: this.device});
       // if(this.device.indexOf("mobileweb"))
@@ -104,9 +105,33 @@ export class ApiService {
       return this.httpClient.post(this.api_url_alt+method, params, {});
     }
   }
+  public downloadFileAndStore(url: string, fileName: string): Promise<any> {
+    //
+    const filePath = this.file.dataDirectory + fileName; 
+                     // for iOS use this.file.documentsDirectory dataDirectory for android
+    let loader: HTMLIonLoadingElement;
+    this.loadingCtrl.create({message:"téléchargement..."}).then((l) => {
+      loader = l;
+      loader.present();
+    })
+    return this.http.downloadFile(url, {}, {}, filePath).then(response => {
+       // prints 200
+       loader.dismiss();
+       console.log('success block...', response);
+       this.alertCtrl.create({subHeader:"Téléchargement terminé.", message:`Enregistré dans ${response.fullPath}`, buttons:["OK"]}).then(a => a.present());
+       return response;
+    }).catch(err => {
+      loader.dismiss();
+        // prints 403
+        console.log('error block ... ', err.status);
+        // prints Permission denied
+        console.log('error block ... ', err.error);
+    })
+ }
   public postData(method, params, entetes: {} = this.entete): Observable<any>
   {
     params.device = this.device;
+    params.appVersion = "3.3.4";
 
 
     if(this.native)

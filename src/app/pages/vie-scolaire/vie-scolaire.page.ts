@@ -15,6 +15,8 @@ export class VieScolairePage implements OnInit {
   public ecole: any = {};
   public vieScolaire: any = {};
   public today: any;
+  public notesCount: any = 0;
+  public coursCount: any = 0;
 
   constructor(private route: ActivatedRoute, private apiSchool: ApiService, 
     private storage: Storage, private userData: UserDataService, public navCtrl: NavController) {
@@ -49,11 +51,13 @@ export class VieScolairePage implements OnInit {
     this.userData.getTelephone().then(t=>{
       this.apiSchool.postData("action_mobile.php", {action:"json_vie_scolaire", eleve:this.item.id, parent: t}).subscribe((data)=>{
         this.userData.loader.dismiss();
-        console.log({vie_s:data.data});
         
-        if(JSON.stringify(this.vieScolaire) != data.data)
+        if(true)
         {
           this.vieScolaire = JSON.parse(data.data);
+          let notifs = this.vieScolaire.notifications;
+          this.coursCount = notifs?.cours;
+          this.notesCount = notifs?.notes;
           this.storage.set(`vieScolaire${this.item.id}`, this.vieScolaire);
         }
       }, (err)=>{
