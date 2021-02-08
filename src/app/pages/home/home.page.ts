@@ -271,6 +271,8 @@ export class HomePage implements OnInit {
 
   async loadKids(tel:any){
     let ecole = this.ecole;
+    console.log(`loading kids for ${ecole.id}`);
+    
     if(!ecole?.id){
       console.error({ecole: ecole})
       return;
