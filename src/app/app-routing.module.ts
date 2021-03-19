@@ -122,6 +122,10 @@ const routes: Routes = [
   {
     path: 'cours',
     loadChildren: () => import('./pages/cours/cours.module').then( m => m.CoursPageModule)
+  },
+  {
+    path: 'cours-details',
+    loadChildren: () => import('./pages/cours-details/cours-details.module').then( m => m.CoursDetailsPageModule)
   }
 ];
 

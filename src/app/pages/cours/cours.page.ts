@@ -29,25 +29,14 @@ export class CoursPage implements OnInit {
     })
     this.load(this.eleve);
   }
-
-  ionViewDidEnter(){
-  }
-  delete(item:any){
-    this.alertCtrl.create({header:"Voulez-vous vraiment supprimer ce cours ?", 
-    buttons:[
-      {
-        text:"Oui", handler:()=>{
-        this.coursService.delete(item).subscribe((data) => {
-          const json = JSON.parse(data.data);
-          if(json.status == "ok"){
-            this.cours.splice(this.cours.indexOf(item), 1);
-          }
-        })
-    }}, "Annuler"]}).then((a) => {
-      a.present();
+  openCours(item:any){
+    this.navCtrl.navigateForward("cours-details", {
+      queryParams:item
     })
   }
-
+  ionViewDidEnter(){
+  }
+  
   load(eleve:any){
     this.storage.get("school").then(s => {
       this.storage.get(`cours${s.id}`).then(c => this.cours = c);

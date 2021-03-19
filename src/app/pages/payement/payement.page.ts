@@ -50,6 +50,7 @@ export class PayementPage implements OnInit {
   @ViewChild('sender') senderInput: any;
   raison: string;
   user_phone: any;
+  public paymentLink: string;
 
   startWatchingCTSMS() {
     SMSReceive.startWatch(
@@ -81,9 +82,11 @@ export class PayementPage implements OnInit {
       // if(IncomingSMS.address == "Transfert"){
         if(this.mvola_self_accept){
           // if(IncomingSMS.service_center == "+2694000110"){
-            this.api.postData2("action_mobile.php", 
-            {action: "appropriate_payed", reason: this.item.reason, ecole:this.id_ecole, id_membre:this.userId, numero:this.item.numero ?? this.item.num ?? this.item.id, 
-            annee: this.item.year, ile: this.item.ile, examen:this.item.exam, telephone_membre:this.user_phone}).subscribe((data)=>{
+            let params = {action: "appropriate_payed",reason: this.item.reason, item:this.item, ecole:this.id_ecole, 
+            id_membre:this.userId, numero:this.item.numero ?? this.item.num ?? this.item.id, validity:this.item.validity,
+            annee: this.item.year, ile: this.item.ile, examen:this.item.exam, telephone_membre:this.user_phone};
+
+            const callBack = (data)=>{
               console.log({appro_payed: data});
               
               let json = JSON.parse(data.data);
@@ -96,7 +99,16 @@ export class PayementPage implements OnInit {
                 }
                 d.present();
               });
-            })
+            }
+
+            if(this.reason == "coaching")
+            {
+              this.api.postData("action_mobile.php", params).subscribe(callBack)
+            }
+            else
+            {
+              this.api.postData2("action_mobile.php", params).subscribe(callBack)
+            }
           // }
         }
         else{
@@ -237,7 +249,7 @@ export class PayementPage implements OnInit {
           this.appropriate_num_id = dataJSON.appropriate_num_id;
           console.log({app: this.appropriate_num_id});
           console.log(dataJSON);
-          
+          console.log(JSON.parse(dataJSON.post))
           
 
           if(this.senderInput)
@@ -315,7 +327,7 @@ export class PayementPage implements OnInit {
     
   }
   public transfer()
-  {
+  { 
     if(!this.item)
       this.item = {};
     
@@ -324,7 +336,7 @@ export class PayementPage implements OnInit {
     this.startWatchingMvolaSMS();
     
     this.call.callNumber("#444*1*"+this.mvolaAction+"*"+this.phoneNumber+"*"
-    +(this.price.mvola ?? this.price.all)+`*${this.id_ecole}`+this.getReason()+`${this.item.id}#`, true).then((data)=>{
+    +(this.price.mvola ?? this.price.all)+`*${this.id_ecole ?? 0}`+this.getReason()+`${this.item.id}#`, true).then((data)=>{
       console.log(data);
     }).finally(()=>{this.loading = 0;});
       
@@ -352,12 +364,14 @@ export class PayementPage implements OnInit {
     if(!this.user_phone){
       this.user_phone = await this.storage.get("telephone");
     }
-    const browser = this.iab.create(`https://natidja.app/payment/checkout.php?numero=${this.item.num ?? this.item.id}&examen=`+this.item.exam+"&annee="+this.item.year+"&ile="
-    +this.item.ile+"&id_membre="+this.userId+`&id_ecole=${this.id_ecole}&reason=${this.reason}&telephone=${this.user_phone}`);
+    this.paymentLink = `https://natidja.app/payment/checkout.php?numero=${this.item.num ?? this.item.id}&examen=`+this.item.exam+"&annee="+this.item.year+"&ile="
+    +this.item.ile+"&id_membre="+this.userId+`&id_ecole=${this.id_ecole ?? 0}&reason=${this.reason}&telephone=${this.user_phone}`;
+    const browser = this.iab.create(this.paymentLink);
+    browser.show();
     // browser.executeScript()
-    browser.on("exit").subscribe(()=>{
-      this.navCtrl.navigateBack("home");
-    })
+    // browser.on("exit").subscribe(()=>{
+    //   this.navCtrl.navigateBack("home");
+    // })
   }
 
   ngOnInit() {

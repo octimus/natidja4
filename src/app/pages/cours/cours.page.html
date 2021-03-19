@@ -10,7 +10,7 @@
 <ion-content>
   <ion-list>
     <ion-list>
-      <ion-item-sliding *ngFor="let item of cours">
+      <ion-item-sliding *ngFor="let item of cours" (click)="openCours(item)">
         <ion-item>
           <ion-label>
             {{item.titre}} <br> 

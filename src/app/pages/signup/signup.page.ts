@@ -88,7 +88,7 @@ export class SignupPage implements OnInit {
 
     if (this.password == this.confirm_password) {
       this.loader.present();
-      this.api.postData("octram/action_mobile.php",
+      this.api.postDataAlt("octram/action_mobile.php",
         {
           action: "inscription", nom: this.nom_prenom, ville: this.ville, password: this.password,
           email: this.email, telephone: this.telephone, type_compte: this.typeCompte
@@ -119,6 +119,8 @@ export class SignupPage implements OnInit {
             alert(JSON.stringify(response));
           }
         }, (err)=>{
+          console.error(err.error);
+          console.error(err.url)
           this.alertCtrl.create({
             header: "Echec de connexion",
             message: "Veuillez verifier votre connexion à internet SVP.",

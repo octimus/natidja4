@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,UAAU,EAAE,UAAU,EAAE,WAAW,CAC/B;EACI,YAAY,CAAA,IAAC;EACb,gBAAgB,EAAE,OAAO,CAAA,UAAU;EACnC,gBAAgB,EAAE,yCAAyC,CAAA,UAAU;EACrE,eAAe,EAAE,IAAI;EACrB,qBAAqB,EAAE,UAAU;EACjC,qBAAqB,EAAE,KAAK;CAC/B;;AACD,AAAA,OAAO,CACP;EACI,aAAa,EAAE,iBAAiB;CACnC;;AACD,AAAA,OAAO,CACP;EACI,KAAK,EAAE,OAAO;CACjB",
+    "sources": [
+        "bulletin.page.scss"
+    ],
+    "names": [],
+    "file": "bulletin.page.css"
+}

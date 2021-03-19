@@ -1,0 +1,28 @@
+ion-avatar {
+  margin: auto;
+  width: 64px;
+  height: 64px;
+}
+
+ion-col span {
+  height: 3em;
+  display: block;
+  color: #5c5959;
+  font-weight: 150;
+  font-size: small;
+}
+
+ion-col {
+  margin-top: 12px;
+  padding: 12px;
+  -webkit-box-shadow: 1px 1px 5px 0px rgba(189, 186, 186, 0.199);
+          box-shadow: 1px 1px 5px 0px rgba(189, 186, 186, 0.199);
+  border-radius: 12px;
+}
+
+.notification {
+  position: relative;
+  margin-top: -15px;
+  margin-left: -12px;
+}
+/*# sourceMappingURL=vie-scolaire.page.css.map */

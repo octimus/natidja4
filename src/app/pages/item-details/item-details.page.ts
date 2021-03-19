@@ -28,7 +28,7 @@ export class ItemDetailsPage implements OnInit {
     public alertCtrl:AlertController, public    userData:UserDataService, 
     public api:ApiService, private route: ActivatedRoute, private iab: InAppBrowser) {
 
-    this.userProfile = { displayName: "octimus", telephone: "3632222", userId: 0, photo: "default.png", domicile: "vvni", email: "said@octra.io" };
+    this.userProfile = { displayName: "", telephone: "", userId: 0, photo: "", domicile: "", email: "" };
 
     // events.subscribe('user:submit', (user, time) => {
     //     // user and time are the same arguments passed in `events.publish(user, time)`

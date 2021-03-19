@@ -1,0 +1,47 @@
+ion-header {
+  color: whitesmoke;
+}
+
+form.form-login button {
+  margin: 30px;
+}
+
+.fb-btn {
+  margin: auto;
+}
+
+.bg1 {
+  background: url("../../../assets/photos/pattern.svg") !important;
+  background-size: 100% 100% !important;
+}
+
+.logo {
+  margin: auto;
+  width: 40%;
+}
+
+.text {
+  color: lightgrey;
+  font-size: 110%;
+}
+
+.transparent-nav button {
+  background: rgba(255, 255, 255, 0.23) !important;
+  color: white;
+}
+
+ion-navbar.transparent-nav {
+  background: rgba(255, 255, 255, 0);
+}
+
+ion-content form ion-item {
+  color: black !important;
+}
+
+ion-content form.form-login {
+  background: white !important;
+  padding: 18px;
+  border-radius: 8px;
+  color: black !important;
+}
+/*# sourceMappingURL=login.page.css.map */

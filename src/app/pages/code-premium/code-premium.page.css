@@ -1,0 +1,48 @@
+ion-header,
+ion-navbar,
+ion-content {
+  background-color: #4b4141 !important;
+  background-image: url("../../../assets/photos/pattern.svg") !important;
+  background-size: 100%;
+  background-blend-mode: difference;
+  background-attachment: fixed;
+}
+
+.nums-container {
+  padding: 5px;
+  border-radius: 12px;
+  background: rgba(240, 244, 245, 0.425);
+  width: 95%;
+  margin: auto;
+  margin-top: 35px;
+  height: auto;
+}
+
+.form-signin {
+  padding: 15px;
+  border-radius: 12px;
+  background: rgba(240, 244, 245, 0.425);
+  width: 95%;
+  margin: auto;
+  margin-top: 35px;
+  height: auto;
+}
+
+.form-signin .div {
+  border-radius: 12px;
+  padding: 5px;
+  padding-top: 25px;
+  padding-bottom: 35px;
+  background: white;
+  height: auto;
+}
+
+.mvola {
+  width: 55%;
+}
+
+h5,
+h2 {
+  color: #299671;
+}
+/*# sourceMappingURL=code-premium.page.css.map */

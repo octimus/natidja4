@@ -8,6 +8,15 @@
 </ion-header>
 
 <ion-content>
+    <ion-card *ngIf="reason == 'coaching'">
+        <img [src]="item.photo" alt="" srcset="">
+        <ion-card-header>
+            <ion-card-subtitle>{{item.nom_matiere+' - '+item.nom_classe}}</ion-card-subtitle>
+            <ion-card-title>{{item.nom}}</ion-card-title>
+            <ion-card-subtitle>{{item.prix_hebdo}} KMF / Semaine</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content [innerHtml]="item.slogan ? item.slogan.replaceAll('\n', '<br/>') : '' | textHtml"></ion-card-content>
+    </ion-card>
   <ion-card *ngIf="price != null && paymentText" class="ion-text-center ion-padding">
     <strong>
         {{paymentText}}
@@ -81,20 +90,21 @@
     </div>
   </ion-card>
   <ion-card class="form-signin ion-text-center" *ngIf="notPayed && price.card">
-        <div class="ion-text-center">
-        <img src="assets/img/credit-card.png" style="width:100px;" alt="bank card" class="card" (error)="defaultImg($event.target, 'https://natidja.octra.io/assets/img/mvola.png')">
-        </div>
-        <h3>{{price.card}} €</h3>
-        <p *ngIf="loading2" class="loader" class="ion-text-center" style="width:100px;margin:auto;">
-            <!-- <ion-icon name="heart" color="danger" meddium></ion-icon> -->
-            <img src="assets/icon/loader.svg" />
-        </p>
-        <div>
-            <ion-button color="third" shape="round" fill="outline" (click)="openInAppBrowser()">
-            <ion-icon slot="start" name="card"></ion-icon>
-            Payer par carte bancaire
-            </ion-button>
-        </div>
+    <!-- <a [href]="paymentLink">{{paymentLink}}</a> -->
+    <div class="ion-text-center">
+    <img src="assets/img/credit-card.png" style="width:100px;" alt="bank card" class="card" (error)="defaultImg($event.target, 'https://natidja.octra.io/assets/img/mvola.png')">
+    </div>
+    <h3>{{price.card}} €</h3>
+    <p *ngIf="loading2" class="loader" class="ion-text-center" style="width:100px;margin:auto;">
+        <!-- <ion-icon name="heart" color="danger" meddium></ion-icon> -->
+        <img src="assets/icon/loader.svg" />
+    </p>
+    <div>
+        <ion-button color="third" shape="round" fill="outline" (click)="openInAppBrowser();">
+        <ion-icon slot="start" name="card"></ion-icon>
+        Payer par carte bancaire
+        </ion-button>
+    </div>
   </ion-card>
   <br><br>
 </ion-content>

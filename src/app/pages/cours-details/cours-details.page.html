@@ -1,0 +1,201 @@
+<ion-header>
+    <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+        <ion-back-button></ion-back-button>
+      </ion-buttons>
+      <ion-title>{{item.titre}}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content>
+    <app-file-component [src]="item.url" [title]="item.titre" alt="contenu"></app-file-component>
+    <div class="ion-padding">
+        <ion-note *ngIf="item.date">
+           <small>{{item.date | moment : ''}}</small>
+        </ion-note><br>
+        <ion-chip color="primary" mode="ios" outline="true">
+            <ion-avatar>
+                <img [src]="item.photo_coach" />
+            </ion-avatar>
+            <ion-label>{{item.nom_coach}}</ion-label>
+        </ion-chip>
+    </div>
+    <ion-list *ngIf="item?.responses?.length > 0">
+        <ion-item-group *ngFor="let q of item?.responses">
+            <ion-item-divider color="light">
+                <ion-label class="ion-text-wrap">{{q.question}}</ion-label>
+            </ion-item-divider>
+            <ion-item lines="none">
+                <!-- <ion-icon style="margin:auto;" slot="start" *ngIf="q?.isCorrect != null" 
+                [color]="q?.isCorrect == 1 ? 'success' : 'danger'" [name]="q?.isCorrect == 1 ? 'checkmark-circle' : 'close-circle'"></ion-icon> -->
+                <ion-label class="ion-text-wrap">
+                    <h3>VOUS</h3>
+                    <ion-text [class.barree]="q?.isCorrect === 1" [color]="q.isCorrect == 1 ? 'success' : q?.isCorrect == 0 ? 'danger' : ''" [innerHtml]="q?.content.replaceAll('\n', '<br/>')"></ion-text>
+                </ion-label>
+                <ion-label class="ion-text-wrap" *ngIf="q.correct != q.content && q.isCorrect != null && q.isCorrect !== ''">
+                    <h3>COACH</h3>
+                    <ion-text color="success" [innerHtml]="q.correct.replaceAll('\n', '<br/>')"></ion-text>
+                </ion-label>
+            </ion-item>
+            <ion-card-content class="teacher-comment ion-no-padding ion-text-left" *ngIf="q?.teacher_comment">
+                <ion-item>
+                    <ion-grid>
+                        <ion-row>
+                            <ion-col size="2">
+                              <ion-avatar class="avatar ion-item-left" style="float:left;">
+                                <img src="{{item.photo_coach}}" (error)="defaultImg($event.target)">
+                              </ion-avatar>
+                            </ion-col>
+                            <ion-col size="10">
+                              <div class="aLabel">
+                                <h5>{{item.nom_coach}}</h5>
+                                <ion-note>{{item.nom}}</ion-note>
+                              </div>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row>
+                            <ion-col size="12">
+                              <div class="comment" (click)="openPage('response')">
+                                  {{q.teacher_comment}}
+                                  <div class="date">
+                                      <!-- <small>{{q?.date | moment : ''}}</small> -->
+                                  </div>
+                              </div>
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
+                </ion-item>
+            </ion-card-content>
+        </ion-item-group>
+        <div class="ion-padding" *ngIf="!isValidated(item.responses) && logedIn">
+            <ion-button *ngIf="item?.responses.length > 0" (click)="validerExo()" expand="block">
+                Valider l'exercice
+                <ion-icon slot="end" name="paper-plane"></ion-icon>
+            </ion-button>
+        </div>
+        
+    </ion-list>
+    <div>
+        <ion-card-header>
+            <ion-card-subtitle>Avez-vous des</ion-card-subtitle>
+            <ion-card-title>Questions ?</ion-card-title>
+        </ion-card-header>
+        <ion-card-content class="ion-text-center">
+            <form class="commentForm" *ngIf="logedIn">
+                <div class="visitor">
+                    <ion-avatar class="avatar" slot="start">
+                        <img src="{{userProfile.photo}}" (error)="defaultImg($event.target)">
+                    </ion-avatar>
+                    <div class="aLabel">
+                        <h3>{{userProfile.displayName}}</h3>
+                        <ion-note>
+                            {{item.classe}}
+                        </ion-note>
+                    </div>
+                </div>
+                <ion-grid fixed>
+                    <ion-row>
+                        <ion-col size="10" class="ion-no-padding">
+                          <textarea name="comment" class="comment" [(ngModel)]="comment" placeholder="Écrivez votre question ici"></textarea>
+                        </ion-col>
+                        <ion-col size="2" class="ion-no-padding">
+                          <ion-button (click)="send()" fill="clear" class='btn-send'>
+                              <ion-icon name="send"></ion-icon>
+                          </ion-button>
+                        </ion-col>
+                    </ion-row>
+                </ion-grid>
+            </form>
+            <ion-button *ngIf="!logedIn" (click)="navCtrl.navigateForward('login');" class="btn-pulse" fill="solid" shape="round">
+                Avez-vous des questions ?
+            </ion-button>
+            <ion-list>
+                <ion-item *ngFor="let item of comments">
+                    <ion-grid fixed>
+                        <ion-row>
+                            <ion-col size="2">
+                              <ion-avatar class="avatar ion-item-left">
+                                  <img src="{{item.senderPhoto}}" (error)="defaultImg($event.target)">
+                              </ion-avatar>
+                            </ion-col>
+                            <ion-col size="10">
+                              <div class="aLabel">
+                                  <h5>{{item.senderName}}</h5>
+                                  <ion-note>{{item.senderHome}}</ion-note>
+                              </div>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row>
+                            <ion-col size="12">
+                              <div class="comment" (click)="openPage('response')">
+                                  {{item.content}}
+                                  <div class="date">
+                                      <small>{{item.date | moment:''}}</small>
+                                  </div>
+                              </div>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row>
+                            <ion-col size="12">
+                              <div>
+                                  <ion-button *ngIf="logedIn" (click)="toggleResponse(item)" fill="clear" size="small" class='btn-answer'>
+                                      Répondre
+                                  </ion-button>
+                                  <ion-button *ngIf="item.senderId==userProfile.userId" (click)="deleteComment(item.id)" fill="clear" color="danger" size="small" class='btn-answer'>
+                                      Supprimer
+                                  </ion-button>
+                                  <ion-button *ngIf="item.nbrReponses>0" (click)="loadResponses(item)" fill="clear" color="secondary" size="small" class='btn-answer'>
+                                      {{item.nbrReponses}} réponses
+                                  </ion-button>
+                                  <form *ngIf="logedIn && item.openResponse" class="reponseForm">
+                                    <ion-row>
+                                        <ion-col size="10">
+                                            <textarea name="commentResponse" class="comment" [(ngModel)]="comment_response" placeholder="Réponse"></textarea>
+                                        </ion-col>
+                                        <ion-col size="2">
+                                            <ion-button (click)="sendResponse(item.id)" fill="clear" class='btn-send'>
+                                                <ion-icon name="send"></ion-icon>
+                                            </ion-button>
+                                        </ion-col>
+                                    </ion-row>
+                                  </form>
+                                  <ion-list *ngIf="item.responses" class="reponseForm">
+                                    <ion-item *ngFor="let item of item.responses">
+                                        <ion-grid>
+                                            <ion-row>
+                                                <ion-col size="3">
+                                                    <ion-avatar item-left class="avatar">
+                                                        <img src="{{item.senderPhoto}}" (error)="defaultImg($event.target)">
+                                                    </ion-avatar>
+                                                </ion-col>
+                                                <ion-col size="9">
+                                                    <div class="aLabel">
+                                                        <h3>{{item.senderName}}</h3>
+                                                        <ion-note>{{item.senderHome}}</ion-note>
+                                                    </div>
+                                                </ion-col>
+                                            </ion-row>
+                                            <ion-row>
+                                                <ion-col size="12">
+                                                    <div class="comment" (click)="openPage('reponse')">
+                                                        {{item.content}}
+                                                        <small>{{item.date | moment}}</small>
+                                                        <div class="date">
+                                                        </div>
+                                                    </div>
+                                                </ion-col>
+                                            </ion-row>
+                                        </ion-grid>
+                                    </ion-item>
+                                  </ion-list>
+                              </div>
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
+                    <hr/>
+                </ion-item>
+            </ion-list>
+        </ion-card-content>
+    </div>
+  </ion-content>
+  

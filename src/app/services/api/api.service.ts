@@ -83,7 +83,8 @@ export class ApiService {
   }
   public setServer(url="https://natidja.app/")
   {
-    this.api_url = url;
+    if(typeof(url) != "undefined" && url != null && url != "undefined")
+      this.api_url = url;
   }
   public postDataAlt(method, params, entetes: {} = this.entete): Observable<any>
   {
@@ -131,8 +132,7 @@ export class ApiService {
   public postData(method, params, entetes: {} = this.entete): Observable<any>
   {
     params.device = this.device;
-    params.appVersion = "3.3.4";
-
+    params.appVersion = "3.4.1";
 
     if(this.native)
     {

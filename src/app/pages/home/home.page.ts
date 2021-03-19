@@ -5,13 +5,15 @@ import { UserDataService } from '../../services/user-data/user-data.service';
 import { GoogleAnalytics } from '@ionic-native/google-analytics/ngx';
 import { EventLoggerService } from '../../services/event-logger/event-logger.service';
 import { SettingsService } from '../../services/settings/settings.service';
-import { Platform, AlertController, NavController, ModalController, IonSelect } from '@ionic/angular';
+import { Platform, AlertController, NavController, ModalController, IonSelect, IonSlides, LoadingController } from '@ionic/angular';
 import { ServerSelectPage } from '../../modals/server-select/server-select.page';
 import { ExamSelectPage } from '../../modals/exam-select/exam-select.page';
 import { ClassSelectPage } from '../../modals/class-select/class-select.page';
 import { ApiService } from 'src/app/services/api/api.service';
 import { Storage } from '@ionic/storage';
 import { ChatService } from 'src/app/services/chat/chat.service';
+import { CoursService } from 'src/app/services/cours/cours.service';
+import { CoachService } from 'src/app/services/coach/coach.service';
 
 @Component({
   selector: 'app-home',
@@ -20,6 +22,7 @@ import { ChatService } from 'src/app/services/chat/chat.service';
 })
 export class HomePage implements OnInit {
   @ViewChild(IonSelect) selectYear: IonSelect;
+  @ViewChild('slider') slider: IonSlides;
   public examen: string;
  
   public premium:any = false;
@@ -48,7 +51,120 @@ export class HomePage implements OnInit {
   public canActivateNotes: boolean = false;
   public nbrResultat: any;
   public disponibility:any = {};
+  public coachs:any[] = [];
+  public courses: any[] = [];
 
+  public slidesOpt: any = {
+    slidesPerView: 2.5,
+    spaceBetween: -20,
+    loop:true,
+    coverflowEffect: {
+      rotate: 50,
+      stretch: 0,
+      depth: 100,
+      modifier: 1,
+      slideShadows: true,
+    },
+    on: {
+      beforeInit() {
+        const swiper = this;
+
+        swiper.classNames.push(`${swiper.params.containerModifierClass}coverflow`);
+        swiper.classNames.push(`${swiper.params.containerModifierClass}3d`);
+
+        swiper.params.watchSlidesProgress = true;
+        swiper.originalParams.watchSlidesProgress = true;
+      },
+      setTranslate() {
+        const swiper = this;
+        const {
+          width: swiperWidth, height: swiperHeight, slides, $wrapperEl, slidesSizesGrid, $
+        } = swiper;
+        const params = swiper.params.coverflowEffect;
+        const isHorizontal = swiper.isHorizontal();
+        const transform$$1 = swiper.translate;
+        const center = isHorizontal ? -transform$$1 + (swiperWidth / 2) : -transform$$1 + (swiperHeight / 2);
+        const rotate = isHorizontal ? params.rotate : -params.rotate;
+        const translate = params.depth;
+        // Each slide offset from center
+        for (let i = 0, length = slides.length; i < length; i += 1) {
+          const $slideEl = slides.eq(i);
+          const slideSize = slidesSizesGrid[i];
+          const slideOffset = $slideEl[0].swiperSlideOffset;
+          const offsetMultiplier = ((center - slideOffset - (slideSize / 2)) / slideSize) * params.modifier;
+
+          let rotateY = isHorizontal ? rotate * offsetMultiplier : 0;
+          let rotateX = isHorizontal ? 0 : rotate * offsetMultiplier;
+          // var rotateZ = 0
+          let translateZ = -translate * Math.abs(offsetMultiplier);
+
+          let translateY = isHorizontal ? 0 : params.stretch * (offsetMultiplier);
+          let translateX = isHorizontal ? params.stretch * (offsetMultiplier) : 0;
+
+          // Fix for ultra small values
+          if (Math.abs(translateX) < 0.001) translateX = 0;
+          if (Math.abs(translateY) < 0.001) translateY = 0;
+          if (Math.abs(translateZ) < 0.001) translateZ = 0;
+          if (Math.abs(rotateY) < 0.001) rotateY = 0;
+          if (Math.abs(rotateX) < 0.001) rotateX = 0;
+
+          const slideTransform = `translate3d(${translateX}px,${translateY}px,${translateZ}px)  rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+          $slideEl.transform(slideTransform);
+          $slideEl[0].style.zIndex = -Math.abs(Math.round(offsetMultiplier)) + 1;
+          if (params.slideShadows) {
+            // Set shadows
+            let $shadowBeforeEl = isHorizontal ? $slideEl.find('.swiper-slide-shadow-left') : $slideEl.find('.swiper-slide-shadow-top');
+            let $shadowAfterEl = isHorizontal ? $slideEl.find('.swiper-slide-shadow-right') : $slideEl.find('.swiper-slide-shadow-bottom');
+            if ($shadowBeforeEl.length === 0) {
+              $shadowBeforeEl = swiper.$(`<div class="swiper-slide-shadow-${isHorizontal ? 'left' : 'top'}"></div>`);
+              $slideEl.append($shadowBeforeEl);
+            }
+            if ($shadowAfterEl.length === 0) {
+              $shadowAfterEl = swiper.$(`<div class="swiper-slide-shadow-${isHorizontal ? 'right' : 'bottom'}"></div>`);
+              $slideEl.append($shadowAfterEl);
+            }
+            if ($shadowBeforeEl.length) $shadowBeforeEl[0].style.opacity = offsetMultiplier > 0 ? offsetMultiplier : 0;
+            if ($shadowAfterEl.length) $shadowAfterEl[0].style.opacity = (-offsetMultiplier) > 0 ? -offsetMultiplier : 0;
+          }
+        }
+
+        // Set correct perspective for IE10
+        if (swiper.support.pointerEvents || swiper.support.prefixedPointerEvents) {
+          const ws = $wrapperEl[0].style;
+          ws.perspectiveOrigin = `${center}px 50%`;
+        }
+      },
+      setTransition(duration) {
+        const swiper = this;
+        swiper.slides
+          .transition(duration)
+          .find('.swiper-slide-shadow-top, .swiper-slide-shadow-right, .swiper-slide-shadow-bottom, .swiper-slide-shadow-left')
+          .transition(duration);
+      }
+    },
+    // freeMode: true,
+  };
+  questionSlides = {
+    initialSlide: 0,
+    direction: 'horizontal',
+    speed: 300,
+    spaceBetween: 8,
+    // loop:true,
+    slidesPerView: 1,
+  };
+
+  logScrollStart(){
+    console.log("scroll start");
+    
+  }
+  logScrolling(event){
+    // console.log(event);
+    this.slider.slideNext()
+  }
+  logScrollEnd(){
+    console.log("scroll end");
+  }
   public btns:any = [{visible:false, btnText:"Forfaits Comores Telecom", text:"Vous semblez avoir des soucis de connexion.Utilisez les 👇🏾👇🏾", number:"*334#"},{visible:true, btnText:"Forfaits Telma", text:"Ou les 👇🏾👇🏾", number:"#444#"},{visible:true, btnText:"Résultat GSA"}];
 
   public userProfile: { displayName: string, telephone: string, userId: any, photo: string, domicile: string, email: string }={displayName:"said maoulida", telephone:null, userId:3, photo:"default.png", domicile:"vvni", email:"said@octra.io"};
@@ -57,19 +173,19 @@ export class HomePage implements OnInit {
     initialSlide: 1,
     speed: 500,
     loop: true,
-    auotoplay: true,
   };
   kids: any = [];
   msgCountTimer: NodeJS.Timeout;
   public msgAccueil: any;
+  autreContent: any;
 
   constructor(private platform: Platform, private alertCtrl: AlertController, 
     private ngZone: NgZone, private conection: Network, 
     private api: ApiService, private apiSchool: ApiService, public navCtrl: NavController, 
-    private modalCtrl:ModalController, 
+    private modalCtrl:ModalController, private loadingCtrl: LoadingController,
     public call:CallNumber, public userData:UserDataService, 
     public logger:EventLoggerService, public settings:SettingsService, 
-    private storage: Storage, private chatService: ChatService) {
+    private storage: Storage, private chatService: ChatService, private coursService: CoursService, private coachService: CoachService) {
 
     this.platform.ready().then(() => {
       this.settings.getPremium().then((data)=>{
@@ -127,8 +243,6 @@ export class HomePage implements OnInit {
         }
       })
 
-      
-      
       try {
 
         this.conection.onChange().subscribe((data) => {
@@ -169,6 +283,7 @@ export class HomePage implements OnInit {
         this.userProfile.telephone = reponse;
       })
     })
+
     this.loading = false;
     this.loaded = false;
     this.indexLecture = 0;
@@ -182,14 +297,19 @@ export class HomePage implements OnInit {
 
     if(this.examen == null)
     {
+      // this.storage.clear()
       let sSchool = this.storage.get('school').then((d)=>{
         this.ecole = d;
         if(!this.ecole)
-          this.openModalExam(0);
+        {  
+          // this.openModalExam(0);
+          this.examen = "BAC";
+        }
         else
         {  
           this.examen = "AUTRES";
-          this.apiSchool.setServer(this.ecole?.url+"/");
+          if(this.ecole?.url)
+            this.apiSchool.setServer(this.ecole?.url+"/");
           this.userData.getTelephone().then(tel=>{
             this.loadKids(tel);
           })
@@ -271,6 +391,8 @@ export class HomePage implements OnInit {
 
   async loadKids(tel:any){
     let ecole = this.ecole;
+    if(!ecole)
+      return;
     console.log(`loading kids for ${ecole.id}`);
     
     if(!ecole?.id){
@@ -304,6 +426,7 @@ export class HomePage implements OnInit {
     if(this.kids.length == 0){
       this.userData.getTelephone().then(t => {
         if(t){
+          if(this.ecole?.url)
           this.apiSchool.setServer(this.ecole?.url+"/")
           this.loadKids(t);
         }
@@ -493,12 +616,13 @@ export class HomePage implements OnInit {
     ecole:this.ecole?.id, classe:this.classe?.id }, {})
     .subscribe(response => {
       this.connexionError = 0;
-      try {
+        try {
           let container = document.querySelector("#autre");
-          console.log(container);
-          
-          if(container)
+          if(container && this.autreContent != response.data)
+          {
             container.innerHTML = response.data;
+            this.autreContent = response.data;
+          }
         }
         catch (error) {
           console.log(error);
@@ -726,8 +850,156 @@ export class HomePage implements OnInit {
     // this.ga.trackEvent('Bouton Login de l accueil', 'Tapped Action', 'Item Tapped is '+item, 0);
     this.navCtrl.navigateForward(page)
   }
-
-  ngOnInit() {
+  
+  openCours(item:any){
+    this.navCtrl.navigateForward("cours-details", {
+      queryParams:item
+    })
   }
+  ngOnInit(event: any = null) {
+    this.getListCoursExos(null, true);
+    this.coachService.getList(this.coachs.length).then((data)=>{
+      try {
+        const json = JSON.parse(data.data);
+        if(json.status == "ok"){
+          this.coachs = json.data;
+        }
+      } catch (error) {
+        console.error(error)
+        console.log({coachs:data.data})
+      }
+    }).finally(()=>{
+      if(event)
+        event.target.complete();
+    })
+  }
+  public getListCoursExos(event, vider: boolean = false){
+    // this.coursService.getListCoaching("cours", this.courses.length/2).then((data)=>{
+    //   try {
+    //     const json = JSON.parse(data.data);
+    //     if(json.status == "ok"){
+    //       this.courses = json.data;
+    //     }
+    //   } catch (error) {
+    //     console.error(error);
+    //     console.log({cours:data.data});
+    //   }
+    // });
+    let offset: number = event != null ? this.courses.length : 0
+    this.coursService.getListCoaching("", offset).then((data)=>{
+      try {
+        const json = JSON.parse(data.data);
+        console.log({exo:json});
+        
+        if(json.status == "ok"){
+          if(vider)
+            this.courses = [];
+          this.courses = [...this.courses,...json.data];
+        }
+      } catch (error) {
+        console.error(error);
+        console.log({cours:data.data});
+      }
+    }).finally(()=>{
+      if(event != null)
+      event.target.complete()
+    });
+  }
+  async validerExo(item){
+    console.log({iiittteeeeeeeeem:item});
+    let l = await this.loadingCtrl.create({
+      message:"Validation..."
+    });
+    l.present();
+    this.coursService.validerExo(item.id).then((data) => {
+      try {
+        const json = JSON.parse(data.data)
+        console.log({response_validation: json})
 
+        if(json.status == "ok"){
+          if(json.data){
+            let len: number = item.responses.length;
+            for(var i = 0; i<len; i++){
+              item.responses.pop();
+            }
+            json.data.forEach(e => item.responses.push(e));
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        console.log(data.data)
+      }
+    }, (err)=>{
+      console.error(err)
+    }).finally(()=>{
+      l.dismiss();
+    })
+  }
+  public async sendResponse(q, elt: any, last=0, item: any = {}){
+    // console.log(slide);
+    if(q?.isCorrect != null && last == 0){
+      let slides: IonSlides = elt.parentNode.parentNode.parentNode.parentNode.parentNode;
+      slides.getActiveIndex().then(async index=>{
+        let slidesLength: number = await slides.length()
+
+        if(slidesLength - 1 == index)
+          slides.slideTo(0);
+        else
+        {
+          console.log(index)
+          slides.slideNext().then(()=>{
+    
+          }, (err) => {
+            console.error(err)
+            // slides.slideTo(0)
+          })
+        }
+      })
+      return;
+    }
+    q.loading = true;
+    let rep = elt.parentNode.querySelector('ion-textarea').value;
+    console.log({reponse: rep});
+    this.coursService.sendResponse(rep, q).then((data)=>{
+      const json = JSON.parse(data.data);
+      q.content = rep;
+      if(json.status == "ok"){
+        if(last == 1){
+          this.validerExo(item)
+        }
+        elt.parentNode.parentNode.parentNode.parentNode.parentNode.slideNext();
+      }
+    }, (err)=>{
+      this.alertCtrl.create({message:err.error, buttons: ["OK"]}).then(a => a.present());
+    }).finally(()=>{
+      q.loading = false;
+    })
+  }
+  isValidated(items:any[]){
+    return items.filter(elt => elt.isCorrect == null).length == 0;
+  }
+  doRefresh(event){
+    this.ngOnInit(event)
+  }
+  isLast(questions: any[], q): boolean{
+    if(questions.length == 1) return true;
+    let rep: boolean = true;
+    if(q?.isCorrect != null){
+      return false;
+    }
+    questions.forEach((elt) => {
+      if(elt.id != q.id){
+        if(elt.content == null || elt.content == ""){
+          rep = false;
+        }
+      }
+    });
+    return rep;
+  }
+  trimString(string, length) {
+    let btn = `<a class='btn-view-more'>plus</a>`;
+    return string.length > length ? 
+            string.substring(0, length) + '...' + btn :
+            string;
+  }
 }

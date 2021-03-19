@@ -1,0 +1,116 @@
+.cours-content {
+  max-height: 250px;
+  overflow: hidden;
+}
+
+.cours-content video {
+  max-height: 250px;
+}
+
+.commentForm .comment {
+  background: rgba(255, 255, 255, 0.267);
+  -webkit-box-shadow: 0px 2px 3px 1px rgba(151, 146, 146, 0.205);
+          box-shadow: 0px 2px 3px 1px rgba(151, 146, 146, 0.205);
+  border: none;
+}
+
+.commentForm ion-icon {
+  clear: both;
+  display: inline-block;
+  position: relative;
+}
+
+form ion-col {
+  padding: 0 !important;
+  height: 80px;
+  vertical-align: middle;
+}
+
+.btn-send {
+  vertical-align: middle;
+  margin: auto;
+  padding: 0;
+}
+
+.avatar img {
+  width: 100%;
+}
+
+.circle {
+  border-radius: 50%;
+}
+
+.avatar {
+  display: inline-block;
+  vertical-align: bottom;
+  width: 42px;
+  height: 42px;
+  overflow: hidden;
+  border-radius: 50px;
+  margin: 0;
+  margin-right: 8px;
+}
+
+.aLabel {
+  display: inline-block;
+  vertical-align: bottom;
+  margin: 0;
+  margin-left: 12px;
+}
+
+.visitor {
+  text-align: left;
+  padding: 0;
+  margin-bottom: 15px;
+}
+
+ion-list .comment {
+  display: inline-block;
+  -webkit-box-shadow: 0px 2px 3px 1px rgba(151, 146, 146, 0.205);
+          box-shadow: 0px 2px 3px 1px rgba(151, 146, 146, 0.205);
+  border-radius: 12px;
+  width: auto;
+  max-width: 90%;
+  max-height: 150em;
+  background: rgba(148, 250, 199, 0.267);
+  overflow-wrap: break-word;
+  white-space: normal;
+  padding: 12px;
+}
+
+form textarea.comment {
+  border-radius: 12px;
+  border-width: 0;
+  -webkit-box-shadow: 0px 2px 3px 1px rgba(151, 146, 146, 0.205);
+          box-shadow: 0px 2px 3px 1px rgba(151, 146, 146, 0.205);
+  background: rgba(255, 255, 255, 0.295);
+  overflow-wrap: break-word;
+  padding: 12px;
+  width: 100%;
+}
+
+.btn-answer {
+  font-size: 65%;
+}
+
+.date {
+  text-align: right;
+}
+
+.sliders-container ion-slide img {
+  border-radius: 8px;
+  -webkit-box-shadow: rgba(2, 43, 39, 0.568) 1px 1px 1px 3px;
+          box-shadow: rgba(2, 43, 39, 0.568) 1px 1px 1px 3px;
+  margin: auto;
+  max-width: 92%;
+  vertical-align: middle;
+}
+
+.logedIn {
+  margin-top: 35px;
+}
+
+.entete .circle ion-icon {
+  font-size: 200%;
+}
+/*# sourceMappingURL=cours-details.page.css.map */

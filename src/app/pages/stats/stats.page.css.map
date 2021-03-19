@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AACA,AAAA,eAAe,CAAC;EACZ,WAAW,EAAE,IAAI;CACpB;;AACD,AAAA,UAAU,EAAE,UAAU,CACtB;EACI,gBAAgB,EAAE,OAAO,CAAA,UAAU;EACnC,gBAAgB,EAAE,+5MAA+5M,CAAA,UAAU;EAC37M,eAAe,EAAE,IAAI;EACrB,qBAAqB,EAAE,KAAK;CAC/B",
+    "sources": [
+        "stats.page.scss"
+    ],
+    "names": [],
+    "file": "stats.page.css"
+}

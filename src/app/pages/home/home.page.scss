@@ -9,6 +9,12 @@
 ion-header{
     color:white;
 }
+ion-card ion-card-title{
+    font-size: 1.5em;
+}
+.bg-white, .bg-white ion-item{
+    background-color: #fff;
+}
 .list{
     margin-top: 125px;
 }
@@ -20,10 +26,17 @@ ion-header{
 ion-card.autre-card{
     --background:rgba(255, 255, 255, .8);
     padding-bottom: 12px;
-    margin-top: 12%;
+    margin-top: 0%;
+}
+.send-btn{
+    // float:right;
+    vertical-align: middle;
+    margin: auto;
 }
 ion-card{
     --background:rgba(255, 255, 255, .9);
+    margin-top:none;
+    margin-bottom:none;
 }
 .btn-check {
     position: absolute;
@@ -203,6 +216,13 @@ ion-avatar {
     animation: animation 3100ms linear infinite both;
     animation-delay: 1s;
 }
+.top-right
+{
+    position: absolute;
+    top: 12px;
+    right: 6px;
+    animation: rad 8000ms ease-in-out 3s infinite;
+}
 ion-select {
     max-width: 100%!important;
 }
@@ -238,6 +258,9 @@ ion-list {
     margin-top: 15px!important;
     // border: 1px solid black;
 }
+.hidden{
+    display: none;
+}
 #autre a {
     font-size: 110%;
     display: inline-block;
@@ -269,7 +292,30 @@ ion-select .year {
     -webkit-animation: animation 1300ms linear infinite both;
     animation: animation 1300ms linear infinite both;
 }
+.btn-view-more{
+    color: lightblue;
+    text-decoration: underline;
+}
+ion-button .btn-rotate-animation{
+}
 
+@keyframes rad {
+    0%{
+        transform: rotate(0deg);
+    }
+    5%{
+        transform: rotate(0deg) scale(1.4) translateX(5%);
+    }
+    10%{
+        transform: rotate(0deg) scale(1.4) translateX(-5%);
+    }
+    15%{
+        transform: rotate(0deg) scale(1) translateX(0%);
+    }
+    100%{
+        transform: rotate(0) translateX(0%);
+    }
+}
 /* Generated with Bounce.js. Edit at https://goo.gl/GqfwqT */
 @-webkit-keyframes animation {
     0% {

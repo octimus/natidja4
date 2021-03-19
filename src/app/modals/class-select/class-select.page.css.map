@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,EAAE,CAAC;EACC,WAAW,EAAE,IAAI;EACjB,cAAc,EAAE,IAAI;CACvB;;AACD,AAAA,EAAE,CAAC;EACC,WAAW,EAAE,IAAI;EACjB,cAAc,EAAE,IAAI;EACpB,UAAU,EAAE,MAAM;CACrB",
+    "sources": [
+        "class-select.page.scss"
+    ],
+    "names": [],
+    "file": "class-select.page.css"
+}
