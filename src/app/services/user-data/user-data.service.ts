@@ -426,6 +426,13 @@ export class UserDataService {
     return this.chatUser;
   };
 
+  rechargerOcticoin(code: string): Promise<string> {
+    return this.storage.get("user_id").then((user_i)=> {
+      return this.http.post(this.address_serveur+'/action_mobile.php', {action:"recharger_octicoin", id:user_i, code_recharge: code}, {}).then((value) => {
+        return value.data;
+      });
+    })
+  };
   getOcticoin(): Promise<string> {
     return this.storage.get("user_id").then((user_i)=> {
       return this.http.post(this.address_serveur+'/action_mobile.php', {action:"get_octicoin", user_id:user_i}, {}).then((value) => {

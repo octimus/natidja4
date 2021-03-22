@@ -10,6 +10,7 @@ import { platform } from 'process';
 import { build$ } from 'protractor/built/element';
 // import { SMS } from '@ionic-native/sms/ngx';
 import { Storage } from '@ionic/storage';
+import { Sim } from '@ionic-native/sim/ngx';
 
 declare var SMSReceive: any;
 
@@ -158,11 +159,11 @@ export class PayementPage implements OnInit {
   private iab: InAppBrowser,
   private platform: Platform, private loaderCtrl: LoadingController, 
   // private sms: SMS, 
-  private smsRetriever: SmsRetriever, public storage: Storage) {
+  private smsRetriever: SmsRetriever, public storage: Storage, private sim: Sim) {
     
-  this.storage.get("telephone").then(t => {
-    this.user_phone = t;
-  });
+    this.storage.get("telephone").then(t => {
+      this.user_phone = t;
+    });
     // this.smsRetriever.getAppHash().then((r)=>{
     //   this.appHash = r;
     // })
@@ -331,14 +332,28 @@ export class PayementPage implements OnInit {
     if(!this.item)
       this.item = {};
     
-    this.loading = 1;
-      
-    this.startWatchingMvolaSMS();
-    
-    this.call.callNumber("#444*1*"+this.mvolaAction+"*"+this.phoneNumber+"*"
-    +(this.price.mvola ?? this.price.all)+`*${this.id_ecole ?? 0}`+this.getReason()+`${this.item.id}#`, true).then((data)=>{
-      console.log(data);
-    }).finally(()=>{this.loading = 0;});
+    this.alertCtrl.create({message:"Le transfert sera fait à partir de quelle numero ?", inputs: [
+      {
+        label:"Telephone",
+        type:"text",
+        name: "phoneNumber"
+      }
+    ], buttons: [{
+      text:"Continuer",
+      handler: (data) => {
+        this.api.postData("action_mobile.php", {action: "paiement_mvola", numero: data.phoneNumber, reason: this.reason, userId: this.userId}).subscribe((response)=>{
+
+          this.loading = 1;
+            
+          this.startWatchingMvolaSMS();
+          
+          this.call.callNumber("#444*1*"+this.mvolaAction+"*"+this.phoneNumber+"*"
+          +(this.price.mvola ?? this.price.all)+`*${this.id_ecole ?? 0}`+this.getReason()+`${this.item.id}#`, true).then((data)=>{
+            console.log(data);
+          }).finally(()=>{this.loading = 0;});
+        })
+      }
+    }]})
       
   }
   async showAlert(titre, contenu) {

@@ -1,10 +1,10 @@
 <div style="max-height: 200px;margin:auto;overflow: hidden; text-align: center;">
   <ion-img-viewer [title]="title" [scheme]="scheme" [src]="src" *ngIf="picOrVid(src) == 'picture';" alt=""></ion-img-viewer>
-  <video [src]="src" [controls]="controls" *ngIf="picOrVid(src) == 'video';" style="max-height: 200px;margin:auto;"></video>
+  <video preload="auto" [src]="src" [controls]="controls" *ngIf="picOrVid(src) == 'video';" style="max-height: 200px;margin:auto;"></video>
   <a class="ion-padding" [href]="src" *ngIf="picOrVid(src) == 'document';" style="max-height: 200px;margin:auto;">
     <ion-img slot="start" style="font-size: 50px;width: 132px;margin:auto;" src="assets/icon/pdf-icon.svg" size="large" [alt]="alt"></ion-img>
   </a>
   <div class="ion-padding">
-    <audio [src]="src" [controls]="controls" *ngIf="picOrVid(src) == 'audio'"></audio>
+    <audio [src]="src" [controls]="controls" *ngIf="picOrVid(src) == 'audio'" preload="auto"></audio>
   </div>
 </div>

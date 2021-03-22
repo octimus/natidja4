@@ -32,9 +32,9 @@
                     <h3>VOUS</h3>
                     <ion-text [class.barree]="q?.isCorrect === 1" [color]="q.isCorrect == 1 ? 'success' : q?.isCorrect == 0 ? 'danger' : ''" [innerHtml]="q?.content.replaceAll('\n', '<br/>')"></ion-text>
                 </ion-label>
-                <ion-label class="ion-text-wrap" *ngIf="q.correct != q.content && q.isCorrect != null && q.isCorrect !== ''">
+                <ion-label class="ion-text-wrap" *ngIf="q.isCorrect != null && q.isCorrect !== ''">
                     <h3>COACH</h3>
-                    <ion-text color="success" [innerHtml]="q.correct.replaceAll('\n', '<br/>')"></ion-text>
+                    <ion-text color="primary" [innerHtml]="q.correct.replaceAll('\n', '<br/>')"></ion-text>
                 </ion-label>
             </ion-item>
             <ion-card-content class="teacher-comment ion-no-padding ion-text-left" *ngIf="q?.teacher_comment">

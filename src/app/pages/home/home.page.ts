@@ -53,10 +53,11 @@ export class HomePage implements OnInit {
   public disponibility:any = {};
   public coachs:any[] = [];
   public courses: any[] = [];
+  public octicoin: number = null;
 
   public slidesOpt: any = {
     slidesPerView: 2.5,
-    spaceBetween: -20,
+    spaceBetween: -15,
     loop:true,
     coverflowEffect: {
       rotate: 50,
@@ -149,7 +150,7 @@ export class HomePage implements OnInit {
     initialSlide: 0,
     direction: 'horizontal',
     speed: 300,
-    spaceBetween: 8,
+    // spaceBetween: 8,
     // loop:true,
     slidesPerView: 1,
   };
@@ -193,12 +194,17 @@ export class HomePage implements OnInit {
       })
 
       this.settings.getServer().then((data)=>{
-        this.charger();
+        
+        this.userData.getTelephone().then((reponse)=>{
+          this.userProfile.telephone = reponse;
+          this.charger();
+        })
         // this.chargerUrl();          
         this.chargerAutre();
         this.loadBtns();
         this.userData.getTelephone().then(tel => {
           this.getCount(tel);
+          this.userProfile.telephone = tel;
         });
       })
       // this.ga.startTrackerWithId('UA-102358517-3')
@@ -680,19 +686,23 @@ export class HomePage implements OnInit {
       .subscribe(response => {
 
         try {
+          // alert(response.data);
           let donnees = JSON.parse(response.data.trim());
           this.canActivateNotes = donnees.can_activate_notes;
           this.notifCount = donnees.notif_count;
-
+          
+          if(donnees.octicoin)
+            this.octicoin = donnees.octicoin;
           this.demander_don = donnees.demander_don;
         }
         catch (error) {
           // alert(error);
           this.showAlert("echec", "Mauvais format des données");
-          console.log(error, response);
+          console.log({r:response});
         }
         this.loadPubs();
       }, (error) => {
+        console.error(error);
         // this.showAlert("Problème de connexion", "Veuillez verifier votre connexion à internet.");
         // this.etudiants = this.etudiantsOriginal;
       });
@@ -885,11 +895,16 @@ export class HomePage implements OnInit {
     //     console.log({cours:data.data});
     //   }
     // });
+    this.storage.get("leconsExos").then((data) => {
+      this.courses = [...this.courses,...data];
+    })
+
     let offset: number = event != null ? this.courses.length : 0
     this.coursService.getListCoaching("", offset).then((data)=>{
       try {
         const json = JSON.parse(data.data);
         console.log({exo:json});
+        this.storage.set("leconsExos", json.data);
         
         if(json.status == "ok"){
           if(vider)
@@ -898,7 +913,7 @@ export class HomePage implements OnInit {
         }
       } catch (error) {
         console.error(error);
-        console.log({cours:data.data});
+        console.log(data.data);
       }
     }).finally(()=>{
       if(event != null)
@@ -958,7 +973,7 @@ export class HomePage implements OnInit {
       return;
     }
     q.loading = true;
-    let rep = elt.parentNode.querySelector('ion-textarea').value;
+    let rep = elt.parentNode.querySelector('ion-textarea, ion-radio-group').value;
     console.log({reponse: rep});
     this.coursService.sendResponse(rep, q).then((data)=>{
       const json = JSON.parse(data.data);

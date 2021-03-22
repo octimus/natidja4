@@ -35,7 +35,8 @@
   </ion-segment> -->
 </ion-header>
 
-<ion-content class="ion-text-center"   [scrollEvents]="true"
+<ion-content class="ion-text-center"
+[scrollEvents]="true"
 (ionScrollStart)="logScrollStart()"
 (ionScroll)="logScrolling($event)"
 (ionScrollEnd)="logScrollEnd()">
@@ -46,8 +47,9 @@
         <ion-badge [color]="disponibility.color" class="" (click)="navCtrl.navigateForward('search', {queryParams:{etablissement:disponibility.etablissement, annee:annee, mention:disponibility.mention, examen:examen, ile:disponibility.ile}})">{{disponibility.text}}</ion-badge>
     </div>
     <div class="ion-text-left">
-        <ion-slides mode="ios" #slider pager="false" scrollbar="false" [options]="slidesOpt" class="ion-no-padding">
-            <ion-slide *ngFor="let item of coachs" class="ion-no-padding" (click)="item.validity=7;navCtrl.navigateForward('payement', {queryParams:{item:item, reason: 'coaching'}});" >
+        <ion-slides mode="ios" #slider pager="false" scrollbar="false" [options]="slidesOpt" class="ion-no-padding coach-slides">
+            <ion-slide *ngFor="let item of coachs" class="ion-no-padding" 
+            (click)="item.validity=7;navCtrl.navigateForward('payement', {queryParams:{item:item, reason: 'coaching'}});" >
                 <ion-card style="height: 200px;" class="ion-text-left">
                     <img [src]="item.photo" />
                     <ion-card-header class="ion-no-padding" style="padding: 8px;">
@@ -80,6 +82,7 @@
   <!-- <div id="progress">
 
   </div> -->
+  <app-flip-card [value]="octicoin" *ngIf="octicoin != null"></app-flip-card> <br>
   <div *ngIf="logedIn && canActivateNotes">
     <ion-button fill="outline" shape="round" (click)="openLogin('params-candidat');">
         <ion-icon name="document-text" slot="start"></ion-icon>  
@@ -152,6 +155,7 @@
             <!-- <ion-icon name="checkmark-outline" size="small" *ngIf="item == ile"></ion-icon> -->
             <ion-label size="small">{{item}}</ion-label>
         </ion-chip>
+        
     </div>
     <form (ngSubmit)="rechercher();" *ngIf="examen!='AUTRES'" style="margin:auto;">
         <ion-searchbar animated="true" placeholder="Nom ou numéro" type="search" [debounce]="250" name="search" [(ngModel)]="recherche"></ion-searchbar>
@@ -165,7 +169,7 @@
             </ion-button>
             <br><br>
         </div> -->
-        <ion-button (click)="rechercher();" fill="solid" shape="round">
+        <ion-button color="primary" (click)="rechercher();" fill="solid" shape="round">
             <ion-icon  name="search" slot="start"></ion-icon>
             Rechercher
         </ion-button>
@@ -264,15 +268,26 @@
         <ion-card-content class="size-animation">
             <div [innerHtml]="item.content.replaceAll('\n', '<br/>') | textHtml" *ngIf="item.showMore" (click)="item.showMore = !item.showMore"></div>
             <div [innerHtml]="trimString(item.content, 100) | textHtml" *ngIf="!item.showMore" (click)="item.showMore = !item.showMore"></div>
-            <ion-slides mode="ios" [pager]="false" scrollbar="false" [options]="questionSlides">
-                <ion-slide *ngFor="let q of item.responses; let i = index;" class="ion-text-left">
+            <ion-slides mode="ios" [pager]="false" scrollbar="false" [options]="questionSlides" class="ion-no-padding ion-text-left">
+                <ion-slide *ngFor="let q of item.responses; let i = index;" class="ion-text-left ion-no-padding">
                     <div>
-                        <h5>
+                        <h4>
                             {{q.question}}
-                        </h5>
+                        </h4>
                         <ion-item class="ion-no-padding"  *ngIf="logedIn">
-                            <ion-textarea name="response" [value]="q.content" type="text" 
-                            placeholder="Saisissez votre réponse ici" [disabled]="q?.isCorrect != null"></ion-textarea>
+                            <ion-textarea *ngIf="q.others.length <= 1" name="response" [value]="q.content" type="text" 
+                            placeholder="Saisissez votre réponse ici" [disabled]="q?.isCorrect != null" [class.hidden]="q?.isCorrect != null"></ion-textarea>
+
+                            <ion-text slot="start" [color]="q.isCorrect == true ? 'primary' : 'false'" *ngIf="q?.isCorrect != null">
+                                {{q?.content}}
+                            </ion-text>
+
+                            <ion-radio-group *ngIf="q.others.length > 1" name="response" [value]="q.content" [class.hidden]="q?.isCorrect != null">
+                                <ion-item *ngFor="let o of q.others">
+                                    <ion-label class="ion-text-wrap">{{o.content}}</ion-label>
+                                    <ion-radio [value]="o.content"></ion-radio>
+                                </ion-item>
+                            </ion-radio-group>
                             <ion-icon style="margin:auto;" slot="end" *ngIf="q?.isCorrect != null" 
                             [color]="q?.isCorrect == 1 ? 'success' : 'danger'" 
                             [name]="q?.isCorrect == 1 ? 'checkmark-circle' : 'close-circle'">
@@ -298,7 +313,6 @@
                             Corriger les exercices
                         </ion-button>
                     </div>
-                    <br>
                 </ion-slide>
             </ion-slides>
         </ion-card-content>

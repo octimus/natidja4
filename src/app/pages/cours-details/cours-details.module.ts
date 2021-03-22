@@ -9,7 +9,7 @@ import { CoursDetailsPageRoutingModule } from './cours-details-routing.module';
 import { CoursDetailsPage } from './cours-details.page';
 import { NgxIonicImageViewerModule } from 'ngx-ionic-image-viewer';
 import { PipesModule } from 'src/app/pipes/pipes.module';
-import { FileComponentComponent } from 'src/app/components/file-component/file-component.component';
+import { ComponentsModule } from 'src/app/components/components.module';
 
 @NgModule({
   imports: [
@@ -18,9 +18,9 @@ import { FileComponentComponent } from 'src/app/components/file-component/file-c
     IonicModule,
     NgxIonicImageViewerModule,
     PipesModule,
-    CoursDetailsPageRoutingModule
+    CoursDetailsPageRoutingModule,
+    ComponentsModule
   ],
-  entryComponents: [FileComponentComponent],
   declarations: [CoursDetailsPage]
 })
 export class CoursDetailsPageModule {}

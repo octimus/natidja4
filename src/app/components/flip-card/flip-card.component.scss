@@ -1,0 +1,132 @@
+@import url(https://fonts.googleapis.com/css?family=Montserrat);
+
+.body {
+    max-width:100%;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    color: #E1E6FA;
+    font-family: Montserrat, sans-serif;
+}
+.card-holder,
+.success {
+    position: relative;
+    height: 200px;
+    width: 530px;
+    max-width: 90%;
+}
+.card-wrap {
+    transition: 600ms;
+	transform-style: preserve-3d;
+    transform-origin: 50%;
+	position: relative;
+    z-index: 1;
+}
+.front,
+.back {
+    position: absolute;
+	top: 0;
+	left: 0;
+    height: 150px;
+    width: 480px;
+    padding: 10px 20px;
+	backface-visibility: hidden;
+    background: linear-gradient(to bottom right, #161925, #1F2D2B );
+    // background: #232633;
+    border-radius: 6px;
+    transition: 600ms;
+    max-width:100%;
+}
+.front {
+    z-index: 2;
+    transform: rotateY(0deg);
+}
+.back {
+    transform: rotateY(180deg);
+}
+.card-holder.back-flip .card-wrap {
+    transform: rotateY(180deg);
+}
+.card-holder.slide .front,
+.card-holder.slide .back {
+    transform: translateY(-500%);
+}
+.input-wrap {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px 0;
+    &--double {
+        input:not([type=submit]) {
+            flex: 0 1 50%;
+            margin-right: 5px;
+            max-width: 75px;
+        }
+    }
+    &--short {
+        input {
+            max-width: calc(100% - 100px);
+        }
+    }
+    &--tiny {
+        input {
+            position: absolute;
+            right: 30px;
+            bottom: 70px;
+            float: right;
+            max-width: 100px;
+        }
+    }
+    svg {
+        height: auto;
+        margin-left: 20px;
+        max-width: 70px;
+    }
+
+    input{
+    // max-width: 100%;
+
+    }
+}
+input:not([type=submit]), ion-input {
+    flex: 0 1 100%;
+    color: #E1E6FA;
+    padding: 10px 5px;
+    background: #181A23;
+    border: none;
+}
+input[class=submit] {
+    position: absolute;
+    bottom: -38px;
+    left: 0;
+    width: 100%;
+    padding: 15px 0;
+    color: #1e3128;
+    border: none;
+    border-radius: 0 0 6px 6px;
+    background: linear-gradient(to bottom right, #72A0A0, #82EFBC);
+}
+.success {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    z-index: 0;
+    opacity: 0;
+    transition: 600ms opacity;
+    &--confirm {
+        opacity: 1;
+    }
+    svg {
+        height: auto;
+        max-width: 150px;
+        padding: 20px;
+        background: #82EFBC;
+        border-radius: 50%;
+        fill: #161925;
+    }
+}
+.loader
+{
+    backdrop-filter: blur(5px);
+    border-radius: 50%;
+}
