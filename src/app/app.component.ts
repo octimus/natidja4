@@ -6,6 +6,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { UserDataService } from './services/user-data/user-data.service';
 import { ActivatedRoute } from '@angular/router';
 import { OneSignal } from "@ionic-native/onesignal/ngx";
+import { SettingsService } from './services/settings/settings.service';
 
 
 @Component({
@@ -44,11 +45,12 @@ export class AppComponent implements OnInit {
     }
   ];
   public logedIn: any = false;
+  public bgClasse: any;
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
 
   constructor(
     private platform: Platform,
-    private splashScreen: SplashScreen,
+    private splashScreen: SplashScreen, private settings: SettingsService,
     private statusBar: StatusBar, private userData: UserDataService,
     public navCtrl: NavController, private oneSignal: OneSignal, 
     private alertController: AlertController, private menu: MenuController
@@ -93,9 +95,14 @@ export class AppComponent implements OnInit {
     this.initializeApp();
   }
 
+  setBg(bg){
+    this.settings.setBackGround(bg).then(() => {
+      window.location.reload()
+    }, (error) => console.error(error));
+  }
   initializeApp() {
     this.platform.ready().then(() => {
-
+      this.settings.getBackGround().then((data => this.bgClasse = data));
       this.userData.hasLoggedIn().then((response) => {
         this.logedIn = response;
       });

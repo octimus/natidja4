@@ -17,6 +17,10 @@
     position: relative;
     // margin-bottom: 25px;
 }
+.courses ion-card .rtl{
+    direction:rtl;
+    text-align: right!important;
+}
 form ion-col{
     padding: 0!important;
     height: 80px;
@@ -86,6 +90,7 @@ form textarea.comment {
     overflow-wrap: break-word;
     padding: 12px;
     width: 100%;
+    max-height: min-content;
 }
 .btn-answer {
     font-size: 65%;

@@ -1,0 +1,11 @@
+<div class="ion-padding ion-text-center">
+  <img [src]="photo" style="max-height: 30vh;"/>
+  <h5>{{nom}}</h5>
+  <ion-chip color="primary" mode="ios" *ngIf="prix_hebdo" outline="true">
+    <ion-label *ngIf="prix_hebdo">{{prix_hebdo}} FC</ion-label>
+  </ion-chip>
+  <p [innerHtml]="slogan?.replace('\n', '<br/>')"></p>
+  <ion-button *ngIf="id" expand="block" fill="clear" shape="round">
+    s'abonner
+  </ion-button>
+</div>

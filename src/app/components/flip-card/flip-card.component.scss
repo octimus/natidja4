@@ -104,7 +104,9 @@ input[class=submit] {
     color: #1e3128;
     border: none;
     border-radius: 0 0 6px 6px;
-    background: linear-gradient(to bottom right, #72A0A0, #82EFBC);
+    background: linear-gradient(to bottom right, var(--ion-color-primary-shade), var(--ion-color-primary-tint));
+    color: #fff;
+    // background: linear-gradient(0deg, rgba(69,123,157,1) 0%, rgba(168,218,219,1) 100%);
 }
 .success {
     align-items: center;

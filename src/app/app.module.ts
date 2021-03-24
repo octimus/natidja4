@@ -28,6 +28,7 @@ import { CoursService } from './services/cours/cours.service';
 import { PreviewAnyFile } from '@ionic-native/preview-any-file/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { NgxIonicImageViewerModule } from 'ngx-ionic-image-viewer';
+import { Sim } from '@ionic-native/sim/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -41,7 +42,7 @@ import { NgxIonicImageViewerModule } from 'ngx-ionic-image-viewer';
   ],
   providers: [
     StatusBar, Camera, Crop, InAppBrowser, SMS, SmsRetriever, ChatService, CoursService, PreviewAnyFile,
-    SplashScreen, HTTP, NavParams, Network, CallNumber, FileTransfer, FileChooser, File,
+    SplashScreen, HTTP, NavParams, Network, CallNumber, FileTransfer, FileChooser, File, Sim,
     OneSignal, 
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],

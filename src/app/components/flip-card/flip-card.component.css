@@ -1,0 +1,172 @@
+@import url(https://fonts.googleapis.com/css?family=Montserrat);
+.body {
+  max-width: 100%;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  color: #E1E6FA;
+  font-family: Montserrat, sans-serif;
+}
+
+.card-holder,
+.success {
+  position: relative;
+  height: 200px;
+  width: 530px;
+  max-width: 90%;
+}
+
+.card-wrap {
+  -webkit-transition: 600ms;
+  transition: 600ms;
+  -webkit-transform-style: preserve-3d;
+          transform-style: preserve-3d;
+  -webkit-transform-origin: 50%;
+          transform-origin: 50%;
+  position: relative;
+  z-index: 1;
+}
+
+.front,
+.back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 150px;
+  width: 480px;
+  padding: 10px 20px;
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+  background: -webkit-gradient(linear, left top, right bottom, from(#161925), to(#1F2D2B));
+  background: linear-gradient(to bottom right, #161925, #1F2D2B);
+  border-radius: 6px;
+  -webkit-transition: 600ms;
+  transition: 600ms;
+  max-width: 100%;
+}
+
+.front {
+  z-index: 2;
+  -webkit-transform: rotateY(0deg);
+          transform: rotateY(0deg);
+}
+
+.back {
+  -webkit-transform: rotateY(180deg);
+          transform: rotateY(180deg);
+}
+
+.card-holder.back-flip .card-wrap {
+  -webkit-transform: rotateY(180deg);
+          transform: rotateY(180deg);
+}
+
+.card-holder.slide .front,
+.card-holder.slide .back {
+  -webkit-transform: translateY(-500%);
+          transform: translateY(-500%);
+}
+
+.input-wrap {
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  padding: 10px 0;
+}
+
+.input-wrap--double input:not([type=submit]) {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 1 50%;
+          flex: 0 1 50%;
+  margin-right: 5px;
+  max-width: 75px;
+}
+
+.input-wrap--short input {
+  max-width: calc(100% - 100px);
+}
+
+.input-wrap--tiny input {
+  position: absolute;
+  right: 30px;
+  bottom: 70px;
+  float: right;
+  max-width: 100px;
+}
+
+.input-wrap svg {
+  height: auto;
+  margin-left: 20px;
+  max-width: 70px;
+}
+
+input:not([type=submit]), ion-input {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 1 100%;
+          flex: 0 1 100%;
+  color: #E1E6FA;
+  padding: 10px 5px;
+  background: #181A23;
+  border: none;
+}
+
+input[class=submit] {
+  position: absolute;
+  bottom: -38px;
+  left: 0;
+  width: 100%;
+  padding: 15px 0;
+  color: #1e3128;
+  border: none;
+  border-radius: 0 0 6px 6px;
+  background: -webkit-gradient(linear, left top, right bottom, from(var(--ion-color-primary-shade)), to(var(--ion-color-primary-tint)));
+  background: linear-gradient(to bottom right, var(--ion-color-primary-shade), var(--ion-color-primary-tint));
+  color: #fff;
+}
+
+.success {
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  z-index: 0;
+  opacity: 0;
+  -webkit-transition: 600ms opacity;
+  transition: 600ms opacity;
+}
+
+.success--confirm {
+  opacity: 1;
+}
+
+.success svg {
+  height: auto;
+  max-width: 150px;
+  padding: 20px;
+  background: #82EFBC;
+  border-radius: 50%;
+  fill: #161925;
+}
+
+.loader {
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+  border-radius: 50%;
+}
+/*# sourceMappingURL=flip-card.component.css.map */

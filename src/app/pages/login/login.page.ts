@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Sim } from '@ionic-native/sim/ngx';
 import { NavController, NavParams } from '@ionic/angular';
 import { UserDataService } from 'src/app/services/user-data/user-data.service';
 
@@ -16,8 +17,12 @@ export class LoginPage implements OnInit {
 
   constructor(
     public userData: UserDataService, private navCtrl: NavController,
-    public navParams: NavParams) {
+    public navParams: NavParams, private simData: Sim) {
     this.verifieConnexion();
+    this.simData.getSimInfo().then((simInfo) => {
+      this.userLogin.login = simInfo.phoneNumber;
+    })
+
     this.submitted = false;
 
     this.userData.loginState.subscribe((d)=>{

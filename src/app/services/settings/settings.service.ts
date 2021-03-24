@@ -99,4 +99,12 @@ export class SettingsService {
       })
     })
   }
+  public setBackGround(str): Promise<any>
+  {
+    return this.storage.set('background', str);
+  }
+  public getBackGround(): Promise<any>
+  {
+    return this.storage.get('background');
+  }
 }

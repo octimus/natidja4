@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,EAAE,CAAA;EACE,SAAS,EAAC,MAAM;CACnB",
+    "sources": [
+        "coach-details.component.scss"
+    ],
+    "names": [],
+    "file": "coach-details.component.css"
+}

@@ -35,11 +35,40 @@
               Mon profil
             </ion-button>
           </ion-item>
+          <div class="ion-padding">
+            <ion-button size="small" [disabled]="bgClasse == 'bg-light'" (click)="setBg('bg-light')" *ngIf="logedIn" class="bg-light">
+              bg
+            </ion-button>
+            <ion-button size="small" [disabled]="bgClasse == 'bg-updown'" (click)="setBg('bg-updown')" *ngIf="logedIn" class="bg-updown">
+              bg
+            </ion-button>
+            <ion-button size="small" [disabled]="bgClasse == 'bg-primary-secondary'" (click)="setBg('bg-primary-secondary')" *ngIf="logedIn" class="bg-primary-secondary">
+              bg
+            </ion-button>
+            <ion-button size="small" [disabled]="bgClasse == 'bg-primary-tertiary'" (click)="setBg('bg-primary-tertiary')" *ngIf="logedIn" class="bg-primary-tertiary">
+              bg
+            </ion-button>
+            <ion-button size="small" [disabled]="bgClasse == 'bg-tertiary-primary'" (click)="setBg('bg-tertiary-primary')" *ngIf="logedIn" class="bg-tertiary-primary">
+              bg
+            </ion-button>
+            <ion-button size="small" [disabled]="bgClasse == 'bg-transparent'" (click)="setBg('bg-transparent')" *ngIf="logedIn" class="bg-transparent">
+              bg
+            </ion-button>
+            <ion-button size="small" [disabled]="bgClasse == 'bg-code'" (click)="setBg('bg-code')" *ngIf="logedIn" class="bg-code">
+              bg
+            </ion-button>
+            <ion-button size="small" [disabled]="bgClasse == 'bg-light-medium'" (click)="setBg('bg-light-medium')" *ngIf="logedIn" class="bg-light-medium">
+              bg
+            </ion-button>
+            <ion-button size="small" [disabled]="bgClasse == 'bg-img'" (click)="setBg('bg-img')" *ngIf="logedIn" class="bg-img">
+              bg
+            </ion-button>
+          </div>
           <!-- <ion-button color="primary" fill="clear" (click)="navCtrl.navigateForward('my-gifts');closeSideMenu();" *ngIf="logedIn">
             <ion-icon slot="start" name="gift"></ion-icon>
             Mes cadeaux
-          </ion-button> -->
-          <!-- <ion-button color="primary" fill="clear" (click)="navCtrl.navigateForward('selections-autorise');closeSideMenu();" *ngIf="logedIn">
+          </ion-button>
+          <ion-button color="primary" fill="clear" (click)="navCtrl.navigateForward('selections-autorise');closeSideMenu();" *ngIf="logedIn">
             Selections des autorisés
           </ion-button> -->
           <ion-item *ngIf="logedIn">

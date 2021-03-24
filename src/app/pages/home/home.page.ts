@@ -5,7 +5,7 @@ import { UserDataService } from '../../services/user-data/user-data.service';
 import { GoogleAnalytics } from '@ionic-native/google-analytics/ngx';
 import { EventLoggerService } from '../../services/event-logger/event-logger.service';
 import { SettingsService } from '../../services/settings/settings.service';
-import { Platform, AlertController, NavController, ModalController, IonSelect, IonSlides, LoadingController } from '@ionic/angular';
+import { Platform, AlertController, NavController, ModalController, IonSelect, IonSlides, LoadingController, PopoverController } from '@ionic/angular';
 import { ServerSelectPage } from '../../modals/server-select/server-select.page';
 import { ExamSelectPage } from '../../modals/exam-select/exam-select.page';
 import { ClassSelectPage } from '../../modals/class-select/class-select.page';
@@ -14,6 +14,7 @@ import { Storage } from '@ionic/storage';
 import { ChatService } from 'src/app/services/chat/chat.service';
 import { CoursService } from 'src/app/services/cours/cours.service';
 import { CoachService } from 'src/app/services/coach/coach.service';
+import { CoachDetailsComponent } from 'src/app/components/coach-details/coach-details.component';
 
 @Component({
   selector: 'app-home',
@@ -54,7 +55,9 @@ export class HomePage implements OnInit {
   public coachs:any[] = [];
   public courses: any[] = [];
   public octicoin: number = null;
+  public bgClasse = "bg-img";
 
+  public coursesType: "cours"|"exos"|""|"exams" = "";
   public slidesOpt: any = {
     slidesPerView: 2.5,
     spaceBetween: -15,
@@ -163,6 +166,10 @@ export class HomePage implements OnInit {
     // console.log(event);
     this.slider.slideNext()
   }
+  segmentChanged(event: any){
+    this.coursesType = event.target.value;
+    this.getListCoursExos(null, true);
+  }
   logScrollEnd(){
     console.log("scroll end");
   }
@@ -180,15 +187,18 @@ export class HomePage implements OnInit {
   public msgAccueil: any;
   autreContent: any;
 
-  constructor(private platform: Platform, private alertCtrl: AlertController, 
+  constructor(private popoverController: PopoverController,private platform: Platform, private alertCtrl: AlertController, 
     private ngZone: NgZone, private conection: Network, 
     private api: ApiService, private apiSchool: ApiService, public navCtrl: NavController, 
     private modalCtrl:ModalController, private loadingCtrl: LoadingController,
     public call:CallNumber, public userData:UserDataService, 
     public logger:EventLoggerService, public settings:SettingsService, 
-    private storage: Storage, private chatService: ChatService, private coursService: CoursService, private coachService: CoachService) {
+    private storage: Storage, private chatService: ChatService, private coursService: CoursService, 
+    private coachService: CoachService) {
 
     this.platform.ready().then(() => {
+      //récuperation du background
+      this.settings.getBackGround().then(bg => this.bgClasse = bg);
       this.settings.getPremium().then((data)=>{
         this.premium = data;
       })
@@ -342,6 +352,16 @@ export class HomePage implements OnInit {
     // this.lecture("Direct");
   }
 
+  async presentPopover(ev: any, obj: any) {
+    const popover = await this.popoverController.create({
+      component: CoachDetailsComponent,
+      cssClass: 'coach-details',
+      event: ev,
+      translucent: true,
+      componentProps: obj,
+    });
+    return await popover.present();
+  }
   public defaultImg(element, fallback = "assets/img/default-user.png") {
     element.src = fallback;
   }
@@ -883,6 +903,9 @@ export class HomePage implements OnInit {
         event.target.complete();
     })
   }
+  getListTemplate(){
+    return this.courses.filter(c => c.type == this.coursesType || this.coursesType == '');
+  }
   public getListCoursExos(event, vider: boolean = false){
     // this.coursService.getListCoaching("cours", this.courses.length/2).then((data)=>{
     //   try {
@@ -895,12 +918,14 @@ export class HomePage implements OnInit {
     //     console.log({cours:data.data});
     //   }
     // });
+    if(this.coursesType == "exams")
+      return;
     this.storage.get("leconsExos").then((data) => {
       this.courses = [...this.courses,...data];
     })
 
     let offset: number = event != null ? this.courses.length : 0
-    this.coursService.getListCoaching("", offset).then((data)=>{
+    this.coursService.getListCoaching(this.coursesType, offset).then((data)=>{
       try {
         const json = JSON.parse(data.data);
         console.log({exo:json});
@@ -915,11 +940,17 @@ export class HomePage implements OnInit {
         console.error(error);
         console.log(data.data);
       }
+    }, (error) => {
+      console.log("error on loading courses...");
+      console.error(error);
+      
     }).finally(()=>{
       if(event != null)
       event.target.complete()
+
     });
   }
+
   async validerExo(item){
     console.log({iiittteeeeeeeeem:item});
     let l = await this.loadingCtrl.create({

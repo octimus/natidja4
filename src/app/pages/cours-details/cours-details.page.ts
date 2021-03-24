@@ -38,21 +38,24 @@ export class CoursDetailsPage implements OnInit {
       }
       console.log({item:this.item});
       
-      let a = this.item.url.split('.');
-      let ext = a[a.length - 1];
-
-      let extensionPhotoArray: Array<string> = ["jpg", "png", "jpeg", "gif", "bmp"];
-      let extensionVideoArray: Array<string> = ["mp4", "avi", "MPEG-4", "mov"];
-
-      if(extensionPhotoArray.includes(ext)){
-        this.type = "photo";
-      }
-      else if(extensionVideoArray.includes(ext)){
-        this.type = "video";
-      }
-      else
+      if(typeof(this.item.url) != "undefined")
       {
-        this.type = "autre";
+        let a = this.item.url.split('.');
+        let ext = a[a.length - 1];
+  
+        let extensionPhotoArray: Array<string> = ["jpg", "png", "jpeg", "gif", "bmp"];
+        let extensionVideoArray: Array<string> = ["mp4", "avi", "MPEG-4", "mov"];
+  
+        if(extensionPhotoArray.includes(ext)){
+          this.type = "photo";
+        }
+        else if(extensionVideoArray.includes(ext)){
+          this.type = "video";
+        }
+        else
+        {
+          this.type = "autre";
+        }
       }
       this.load();
     });
@@ -74,6 +77,9 @@ export class CoursDetailsPage implements OnInit {
         this.userProfile.userId = reponse;
       })
     })
+  }
+  lineCount(str: string){
+    return str.split(/\r\n|\n|\r/).length;
   }
   async validerExo(){
     let l = await this.loadingController.create({

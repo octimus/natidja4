@@ -138,11 +138,24 @@ export class ApiService {
     {
       let url = method != "bac/action.php" ? this.api_url : this.api_url_alt;
       let backThen = this.http.post(url+method, params, entetes);
-      return from(backThen);
+      let r: Observable<any> = from(backThen);
+      r.subscribe(x => console.log(x), err => {
+        if(err == "cordova_not_available"){
+          this.native = false;
+          this.postData(method, params, entetes);
+        }
+      });
+      return r;
+
     }
     else
     {
-      return this.httpClient.post(this.api_url+method, params, {});
+      let r: Observable<any> = this.httpClient.post(this.api_url+method, params, {});
+      r.subscribe(x => console.warn(x), err => {
+        console.log("rrrrrrrrrrrrrrrrrrrrr")
+        console.log(err);
+      })
+      return r;
     }
   }
   public postData2(method, params, entetes: {} = this.entete): Observable<any>

@@ -17,6 +17,11 @@ ion-menu.md ion-content {
   --padding-bottom: 20px;
 }
 
+.glass-morphism {
+  background: rgba(255, 255, 255, .5);
+  --background: rgba(255, 255, 255, .5);
+  backdrop-filter: blur(6px);
+}
 ion-menu.md ion-list {
   padding: 20px 0;
 }

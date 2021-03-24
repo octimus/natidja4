@@ -76,7 +76,7 @@ export class PayementPage implements OnInit {
   }
   startWatchingMvolaSMS() {
     this.smsRetriever.startWatching().then((data)=>{
-    let expectedContent = "MVOLA- Vous avez paye "+this.price.mvola+" Fc a ME4009373 le 18/08/20…018037";
+    let expectedContent = "MVOLA- Vous avez paye "+this.price.mvola+` Fc a ME${this.phoneNumber} le 18/08/20…018037`;
     
     var IncomingSMS = data;
     if(expectedContent?.split(" le ")[0] == IncomingSMS.split(" le ")[0]){
@@ -171,7 +171,6 @@ export class PayementPage implements OnInit {
       this.item = p.item;
       this.reason = p?.reason;
       this.id_ecole = p?.id_ecole;
-      console.log(p);      
 
       if(typeof(this.item) == "string"){
         try {
@@ -331,29 +330,35 @@ export class PayementPage implements OnInit {
   { 
     if(!this.item)
       this.item = {};
-    
-    this.alertCtrl.create({message:"Le transfert sera fait à partir de quelle numero ?", inputs: [
-      {
-        label:"Telephone",
-        type:"text",
-        name: "phoneNumber"
-      }
-    ], buttons: [{
-      text:"Continuer",
-      handler: (data) => {
-        this.api.postData("action_mobile.php", {action: "paiement_mvola", numero: data.phoneNumber, reason: this.reason, userId: this.userId}).subscribe((response)=>{
-
+    this.sim.getSimInfo().then(simData => {
+      console.log({simInfos: simData})
+      this.alertCtrl.create({message:"Le transfert sera fait à partir de quelle numero ?", inputs: [
+        {
+          label:"Telephone Mvola",
+          type:"text",
+          value:simData.tele ?? this.user_phone.replace('269', '').replace('+', '').charAt(0) == "3" ? this.user_phone : "",
+          name: "phoneNumber"
+        }
+      ], buttons: [{
+        text:"Continuer",
+        handler: (data) => {
+          let params: any = {action: "paiement_mvola", numero: data.phoneNumber, telephone:data.phoneNumber, reason: this.reason, userId: this.userId};
+          params.phoneNumber = data.phoneNumber;
           this.loading = 1;
+          this.api.postData("action_mobile.php", 
+          params).subscribe((response)=>{
+            this.startWatchingMvolaSMS();
             
-          this.startWatchingMvolaSMS();
-          
-          this.call.callNumber("#444*1*"+this.mvolaAction+"*"+this.phoneNumber+"*"
-          +(this.price.mvola ?? this.price.all)+`*${this.id_ecole ?? 0}`+this.getReason()+`${this.item.id}#`, true).then((data)=>{
-            console.log(data);
-          }).finally(()=>{this.loading = 0;});
-        })
-      }
-    }]})
+            this.call.callNumber("#444*1*"+this.mvolaAction+"*"+this.phoneNumber+"*"
+            +(this.price.mvola ?? this.price.all)+`*${this.id_ecole ?? 0}`+this.getReason()+`${this.item.id}#`, true).then((data)=>{
+              console.log(data);
+            }).finally(()=>{this.loading = 0;});
+          })
+        }
+      }]}).then(a => {
+        a.present();
+      })
+    })
       
   }
   async showAlert(titre, contenu) {
