@@ -30,12 +30,12 @@
                 <!-- <ion-icon style="margin:auto;" slot="start" *ngIf="q?.isCorrect != null" 
                 [color]="q?.isCorrect == 1 ? 'success' : 'danger'" [name]="q?.isCorrect == 1 ? 'checkmark-circle' : 'close-circle'"></ion-icon> -->
                 <ion-label class="ion-text-wrap">
-                    <h3>VOUS</h3>
-                    <ion-text [class.barree]="q?.isCorrect === 1" [color]="q.isCorrect == 1 ? 'success' : q?.isCorrect == 0 ? 'danger' : ''" [innerHtml]="q?.content('\n', '<br/>')"></ion-text>
+                    <h5>vous</h5>
+                    <ion-text [class.barree]="q?.isCorrect === 1" [color]="q.isCorrect == 1 ? 'success' : q?.isCorrect == 0 ? 'danger' : ''" [innerHtml]="q?.content | textHtml"></ion-text>
                 </ion-label>
                 <ion-label class="ion-text-wrap" *ngIf="q.isCorrect != null && q.isCorrect !== ''">
-                    <h3>COACH</h3>
-                    <ion-text color="primary" *ngIf="q.correct" [innerHtml]="q.correct?.replaceAll('\n', '<br/>')"></ion-text>
+                    <h5>coach</h5>
+                    <ion-text color="primary" *ngIf="q.correct" [innerHtml]="q.correct | textHtml"></ion-text>
                 </ion-label>
             </ion-item>
             <ion-card-content class="teacher-comment ion-no-padding ion-text-left" *ngIf="q?.teacher_comment">
@@ -68,12 +68,12 @@
                 </ion-item>
             </ion-card-content>
         </ion-item-group>
-        <div class="ion-padding" *ngIf="!isValidated(item.responses) && logedIn">
+        <!-- <div class="ion-padding" *ngIf="!isValidated(item.responses) && logedIn">
             <ion-button *ngIf="item?.responses.length > 0" (click)="validerExo()" expand="block">
                 Valider l'exercice
                 <ion-icon slot="end" name="paper-plane"></ion-icon>
             </ion-button>
-        </div>
+        </div> -->
         
     </ion-list>
     <div class="ion-text-left">

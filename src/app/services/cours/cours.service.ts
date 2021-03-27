@@ -22,7 +22,7 @@ export class CoursService {
   async sendResponse(response:string, question:any): Promise<any>{
     let telephone = await this.userData.getTelephone();
     let userId = await this.userData.getId();
-    return this.api.postData("action_mobile.php", {"action": "send_response", "telephone": telephone, eleve:userId, content:response, question:question.question, exo:question.exo}).toPromise();
+    return this.api.postData("action_mobile.php", {"action": "send_response", "telephone": telephone, eleve:userId, content:response, question:question.question, exo:question.exo, auto_correct:question?.auto_correct}).toPromise();
   }
   async validerExo(id:number): Promise<any>{
     let telephone = await this.userData.getTelephone();

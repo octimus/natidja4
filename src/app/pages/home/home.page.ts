@@ -67,7 +67,7 @@ export class HomePage implements OnInit {
       stretch: 0,
       depth: 100,
       modifier: 1,
-      slideShadows: true,
+      slideShadows: false,
     },
     on: {
       beforeInit() {
@@ -157,14 +157,21 @@ export class HomePage implements OnInit {
     // loop:true,
     slidesPerView: 1,
   };
+  scrollTopValue: any;
 
-  logScrollStart(){
-    console.log("scroll start");
+  logScrollStart(event){
     
   }
   logScrolling(event){
-    // console.log(event);
-    this.slider.slideNext()
+    // console.log(event.detail);
+    if(this.scrollTopValue < event.detail.scrollTop)
+    {
+      this.slider.slideNext()
+    }
+    else{
+      this.slider.slidePrev()
+    }
+    this.scrollTopValue = event.detail.scrollTop;
   }
   segmentChanged(event: any){
     this.coursesType = event.target.value;
@@ -920,11 +927,13 @@ export class HomePage implements OnInit {
     // });
     if(this.coursesType == "exams")
       return;
-    this.storage.get("leconsExos").then((data) => {
-      this.courses = [...this.courses,...data];
-    })
-
-    let offset: number = event != null ? this.courses.length : 0
+      
+      let offset: number = event != null ? this.courses.length : 0
+      if(offset == 0){
+        this.storage.get("leconsExos").then((data) => {
+          this.courses = [...this.courses,...data];
+        })
+      }
     this.coursService.getListCoaching(this.coursesType, offset).then((data)=>{
       try {
         const json = JSON.parse(data.data);
@@ -952,7 +961,7 @@ export class HomePage implements OnInit {
   }
 
   async validerExo(item){
-    console.log({iiittteeeeeeeeem:item});
+    // console.log({iiittteeeeeeeeem:item});
     let l = await this.loadingCtrl.create({
       message:"Validation..."
     });
@@ -983,7 +992,8 @@ export class HomePage implements OnInit {
   }
   public async sendResponse(q, elt: any, last=0, item: any = {}){
     // console.log(slide);
-    if(q?.isCorrect != null && last == 0){
+    console.log(q)
+    if(q?.validated_time != null){
       let slides: IonSlides = elt.parentNode.parentNode.parentNode.parentNode.parentNode;
       slides.getActiveIndex().then(async index=>{
         let slidesLength: number = await slides.length()
@@ -1003,8 +1013,11 @@ export class HomePage implements OnInit {
       })
       return;
     }
-    q.loading = true;
     let rep = elt.parentNode.querySelector('ion-textarea, ion-radio-group').value;
+    if(rep?.length < 1){
+      return;
+    }
+    q.loading = true;
     console.log({reponse: rep});
     this.coursService.sendResponse(rep, q).then((data)=>{
       const json = JSON.parse(data.data);
@@ -1022,7 +1035,8 @@ export class HomePage implements OnInit {
     })
   }
   isValidated(items:any[]){
-    return items.filter(elt => elt.isCorrect == null).length == 0;
+    let c = items.filter(elt => elt.validated_time == null).length == 0;
+    return c;
   }
   doRefresh(event){
     this.ngOnInit(event)

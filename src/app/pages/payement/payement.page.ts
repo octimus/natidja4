@@ -332,11 +332,12 @@ export class PayementPage implements OnInit {
       this.item = {};
     this.sim.getSimInfo().then(simData => {
       console.log({simInfos: simData})
+
       this.alertCtrl.create({message:"Le transfert sera fait à partir de quelle numero ?", inputs: [
         {
           label:"Telephone Mvola",
           type:"text",
-          value:simData.tele ?? this.user_phone.replace('269', '').replace('+', '').charAt(0) == "3" ? this.user_phone : "",
+          value:simData.tele ? simData.tele : (this.user_phone.replace('269', '').replace('+', '').charAt(0) == "4" ? this.user_phone : ""),
           name: "phoneNumber"
         }
       ], buttons: [{

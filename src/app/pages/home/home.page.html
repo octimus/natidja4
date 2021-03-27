@@ -43,7 +43,7 @@
 
 <ion-content [class]="'ion-text-center'+' '+bgClasse"
 [scrollEvents]="true"
-(ionScrollStart)="logScrollStart()"
+(ionScrollStart)="logScrollStart($event)"
 (ionScroll)="logScrolling($event)"
 (ionScrollEnd)="logScrollEnd()" >
 
@@ -58,7 +58,7 @@
         <ion-slides mode="ios" #slider pager="false" scrollbar="false" [options]="slidesOpt" class="ion-no-padding coach-slides">
             <ion-slide *ngFor="let item of coachs" class="ion-no-padding" 
             (click)="item.validity=7;navCtrl.navigateForward('payement', {queryParams:{item:item, reason: 'coaching'}});" >
-                <ion-card style="height: 200px;" class="ion-text-left">
+                <ion-card style="height: 28vh;" class="ion-text-left">
                     <img [src]="item.photo" />
                     <ion-card-header class="ion-no-padding" style="padding: 8px;">
                         <span>{{item.nom_matiere}}</span><br>
@@ -136,7 +136,7 @@
     <ion-card-header>
         <ion-card-title>
             <a class="circle" (click)="openModalExam(1)" *ngIf="examen != 'AUTRES'">
-                <img src='../../../assets/baaaac.png' style="width: 80%;;" *ngIf="examen=='BAC'" alt="{{userProfile.photo}}" />
+                <img src='../../../assets/baaaac.png' style="max-width: 65%;" *ngIf="examen=='BAC'" alt="{{userProfile.photo}}" />
                 <img src='../../../assets/student-girl.svg' *ngIf="examen=='BEPC'" alt="{{userProfile.photo}}" />
                 <img src='../../../assets/sixieme.png' *ngIf="examen=='SIXIEME'" alt="{{userProfile.photo}}" />
                 <!-- <ion-icon color="fourth" name="camera"></ion-icon> -->
@@ -161,7 +161,7 @@
                     </ion-select-option>
                 </ion-select>
             </ion-item>
-            <ion-chip class="ion-text-center" *ngFor="let item of iles" (click)="ile = item;" [outline]="item != ile" style="width:36%;" color="primary">
+            <ion-chip class="ion-text-center" *ngFor="let item of iles" (click)="ile = item;" [outline]="item != ile" style="width:30%;" color="primary">
                 <!-- <ion-icon name="checkmark-outline" size="small" *ngIf="item == ile"></ion-icon> -->
                 <ion-label size="small">{{item}}</ion-label>
             </ion-chip>
@@ -201,6 +201,12 @@
             <ion-badge slot="end" color="danger" *ngIf="item.decision!='Admis' && item.decision != 'Autorise'">{{item.decision}}</ion-badge>
             </ion-item>
         </ion-list>
+        <ion-infinite-scroll threshold="10px" (ionInfinite)="filtrer(false, $event)" *ngIf="nbrResultat > etudiants.length">
+            <ion-infinite-scroll-content
+              loadingSpinner="bubbles"
+              loadingText="Chargement...">
+            </ion-infinite-scroll-content>
+        </ion-infinite-scroll>
     </ion-card-content>
   </ion-card>
 
@@ -287,14 +293,14 @@
                             {{q.question}}
                         </h4>
                         <ion-item class="ion-no-padding"  *ngIf="logedIn">
-                            <ion-textarea *ngIf="q.others.length <= 1" name="response" [value]="q.content" type="text" 
-                            placeholder="Saisissez votre réponse ici" [disabled]="q?.isCorrect != null" [class.hidden]="q?.isCorrect != null"></ion-textarea>
+                            <ion-textarea *ngIf="q.others?.length <= 1" name="response" [value]="q.content" type="text" 
+                            placeholder="Saisissez votre réponse ici" [disabled]="q?.validated_time != null" [class.hidden]="q?.validated_time != null"></ion-textarea>
 
-                            <ion-text slot="start" [color]="q.isCorrect == true ? 'primary' : 'false'" *ngIf="q?.isCorrect != null">
+                            <ion-text slot="start" [color]="q.isCorrect == true ? 'primary' : 'false'" *ngIf="q?.validated_time != null">
                                 {{q?.content}}
                             </ion-text>
 
-                            <ion-radio-group *ngIf="q.others.length > 1" name="response" [value]="q.content" [class.hidden]="q?.isCorrect != null">
+                            <ion-radio-group *ngIf="q.others?.length > 1" name="response" [value]="q.content" [class.hidden]="q?.validated_time != null">
                                 <ion-item *ngFor="let o of q.others">
                                     <ion-label class="ion-text-wrap">{{o.content}}</ion-label>
                                     <ion-radio [value]="o.content"></ion-radio>
@@ -308,7 +314,7 @@
                                 <ion-icon name="heart" size="small" color="danger"></ion-icon><br>
                             </p>
                             <ion-button [class.hidden]="q?.loading == true" (click)="sendResponse(q, $event.target)" 
-                            class="send-btn" slot="end" fill="clear" *ngIf="!isLast(item.responses, q)">
+                            class="send-btn" slot="end" fill="clear" *ngIf="!isLast(item.responses, q) || isValidated(item.responses)">
                                 <ion-icon slot="icon-only" [name]="q?.content ? 'arrow-forward-outline' : 'send'"></ion-icon>
                             </ion-button>
                             <ion-button  [class.hidden]="q?.loading == true" 
@@ -329,17 +335,11 @@
             </ion-slides>
         </ion-card-content>
     </ion-card>
-    <ion-infinite-scroll threshold="100px" (ionInfinite)="getListCoursExos($event)" *ngIf="courses.length > 0">
+    <ion-infinite-scroll threshold="100px" (ionInfinite)="getListCoursExos($event)" *ngIf="courses.length > 0 && coursesType != 'exams'">
         <ion-infinite-scroll-content
           loadingSpinner="bubbles"
           loadingText="Chargement...">
         </ion-infinite-scroll-content>
     </ion-infinite-scroll>
   </div>
-  <ion-infinite-scroll threshold="100px" (ionInfinite)="filtrer(false, $event)" *ngIf="nbrResultat > etudiants.length">
-    <ion-infinite-scroll-content
-      loadingSpinner="bubbles"
-      loadingText="Chargement...">
-    </ion-infinite-scroll-content>
-  </ion-infinite-scroll>
 </ion-content>

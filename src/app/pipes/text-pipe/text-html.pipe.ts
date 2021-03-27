@@ -10,7 +10,7 @@ export class TextHtmlPipe implements PipeTransform {
     var Rexp =  /((http|https|ftp):\/\/[\w?=&.\/-;#~%-]+(?![\w\s?&.\/;#~%"=-]*>))/g; 
     var Rexp2 =  /\n/g;
     // Replac the RegExp content by HTML element
-    return text.replace(Rexp, "<a href='$1' target='_blank'>$1</a>").replace(Rexp2, "<br/>");
+    return text?.replace(Rexp, "<a href='$1' target='_blank'>$1</a>").replace(Rexp2, "<br/>");
   }
 
 }

@@ -16,6 +16,45 @@ ion-menu.md ion-content {
   --padding-top: 20px;
   --padding-bottom: 20px;
 }
+.custom-header{
+  width:350px;
+  height:190px;
+  // background: var(--ion-color-primary);
+  // background: linear-gradient(var(--ion-color-tertiary) 0%, var(--ion-color-primary) 100%);
+  background: rgb(69,123,157);
+  background: linear-gradient(var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%);
+  transform: rotate(-15deg);
+  border-radius: 10px 10px 10px 50px;
+  margin-left:-5vw;
+  margin-top: -12vh;
+  margin-bottom: 10vh;
+  box-shadow: 0px 1px 10px rgba(98, 140, 255, 0.5);
+
+}
+.header-content{
+  position: absolute;
+  top: 30px;
+  left: 15px;
+  display: flex;
+  align-items: center;
+  img{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 7px solid #5887a785;
+    margin:5px;
+  }
+  h2{
+    font-weight: 300;
+    color: #ffffff;
+  }
+  p{
+    font-size: 14px;
+    color: #e4e4e4;
+    font-weight: 100;
+    letter-spacing: .4px;
+  }
+}
 
 .glass-morphism {
   background: rgba(255, 255, 255, .5);

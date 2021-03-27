@@ -2,17 +2,23 @@
   <ion-split-pane contentId="main-content">
     <ion-menu contentId="main-content" type="overlay">
       <ion-content class="ion-padding-top">
+        <div class="custom-header">
+        </div>
+        <div class="header-content" *ngIf="logedIn">
+          <img [src]="userProfile.photo" alt="" (click)="navCtrl.navigateForward('profile');closeSideMenu();">
+          <ion-label  (click)="navCtrl.navigateForward('profile');closeSideMenu();">
+            <h2>{{userProfile.displayName}}</h2>
+            <p>
+              {{userProfile.domicile}}
+            </p>
+          </ion-label>
+        </div>
         <ion-list id="inbox-list">
-          <!-- <ion-list-header>
-            <a class="circle" (click)="openModalExam(1)" *ngIf="userProfile.photo != 'default.png'">
-              <img src="{{userProfile.photo}}" *ngIf="examen=='BAC'" (error)="defaultImg($event.target, 'assets/student-bac.svg')" alt="{{userProfile.photo}}" />
-              <img src="{{userProfile.photo}}" *ngIf="examen=='BEPC'" (error)="defaultImg($event.target, 'assets/student-girl.svg')" alt="{{userProfile.photo}}" />
-              <img src="{{userProfile.photo}}" *ngIf="examen=='SIXIEME'" (error)="defaultImg($event.target, 'assets/student-boy.svg')" alt="{{userProfile.photo}}" />
-          </a>
-            {{userProfile.displayName}}
-          </ion-list-header> -->
+          <ion-list-header>
+            
+            
+          </ion-list-header>
           <!-- <ion-note>hi@ionicframework.com</ion-note> -->
-
           <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
             <ion-item (click)="selectedIndex = i" routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" [class.selected]="selectedIndex == i">
               <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
@@ -36,6 +42,9 @@
             </ion-button>
           </ion-item>
           <div class="ion-padding">
+            <ion-button size="small" [disabled]="bgClasse == ''" (click)="setBg('')" *ngIf="logedIn" color="light">
+              bg
+            </ion-button>
             <ion-button size="small" [disabled]="bgClasse == 'bg-light'" (click)="setBg('bg-light')" *ngIf="logedIn" class="bg-light">
               bg
             </ion-button>
