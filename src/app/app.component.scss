@@ -18,11 +18,12 @@ ion-menu.md ion-content {
 }
 .custom-header{
   width:350px;
-  height:190px;
+  height:30vh;
   // background: var(--ion-color-primary);
   // background: linear-gradient(var(--ion-color-tertiary) 0%, var(--ion-color-primary) 100%);
   background: rgb(69,123,157);
-  background: linear-gradient(var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%);
+  // background: linear-gradient(var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%);
+  background: linear-gradient(to bottom, #a8cfdb, #457b9d);
   transform: rotate(-15deg);
   border-radius: 10px 10px 10px 50px;
   margin-left:-5vw;

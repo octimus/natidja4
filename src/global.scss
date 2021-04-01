@@ -45,6 +45,10 @@ body {
     background: linear-gradient(0deg,rgba(168,218,219,1) 80%, rgba(69,123,157,1) 100%);
 }
 
+.courses ion-card .rtl{
+    direction:rtl;
+}
+
 .bg-transparent{
     --background: rgba(255,255,255, 0);
 }

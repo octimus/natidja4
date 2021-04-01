@@ -206,21 +206,35 @@ export class CoursDetailsPage implements OnInit {
   openPage(page: string){
     return;
   }
-  public load()
+  public load(event = null)
   {
+    if(!this.item.canSeeComment){
+      return;
+    }
+
     this.api.postData("bac/action.php",
-    {action:"comments_json", cours:this.item.id, userId: this.userProfile.userId}, {}).subscribe((response)=>{
-       console.log(response.data)
-      // this.loader.dismiss();  
-      let resultat;
-      response.data = (response.data).trim();
-      if(response.data=="")
+    {action:"comments_json", cours:this.item.id, userId: this.userProfile.userId, offset: this.comments?.length}, {}).subscribe((response)=>{
+      if(event)
+        event.target.complete();
+        // this.loader.dismiss();  
+        let resultat;
+        response.data = (response.data).trim();
+        if(response.data=="")
         return false;
         
-      try
-      {
-        resultat = JSON.parse(response.data);
-        this.comments = resultat.data;
+        try
+        {
+          resultat = JSON.parse(response.data);
+          console.log(resultat)
+        if(this.comments.length == 0)
+          this.comments = resultat.data;
+        else
+        {
+          if(resultat?.data)
+          {  
+            this.comments = [...this.comments, ...resultat.data];
+          }
+        }
         // alert(JSON.stringify(this.comments))
       }catch(err)
       {
@@ -229,28 +243,41 @@ export class CoursDetailsPage implements OnInit {
       }
 
      }, (err)=>{
+      if(event)
+        event.target.complete();
        this.alertCtrl.create({
         header: "Echec de connexion",
         subHeader: JSON.stringify(err),
         buttons: ["ok"]
       }).then(a => a.present());
       
-     })
+     });
   }
 
   public toggleResponse(comment)
   {
+    this.comments.map((c)=>{
+      if(c != comment)
+        c.openResponse = 0;
+    })
     if(comment.openResponse == 0)
       comment.openResponse = 1;
     else
       comment.openResponse = 0;
   }
-  public loadResponses(item)
+  public loadResponses(item, refresh: any = 0)
   {
-    item.responses = [];
+    if(refresh == 0)
+      item.responses = [];
+    this.comments.map(elem => {
+      clearTimeout(elem.responses_open);
+      elem.responses_open = null;
+    })
+
+    let offset = item?.responses?.length ? item.responses?.length : 0;
 
     this.api.postData("bac/action.php",
-      { action: "responses_comment_json", commentId:item.id }, {})
+      { action: "responses_comment_json", commentId:item.id, offset: offset }, {})
       .subscribe(response => {
 
         try {
@@ -258,19 +285,29 @@ export class CoursDetailsPage implements OnInit {
           let dat = response.data.trim();
 
           let data = JSON.parse(dat);
-          item.responses = data.data; 
+          if(refresh == 0)
+            item.responses = data.data;
+          else
+          {
+            item.responses = [...item.responses, ...data.data];
+          }
 
         }
         catch (error) {
-          if(response.data)
+          if(response.data && refresh == 0)
           {
             this.alertCtrl.create({subHeader:'Erreur', message:response.data, buttons: ["OK"]}).then(a => a.present());
           }
         }
       }, (error) => {
+        if(refresh == 0)
+          this.alertCtrl.create({subHeader:"Problème de connexion", message:JSON.stringify(error), buttons: ["OK"]}).then(a => a.present());
+      }
+    );
 
-        this.alertCtrl.create({subHeader:"Problème de connexion", message:JSON.stringify(error), buttons: ["OK"]}).then(a => a.present());
-      });
+    item.responses_open = setTimeout(() => {
+      this.loadResponses(item, 1);
+    }, 10000);
   }
 
   public send()

@@ -9,13 +9,13 @@
 
 <ion-content>
     <ion-card *ngIf="reason == 'coaching'">
-        <img [src]="item.photo" alt="" srcset="">
+        <!-- <img [src]="item.photo" alt="" srcset=""> -->
         <ion-card-header>
-            <ion-card-subtitle>{{item.nom_matiere+' - '+item.nom_classe}}</ion-card-subtitle>
+            <!-- <ion-card-subtitle>{{item.nom_matiere+' - '+item.nom_classe}}</ion-card-subtitle> -->
             <ion-card-title>{{item.nom}}</ion-card-title>
-            <ion-card-subtitle>{{item.prix_hebdo}} KMF / Semaine</ion-card-subtitle>
+            <ion-card-subtitle>Abonnement</ion-card-subtitle>
         </ion-card-header>
-        <ion-card-content [innerHtml]="item.slogan ? item.slogan.replaceAll('\n', '<br/>') : '' | textHtml"></ion-card-content>
+        <!-- <ion-card-content [innerHtml]="item.slogan ? item.slogan.replaceAll('\n', '<br/>') : '' | textHtml"></ion-card-content> -->
     </ion-card>
   <ion-card *ngIf="price != null && paymentText" class="ion-text-center ion-padding">
     <strong>
@@ -31,6 +31,22 @@
       <ion-button (click)="navCtrl.back();" expand="block" fill="outline" shape="round">
           Retour
       </ion-button>
+  </ion-card>
+  <ion-card class=" ion-text-center ion-padding" *ngIf="notPayed && price.octicoin">
+    <!-- <a [href]="paymentLink">{{paymentLink}}</a> -->
+    <div class="ion-text-center">
+    </div>
+    <h3>{{price.octicoin}} KMF</h3>
+    <p *ngIf="loading2" class="loader" class="ion-text-center" style="width:100px;margin:auto;">
+        <!-- <ion-icon name="heart" color="danger" meddium></ion-icon> -->
+        <img src="assets/icon/loader.svg" />
+    </p>
+    <div>
+        <ion-button color="third" shape="round" fill="outline" (click)="payByOcticoinsAbonnementCoach();">
+        <ion-icon slot="start" name="card"></ion-icon>
+        Payer
+        </ion-button>
+    </div>
   </ion-card>
   <ion-card class=" ion-text-center ion-padding" *ngIf="notPayed && price.mvola">
     <div>

@@ -15,6 +15,7 @@ import { ChatService } from 'src/app/services/chat/chat.service';
 import { CoursService } from 'src/app/services/cours/cours.service';
 import { CoachService } from 'src/app/services/coach/coach.service';
 import { CoachDetailsComponent } from 'src/app/components/coach-details/coach-details.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -201,8 +202,9 @@ export class HomePage implements OnInit {
     public call:CallNumber, public userData:UserDataService, 
     public logger:EventLoggerService, public settings:SettingsService, 
     private storage: Storage, private chatService: ChatService, private coursService: CoursService, 
-    private coachService: CoachService) {
+    private coachService: CoachService, private route: ActivatedRoute) {
 
+      // this.coachs.push({nom: "testeur", prix_tarzan: 250, prix_technicien: 500, id: 2, slogan:"lorem ipsumm dolor sumet", });
     this.platform.ready().then(() => {
       //récuperation du background
       this.settings.getBackGround().then(bg => this.bgClasse = bg);
@@ -357,6 +359,12 @@ export class HomePage implements OnInit {
     // this.etudiants = JSON.parse(JSON.stringify(this.etudiantsOriginal));
 
     // this.lecture("Direct");
+
+    this.route.queryParams.forEach(d => {
+      // alert(JSON.stringify(d))
+      if(d?.refresh)
+        this.doRefresh(null);
+    })
   }
 
   async presentPopover(ev: any, obj: any) {
@@ -908,6 +916,8 @@ export class HomePage implements OnInit {
     }).finally(()=>{
       if(event)
         event.target.complete();
+
+      this.charger();
     })
   }
   getListTemplate(){

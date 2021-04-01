@@ -132,7 +132,7 @@ export class ApiService {
   public postData(method, params, entetes: {} = this.entete): Observable<any>
   {
     params.device = this.device;
-    params.appVersion = "3.4.1";
+    params.appVersion = "3.6.6";
 
     if(this.native)
     {

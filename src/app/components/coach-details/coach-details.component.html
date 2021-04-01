@@ -2,10 +2,12 @@
   <img [src]="photo" style="max-height: 30vh;"/>
   <h5>{{nom}}</h5>
   <ion-chip color="primary" mode="ios" *ngIf="prix_hebdo" outline="true">
-    <ion-label *ngIf="prix_hebdo">{{prix_hebdo}} FC</ion-label>
-  </ion-chip>
-  <p [innerHtml]="slogan?.replace('\n', '<br/>')"></p>
-  <ion-button *ngIf="id" expand="block" fill="clear" shape="round">
-    s'abonner
+    <ion-label *ngIf="prix_hebdo">{{nom_matiere}} - {{classe}}</ion-label>
+  </ion-chip><br>
+  <small>
+    <ion-note [innerHtml]="slogan?.replace('\n', '<br/>')"></ion-note>
+  </small>
+  <ion-button *ngIf="id" expand="block" fill="clear" shape="round" (click)="navCtrl.navigateForward('coach-profile', {queryParams:coach});">
+    En savoir plus
   </ion-button>
 </div>

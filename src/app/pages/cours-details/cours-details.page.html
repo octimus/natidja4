@@ -19,7 +19,7 @@
             </ion-avatar>
             <ion-label>{{item.nom_coach}}</ion-label>
         </ion-chip>
-        <div *ngIf="item.content" [innerHtml]="item.content | textHtml"></div>
+        <div *ngIf="item.content" [innerHtml]="item.content | textHtml" class="content"></div>
     </div>
     <ion-list *ngIf="item?.responses?.length > 0">
         <ion-item-group *ngFor="let q of item?.responses">
@@ -82,7 +82,7 @@
             <ion-card-title>Questions ?</ion-card-title>
         </ion-card-header>
         <ion-card-content class="ion-text-center">
-            <form class="commentForm" *ngIf="logedIn">
+            <form class="commentForm" *ngIf="logedIn && item.canComment">
                 <div class="visitor">
                     <ion-avatar class="avatar" slot="start">
                         <img src="{{userProfile.photo}}" (error)="defaultImg($event.target)">
@@ -110,28 +110,28 @@
             <ion-button *ngIf="!logedIn" (click)="navCtrl.navigateForward('login');" class="btn-pulse" fill="solid" shape="round">
                 Avez-vous des questions ?
             </ion-button>
-            <ion-list>
-                <ion-item *ngFor="let item of comments">
+            <ion-list *ngIf="item.canSeeComment">
+                <ion-item *ngFor="let comment of comments">
                     <ion-grid fixed>
                         <ion-row>
                             <ion-col size="2">
                               <ion-avatar class="avatar ion-item-left">
-                                  <img src="{{item.senderPhoto}}" (error)="defaultImg($event.target)">
+                                  <img src="{{comment.senderPhoto}}" (error)="defaultImg($event.target)">
                               </ion-avatar>
                             </ion-col>
                             <ion-col size="10">
                               <div class="aLabel">
-                                  <h5>{{item.senderName}}</h5>
-                                  <ion-note>{{item.senderHome}}</ion-note>
+                                  <h5>{{comment.senderName}}</h5>
+                                  <ion-note>{{comment.senderHome}}</ion-note>
                               </div>
                             </ion-col>
                         </ion-row>
                         <ion-row>
                             <ion-col size="12">
                               <div class="comment" (click)="openPage('response')">
-                                  {{item.content}}
+                                  {{comment.content}}
                                   <div class="date">
-                                      <small>{{item.date | moment:''}}</small>
+                                      <small>{{comment.date | moment:''}}</small>
                                   </div>
                               </div>
                             </ion-col>
@@ -139,29 +139,29 @@
                         <ion-row>
                             <ion-col size="12">
                               <div>
-                                  <ion-button *ngIf="logedIn" (click)="toggleResponse(item)" fill="clear" size="small" class='btn-answer'>
-                                      Répondre
-                                  </ion-button>
-                                  <ion-button *ngIf="item.senderId==userProfile.userId" (click)="deleteComment(item.id)" fill="clear" color="danger" size="small" class='btn-answer'>
-                                      Supprimer
-                                  </ion-button>
-                                  <ion-button *ngIf="item.nbrReponses>0" (click)="loadResponses(item)" fill="clear" color="secondary" size="small" class='btn-answer'>
-                                      {{item.nbrReponses}} réponses
-                                  </ion-button>
-                                  <form *ngIf="logedIn && item.openResponse" class="reponseForm">
-                                    <ion-row>
-                                        <ion-col size="10">
-                                            <textarea name="commentResponse" class="comment" [(ngModel)]="comment_response" placeholder="Réponse"></textarea>
-                                        </ion-col>
-                                        <ion-col size="2">
-                                            <ion-button (click)="sendResponse(item.id)" fill="clear" class='btn-send'>
-                                                <ion-icon name="send"></ion-icon>
-                                            </ion-button>
-                                        </ion-col>
-                                    </ion-row>
-                                  </form>
-                                  <ion-list *ngIf="item.responses" class="reponseForm">
-                                    <ion-item *ngFor="let item of item.responses">
+                                <ion-button *ngIf="logedIn && item.canRespond" (click)="toggleResponse(comment)" fill="clear" size="small" class='btn-answer'>
+                                    Répondre
+                                </ion-button>
+                                <ion-button *ngIf="comment.senderId==userProfile.userId" (click)="deleteComment(comment.id)" fill="clear" color="danger" size="small" class='btn-answer'>
+                                    Supprimer
+                                </ion-button>
+                                <ion-button *ngIf="comment.nbrReponses>0 && item.canSeeResponses > 0" (click)="loadResponses(comment)" fill="clear" color="secondary" size="small" class='btn-answer'>
+                                    {{comment.nbrReponses}} réponses
+                                </ion-button>
+                                <form *ngIf="logedIn && comment?.openResponse && item.canRespond" class="reponseForm">
+                                <ion-row>
+                                    <ion-col size="10">
+                                        <textarea name="commentResponse" class="comment" [(ngModel)]="comment_response" placeholder="Réponse">{{comment.openResponse}}</textarea>
+                                    </ion-col>
+                                    <ion-col size="2">
+                                        <ion-button (click)="sendResponse(comment.id)" fill="clear" class='btn-send'>
+                                            <ion-icon name="send"></ion-icon>
+                                        </ion-button>
+                                    </ion-col>
+                                </ion-row>
+                                </form>
+                                <ion-list *ngIf="comment.responses?.length && comment.responses_open" class="reponseForm">
+                                    <ion-item *ngFor="let item of comment.responses">
                                         <ion-grid>
                                             <ion-row>
                                                 <ion-col size="3">
@@ -188,13 +188,17 @@
                                             </ion-row>
                                         </ion-grid>
                                     </ion-item>
-                                  </ion-list>
+                                </ion-list>
                               </div>
                             </ion-col>
                         </ion-row>
                     </ion-grid>
                     <hr/>
                 </ion-item>
+                <ion-infinite-scroll threshold="25%" [disabled]="true" position="bottom" (ionInfinite)="load($event)">
+                    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Chargement...">
+                    </ion-infinite-scroll-content>
+                </ion-infinite-scroll>
             </ion-list>
         </ion-card-content>
     </div>

@@ -54,10 +54,13 @@
         <ion-badge [color]="disponibility.color" class="" (click)="navCtrl.navigateForward('search', {queryParams:{etablissement:disponibility.etablissement, annee:annee, mention:disponibility.mention, examen:examen, ile:disponibility.ile}})">{{disponibility.text}}</ion-badge>
     </div>
     <!-- <app-check-list></app-check-list> -->
+    <div *ngIf="coachs.length === 0">
+        <br>
+    </div>
     <div class="ion-text-left">
         <ion-slides mode="ios" #slider pager="false" scrollbar="false" [options]="slidesOpt" class="ion-no-padding coach-slides">
             <ion-slide *ngFor="let item of coachs" class="ion-no-padding" 
-            (click)="item.validity=7;navCtrl.navigateForward('payement', {queryParams:{item:item, reason: 'coaching'}});" >
+            (click)="navCtrl.navigateForward('coach-profile', {queryParams:item});" >
                 <ion-card style="height: 28vh;" class="ion-text-left">
                     <img [src]="item.photo" />
                     <ion-card-header class="ion-no-padding" style="padding: 8px;">
@@ -136,9 +139,9 @@
     <ion-card-header>
         <ion-card-title>
             <a class="circle" (click)="openModalExam(1)" *ngIf="examen != 'AUTRES'">
-                <img src='../../../assets/baaaac.png' style="max-width: 65%;" *ngIf="examen=='BAC'" alt="{{userProfile.photo}}" />
-                <img src='../../../assets/student-girl.svg' *ngIf="examen=='BEPC'" alt="{{userProfile.photo}}" />
-                <img src='../../../assets/sixieme.png' *ngIf="examen=='SIXIEME'" alt="{{userProfile.photo}}" />
+                <img src='https://ecole.natidja.app/photos/bac.png' style="max-width: 65%;" *ngIf="examen=='BAC'" alt="{{userProfile.photo}}" />
+                <img src='https://ecole.natidja.app/photos/bepc.png' *ngIf="examen=='BEPC'" alt="{{userProfile.photo}}" />
+                <img src='https://ecole.natidja.app/photos/sixieme.png' *ngIf="examen=='SIXIEME'" alt="{{userProfile.photo}}" />
                 <!-- <ion-icon color="fourth" name="camera"></ion-icon> -->
                 <ion-button expand="block" fill="clear" shape="round" class="top-right" size="small">
                     <ion-icon name="swap-horizontal-outline" slot="icon-only" class=" btn-rotate-animation"></ion-icon>
@@ -228,7 +231,7 @@
     <div class="ion-padding ion-text-center my-kids" *ngIf="examen == 'AUTRES'">
         <div class="kid"  *ngFor="let kid of kids" (click)="openVieScolaire(kid)">
         <ion-avatar>
-            <img [src]="ecole?.url+'/photos/full/'+kid.photo" [alt]="kid.nom" onerror="this.src='assets/img/default-user.png'"/>
+            <img [src]="kid.photo" [alt]="kid.nom" onerror="this.src='assets/img/default-user.png'"/>
         </ion-avatar>
         <p>{{kid.nom + " " + kid.prenom}}</p>
         </div>
@@ -270,13 +273,14 @@
         <app-file-component [src]="item.url" [title]="item.titre" [scheme]="'dark'" alt="contenu" *ngIf="item.url"></app-file-component>
         <ion-item>
             <ion-icon [name]="item.type == 'cours' ? 'library-outline' : 'barbell-outline'" color="primary" slot="start"></ion-icon>
-            <ion-label>{{item.type == 'exos' ? 'Exercice' : 'Cours'}}</ion-label>
+            <ion-label>{{item.type == 'exos' ? 'Exercice' : 'Cours'}} {{item.coach_label_offre2}}</ion-label>
             <ion-button fill="outline" slot="end" (click)="openCours(item)">ouvrir</ion-button>
 
             <ion-avatar style="width: 32px;height:32px;" slot="end">
                 <img [src]="item.photo_coach" 
-                (click)="presentPopover($event, {photo:item.photo_coach,nom:item.nom_coach, 
-                    id:item?.id_coach, prix_hebdo:item?.coach_prix_hebdo, slogan:item.slogan})"/>
+                (click)="presentPopover($event, {photo:item.photo_coach,nom:item.nom_coach, label_offre:item.coach_label_offre,label_offre2:item.coach_label_offre2,
+                    id:item?.id_coach, prix_hebdo:item?.coach_prix_hebdo, slogan:item.slogan, 
+                    prix_tarzan:item.coach_prix_tarzan, prix_technicien: item.coach_prix_technicien, nom_matiere: item.nom, classe:item.classe})"/>
             </ion-avatar>
         </ion-item>
         <ion-card-header>

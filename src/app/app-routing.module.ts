@@ -126,6 +126,14 @@ const routes: Routes = [
   {
     path: 'cours-details',
     loadChildren: () => import('./pages/cours-details/cours-details.module').then( m => m.CoursDetailsPageModule)
+  },
+  {
+    path: 'coach-profile',
+    loadChildren: () => import('./pages/coach-profile/coach-profile.module').then( m => m.CoachProfilePageModule)
+  },
+  {
+    path: 'coach-search',
+    loadChildren: () => import('./pages/coach-search/coach-search.module').then( m => m.CoachSearchPageModule)
   }
 ];
 

@@ -49,16 +49,21 @@ export class VieScolairePage implements OnInit {
       this.userData.loader.present();
     })
     this.userData.getTelephone().then(t=>{
-      this.apiSchool.postData("action_mobile.php", {action:"json_vie_scolaire", eleve:this.item.id, parent: t}).subscribe((data)=>{
+      this.apiSchool.postData("action_mobile.php", {action:"json_vie_scolaire", eleve:this.item.id, parent: t, ecole: this.item.ecole}).subscribe((data)=>{
         this.userData.loader.dismiss();
         
         if(true)
         {
-          this.vieScolaire = JSON.parse(data.data);
-          let notifs = this.vieScolaire.notifications;
-          this.coursCount = notifs?.cours;
-          this.notesCount = notifs?.notes;
-          this.storage.set(`vieScolaire${this.item.id}`, this.vieScolaire);
+          try {
+            
+            this.vieScolaire = JSON.parse(data.data);
+            let notifs = this.vieScolaire.notifications;
+            this.coursCount = notifs?.cours;
+            this.notesCount = notifs?.notes;
+            this.storage.set(`vieScolaire${this.item.id}`, this.vieScolaire);
+          } catch (error) {
+            alert(data.data)
+          }
         }
       }, (err)=>{
         // this.userData.alerter("Veuillez verifier votre connexion à internet", err.error)

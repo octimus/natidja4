@@ -32,7 +32,7 @@ export class PayementPage implements OnInit {
   public a_server:any = "https://natidja.octra.io";
   public item:any = {};
   public userId:any;
-  public price:{all:number, mvola: number, ct: number, card: number} = {all:null, mvola:null, ct: null, card: null};
+  public price:{all:number, mvola: number, ct: number, card: number, octicoin: number} = {all:null, mvola:null, ct: null, card: null, octicoin:null};
   public paymentText:string = null;
   public reason:any = null;
   public demander_num:any = 0;
@@ -73,6 +73,55 @@ export class PayementPage implements OnInit {
       },
       () => { console.log('watch start failed') }
     )
+  }
+  payByOcticoinsAbonnementCoach() {
+    this.loader.present();
+
+    this.loaderCtrl.create({message: "paiement.."}).then(l => {this.loader = l, this.loader.present()});
+
+    let params = {action: "octicoins_pay_abonnement", reason: this.item.reason ?? this.reason, item:this.item, ecole:this.id_ecole, 
+    id_membre:this.userId, numero:this.item.numero ?? this.item.num ?? this.item.id, validity:this.item.validity,
+    annee: this.item.year, ile: this.item.ile, examen:this.item.exam, telephone_membre:this.user_phone};
+
+    const callBack = (data)=>{
+
+      try{
+        let json = JSON.parse(data.data);
+        if(json.msgTitle || json.msg){
+          this.alertCtrl.create({subHeader: json.msgTitle, message:json.msg, buttons:["OK"]})
+          .then((d)=>{
+            if(json.status == "ok"){
+              d.onDidDismiss().then(()=>{
+                this.navCtrl.navigateBack("home", {queryParams: {refresh: true}});
+              })
+            }
+            d.present();
+          });
+        }
+        else{
+          if(json.status == "ok"){
+            this.navCtrl.navigateBack("home");
+          }
+        }
+      }
+      catch(error){
+        alert(data.data)
+      }
+    }
+
+    if(this.reason == "coaching" || this.reason == "eca")
+    {
+      this.api.postData("action_mobile.php", params).subscribe(callBack, (error)=>{
+        console.error(error)
+        this.loader.dismiss();
+      }, () => this.loader.dismiss())
+    }
+    else
+    {
+      this.api.postData2("action_mobile.php", params).subscribe(callBack, (error)=>{
+        console.error(error)
+      }, () => this.loader.dismiss())
+    }
   }
   startWatchingMvolaSMS() {
     this.smsRetriever.startWatching().then((data)=>{
@@ -168,8 +217,13 @@ export class PayementPage implements OnInit {
     //   this.appHash = r;
     // })
     this.route.queryParams.forEach((p)=>{
-      this.item = p.item;
+      this.item = {...p.item};
       this.reason = p?.reason;
+
+      if(p.offre)
+        this.item.offre = p.offre;
+
+      this.item.validity = p.validity ?? 7;
       this.id_ecole = p?.id_ecole;
 
       if(typeof(this.item) == "string"){
@@ -185,10 +239,12 @@ export class PayementPage implements OnInit {
 
         }
       }
-      this.item.num = this.item.num ?? this.item.numero;
-      this.item.type_examen = this.item.type_examen ?? this.item.exam;
+        
+        this.item.num = this.item.num ?? this.item.numero;
+        this.item.type_examen = this.item.type_examen ?? this.item.exam;
+      
       console.info(this.item)
-
+      
       if(p.price)
         this.price = p.price;
     })
@@ -234,6 +290,7 @@ export class PayementPage implements OnInit {
           this.price.mvola = dataJSON.price_mvola;
           this.price.ct = dataJSON.price_ct;
           this.price.card = dataJSON.price_card;
+          this.price.octicoin = dataJSON.price_octicoin;
           this.ct_sms_msg = dataJSON.ct_sms_msg;
           this.ct_sms_btn_show = dataJSON.ct_sms_btn_show;
           this.ct_sms_receiver = dataJSON.ct_sms_receiver;
@@ -267,6 +324,7 @@ export class PayementPage implements OnInit {
         // this.etudiants = this.etudiantsOriginal;
       });
   }
+
   public defaultImg(element, fallback = "assets/img/mvola.png") {
     element.src = fallback;
   }

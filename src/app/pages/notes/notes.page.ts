@@ -33,7 +33,7 @@ export class NotesPage implements OnInit {
     this.load();
   }
 
-  load(){
+  async load(){
     this.storage.get("canSeeNotes").then(c => {
       if(c){
         this.canSee = c;
@@ -41,16 +41,22 @@ export class NotesPage implements OnInit {
       this.storage.get(`notes${this.item.id}`).then(n => {
         this.notes = n;
       })
-    })
-    this.api.postData("action_mobile.php", {action:"notes_json", id_etudiant:this.item.id}).subscribe(d => {
-      let json = JSON.parse(d.data);
-      this.canSee = json.status != "not payed" ? true : false;
-      this.storage.set("canSeeNotes", this.canSee);
-      if(json.status == "ok"){
-        if(JSON.stringify(this.notes) != JSON.stringify(json.data)){
-          this.notes = json;
-          this.storage.set(`notes${this.item.id}`, this.notes);
+    });
+    let ecole = await this.storage.get("school");
+    let telephone = await this.storage.get("telephone");
+    this.api.postData("action_mobile.php", {action:"notes_json", id_etudiant:this.item.id, ecole: ecole.id, parent: telephone}).subscribe(d => {
+      try {
+        let json = JSON.parse(d.data);
+        this.canSee = json.status != "not payed" ? true : false;
+        this.storage.set("canSeeNotes", this.canSee);
+        if(json.status == "ok"){
+          if(JSON.stringify(this.notes) != JSON.stringify(json.data)){
+            this.notes = json;
+            this.storage.set(`notes${this.item.id}`, this.notes);
+          }
         }
+      } catch (error) {
+        alert(d.data)
       }
     })
   }
