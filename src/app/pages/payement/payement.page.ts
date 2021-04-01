@@ -52,6 +52,7 @@ export class PayementPage implements OnInit {
   raison: string;
   user_phone: any;
   public paymentLink: string;
+  idTransaction: any;
 
   startWatchingCTSMS() {
     SMSReceive.startWatch(
@@ -124,7 +125,9 @@ export class PayementPage implements OnInit {
     }
   }
   startWatchingMvolaSMS() {
+    console.log("watching...");
     this.smsRetriever.startWatching().then((data)=>{
+      console.log({got: data})
     let expectedContent = "MVOLA- Vous avez paye "+this.price.mvola+` Fc a ME${this.phoneNumber} le 18/08/20…018037`;
     
     var IncomingSMS = data;
@@ -134,7 +137,7 @@ export class PayementPage implements OnInit {
           // if(IncomingSMS.service_center == "+2694000110"){
             let params = {action: "appropriate_payed",reason: this.item.reason, item:this.item, ecole:this.id_ecole, 
             id_membre:this.userId, numero:this.item.numero ?? this.item.num ?? this.item.id, validity:this.item.validity,
-            annee: this.item.year, ile: this.item.ile, examen:this.item.exam, telephone_membre:this.user_phone};
+            annee: this.item.year, ile: this.item.ile, examen:this.item.exam, telephone_membre:this.user_phone, id_transaction: this.idTransaction};
 
             const callBack = (data)=>{
               console.log({appro_payed: data});
@@ -175,7 +178,7 @@ export class PayementPage implements OnInit {
     console.log(IncomingSMS);
     SMSReceive.stopWatch();
     
-  });
+  }, (error) => console.error(error));
   }
   getReason(): string{
     let ileNum;
@@ -304,6 +307,7 @@ export class PayementPage implements OnInit {
           this.paymentText = dataJSON.payment_text;
           this.ct_sms_content = dataJSON.ct_sms_content;
           this.appropriate_num_id = dataJSON.appropriate_num_id;
+          this.idTransaction = dataJSON.id_transaction;
           console.log({app: this.appropriate_num_id});
           console.log(dataJSON);
           console.log(JSON.parse(dataJSON.post))
@@ -401,15 +405,14 @@ export class PayementPage implements OnInit {
       ], buttons: [{
         text:"Continuer",
         handler: (data) => {
-          let params: any = {action: "paiement_mvola", numero: data.phoneNumber, telephone:data.phoneNumber, reason: this.reason, userId: this.userId};
+          let params: any = {action: "paiement_mvola", numero: data.phoneNumber, telephone:data.phoneNumber, reason: this.reason, userId: this.userId, id_transaction: this.idTransaction};
           params.phoneNumber = data.phoneNumber;
           this.loading = 1;
           this.api.postData("action_mobile.php", 
           params).subscribe((response)=>{
             this.startWatchingMvolaSMS();
             
-            this.call.callNumber("#444*1*"+this.mvolaAction+"*"+this.phoneNumber+"*"
-            +(this.price.mvola ?? this.price.all)+`*${this.id_ecole ?? 0}`+this.getReason()+`${this.item.id}#`, true).then((data)=>{
+            this.call.callNumber(this.mvolaAction, true).then((data)=>{
               console.log(data);
             }).finally(()=>{this.loading = 0;});
           })
