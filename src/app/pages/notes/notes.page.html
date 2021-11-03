@@ -17,7 +17,14 @@
       </ion-label>
     </ion-item>
   </ion-list>
-  <ion-card *ngIf="!canSee">
+  <ion-list *ngIf="notes?.bulletins">
+    <ion-item *ngFor="let bulletin of notes.bulletins" [href]="bulletin.url">
+      <ion-label>
+        {{bulletin.titre}}
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <ion-card *ngIf="canSee == false">
     <ion-item>
       <ion-icon name="key" slot="start" color="danger"></ion-icon>
       <ion-label>
@@ -30,7 +37,7 @@
     </ion-item>
   
     <ion-card-content>
-      Vous devez vous abonner à cet élève pour suivre sa vie scolaire.
+      Pour souscrire à ce service, vous êtes priés de vous adresser à la direction de l'établissement
     </ion-card-content>
   </ion-card>
 </ion-content>

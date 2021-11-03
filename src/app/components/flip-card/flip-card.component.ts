@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { UserDataService } from 'src/app/services/user-data/user-data.service';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 
 @Component({
   selector: 'app-flip-card',
@@ -16,14 +17,26 @@ export class FlipCardComponent implements OnInit {
   @Input() value: any;
   code: string = "";
   public message: string = ""
+  public octicoins: any;
 
-  constructor(private userData: UserDataService, private alertCtrl: AlertController) { }
+  constructor(private userData: UserDataService, private alertCtrl: AlertController, private barcodescanner: BarcodeScanner) { 
+    this.userData.getOcticoin().then((value) => {
+      this.octicoins = value;
+    })
+  }
 
   flip(){
     this.doFlip = !this.doFlip;
   }
   send(code){
 
+  }
+  scan(){
+    this.barcodescanner.scan().then((data) => {
+      this.code = data.text;
+      console.log(data)
+    }).finally(() => {
+    })
   }
   trimString(string, length) {
     let btn = `<a class='btn-view-more'>plus</a>`;
@@ -47,6 +60,7 @@ export class FlipCardComponent implements OnInit {
         const json = JSON.parse(reponse);
         if(json.status === "ok"){
           this.value = json.octicoin;
+          this.octicoins = json.octicoin;
         }
         else
         {

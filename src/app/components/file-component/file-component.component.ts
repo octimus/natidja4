@@ -10,6 +10,7 @@ export class FileComponentComponent implements OnInit {
   @Input() alt: string;
   @Input() scheme: string;
   @Input() title: string;
+  @Input() poster: string;
   @Input() controls: boolean = true;
   constructor() { }
 

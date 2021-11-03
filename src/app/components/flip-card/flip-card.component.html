@@ -1,4 +1,4 @@
-<div class="body">
+<div class="body" *ngIf="octicoins || octicoins === 0">
   <div class="card-holder" [class.back-flip]="doFlip" [class.slide]="doSlide">
     <div class="card-wrap">
         <div class="front">
@@ -6,8 +6,8 @@
                 <div class="ion-text-left">
                     <!-- <input type="text" id="card-num" placeholder="1111-1111-1111-1111" /> -->
                     <h5>Vous avez</h5>
-                    <h3 color="tertiary"> {{value}} KMF</h3>
-                    <small class="ion-text-left">Utilisable dans tous les platforms octra</small>
+                    <h3 color="tertiary"> {{octicoins}} KMF</h3>
+                    <small class="ion-text-left">Utilisable dans toutes les platforms octra</small>
                 </div>
                 <!-- <div class="input-wrap">
                     <input type="number" placeholder="" id="expiry-mo" />
@@ -31,12 +31,20 @@
             </form>
         </div>
         <div class="back">
+            <ion-buttons slot="end">
+                <ion-button (click)="flip();" fill="clear" size="small" style="float:right;">
+                    <ion-icon slot="icon-only" name="arrow-back" size="small"></ion-icon>
+                </ion-button>
+            </ion-buttons>
             <form action="">
                 <div class="input-wrap">
-                    <ion-text color="secondary">
-                        <h4>Code de recharge</h4>
+                    <ion-text>
+                        Code de recharge
                     </ion-text>
-                    <ion-input type="text" style="max-width: 100%;" placeholder="" id="name" (ionChange)="code = $event.target.value;"></ion-input>
+                    <ion-input type="text" style="max-width: 100%;" placeholder="" id="name" [value]="code" (ionChange)="code = $event.target.value;"></ion-input>
+                    <ion-button (click)="scan();" fill="clear" style="float:right;">
+                        <ion-icon slot="icon-only" name="barcode-outline" size="small"></ion-icon>
+                    </ion-button>
                     <ion-text color="danger" *ngIf="message">
                        <small>{{message}}</small>
                     </ion-text>

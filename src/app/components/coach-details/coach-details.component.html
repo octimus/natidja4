@@ -1,12 +1,12 @@
 <div class="ion-padding ion-text-center">
-  <img [src]="photo" style="max-height: 30vh;"/>
+  <ion-img [src]="photo" style="max-height: 30vh;"></ion-img>
   <h5>{{nom}}</h5>
-  <ion-chip color="primary" mode="ios" *ngIf="prix_hebdo" outline="true">
-    <ion-label *ngIf="prix_hebdo">{{nom_matiere}} - {{classe}}</ion-label>
+  <ion-chip color="primary" mode="ios" *ngIf="nom_matiere" outline="true">
+    <ion-label>{{nom_matiere}} - {{classe}}</ion-label>
   </ion-chip><br>
-  <small>
+  <ion-text>
     <ion-note [innerHtml]="slogan?.replace('\n', '<br/>')"></ion-note>
-  </small>
+  </ion-text>
   <ion-button *ngIf="id" expand="block" fill="clear" shape="round" (click)="navCtrl.navigateForward('coach-profile', {queryParams:coach});">
     En savoir plus
   </ion-button>

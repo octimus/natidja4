@@ -22,6 +22,9 @@
 	position: relative;
     z-index: 1;
 }
+h3{
+    font-weight: bold;
+}
 .front,
 .back {
     position: absolute;
@@ -31,7 +34,9 @@
     width: 480px;
     padding: 10px 20px;
 	backface-visibility: hidden;
-    background: linear-gradient(to bottom right, #161925, #1F2D2B );
+    // background: linear-gradient(to bottom right, #161925, #1F2D2B );
+    background: linear-gradient(to bottom, #a8cfdb, #457b9d);
+
     // background: #232633;
     border-radius: 6px;
     transition: 600ms;
@@ -82,11 +87,6 @@
         margin-left: 20px;
         max-width: 70px;
     }
-
-    input{
-    // max-width: 100%;
-
-    }
 }
 input:not([type=submit]), ion-input {
     flex: 0 1 100%;
@@ -101,7 +101,6 @@ input[class=submit] {
     left: 0;
     width: 100%;
     padding: 15px 0;
-    color: #1e3128;
     border: none;
     border-radius: 0 0 6px 6px;
     background: linear-gradient(to bottom right, var(--ion-color-primary-shade), var(--ion-color-primary-tint));
@@ -131,4 +130,10 @@ input[class=submit] {
 {
     backdrop-filter: blur(5px);
     border-radius: 50%;
+}
+
+.input-wrap ion-button{
+    position: absolute;
+    right: 0%;
+    top: 0%;
 }

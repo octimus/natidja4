@@ -7,7 +7,9 @@ import { Storage } from '@ionic/storage';
 import { FileChooser } from '@ionic-native/file-chooser/ngx';
 import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 import { File } from '@ionic-native/file/ngx';
+import { map } from 'rxjs/operators';
 
+const NATIVE_HTTP = "native_api";
 @Injectable({
   providedIn: 'root'
 })
@@ -20,13 +22,23 @@ export class ApiService {
   private entete: {} = {};
   public device:any;
   private loader: HTMLIonLoadingElement;
+  public ecole: any;
   
   constructor(private http: HTTP, private httpClient: HttpClient, 
     private platform: Platform, private storage: Storage, 
     private fileTransfer: FileTransfer, private fileChooser: FileChooser, 
     private alertCtrl: AlertController, private loadingCtrl: LoadingController, private file: File) { 
       this.device = this.platform.platforms();
+      this.storage.get('school').then((data)=>{
+        this.ecole = data;
+      })
       console.log({platform: this.device});
+      this.getNativeHttp().then((response)=>{
+        if(response)
+          this.native = response;
+        else
+          this.setNativeHttp(this.native);
+      })
       // if(this.device.indexOf("mobileweb"))
       
     // this.http.setDataSerializer("json");
@@ -34,6 +46,12 @@ export class ApiService {
     // this.getEntetes();
   }
 
+  public setNativeHttp(value: boolean): Promise<any>{
+    return this.storage.set(NATIVE_HTTP, value);
+  }
+  public getNativeHttp(): Promise<any>{
+    return this.storage.get(NATIVE_HTTP);
+  }
   getEntetes(): void
   {
     this.storage.get("access_token").then((data) => {
@@ -42,15 +60,12 @@ export class ApiService {
         this.entete = {
          authorization: "Bearer "+data,
         };
-        console.log(this.entete);
-        
       }
     });
   }
 
   public uploadPic(uri, method="", reference): Promise<any>
   {
-    console.log({reference: method});
     
     let fileTransferObject: FileTransferObject = this.fileTransfer.create();
     return fileTransferObject.upload(uri, method, {
@@ -94,16 +109,17 @@ export class ApiService {
 
 
     if(this.native)
-    {
-      // debugger
-      console.log(this.api_url_alt+method, params, entetes);
-      
+    { 
       let backThen = this.http.post(this.api_url_alt+method, params, entetes);
       return from(backThen);
     }
     else
     {
-      return this.httpClient.post(this.api_url_alt+method, params, {});
+      let r: Observable<any> = this.httpClient.post(this.api_url_alt+method, params, {});
+      return r.pipe(map(x => {
+        let data: {data:any} = {data:JSON.stringify(x)}
+        return data;
+      }))
     }
   }
   public downloadFileAndStore(url: string, fileName: string): Promise<any> {
@@ -118,7 +134,6 @@ export class ApiService {
     return this.http.downloadFile(url, {}, {}, filePath).then(response => {
        // prints 200
        loader.dismiss();
-       console.log('success block...', response);
        this.alertCtrl.create({subHeader:"Téléchargement terminé.", message:`Enregistré dans ${response.fullPath}`, buttons:["OK"]}).then(a => a.present());
        return response;
     }).catch(err => {
@@ -131,31 +146,48 @@ export class ApiService {
  }
   public postData(method, params, entetes: {} = this.entete): Observable<any>
   {
+    // if(params.action == "comment") alert("comment")
     params.device = this.device;
-    params.appVersion = "3.6.6";
+    params.appVersion = "3.9.14";
+    if(this.ecole){
+      if(!params?.ecole){
+        params.ecole = this.ecole?.id;
+      }
+    }
 
+    let url = method != "bac/action.php" ? this.api_url : this.api_url_alt;
     if(this.native)
     {
-      let url = method != "bac/action.php" ? this.api_url : this.api_url_alt;
       let backThen = this.http.post(url+method, params, entetes);
       let r: Observable<any> = from(backThen);
       r.subscribe(x => console.log(x), err => {
+        console.error(err)
         if(err == "cordova_not_available"){
+          this.setNativeHttp(false);
           this.native = false;
           this.postData(method, params, entetes);
         }
+        else
+        {
+          console.error(err);
+          this.storage.get("user_id").then((id) => {
+            if(id == 7){
+              alert(JSON.stringify(err));
+            }
+          })
+        }
       });
       return r;
-
+      
     }
     else
     {
-      let r: Observable<any> = this.httpClient.post(this.api_url+method, params, {});
-      r.subscribe(x => console.warn(x), err => {
-        console.log("rrrrrrrrrrrrrrrrrrrrr")
-        console.log(err);
-      })
-      return r;
+      let r: Observable<any> = this.httpClient.post(url+method, params, {responseType: "json"});
+
+      return r.pipe(map(x => {
+        let data: {data:any} = {data:JSON.stringify(x)}
+        return data;
+      }));
     }
   }
   public postData2(method, params, entetes: {} = this.entete): Observable<any>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AlertController, LoadingController, NavController, Platform } from '@ionic/angular';
+import { AlertController, IonSlides, LoadingController, NavController, Platform, PopoverController } from '@ionic/angular';
+import { CoachDetailsComponent } from 'src/app/components/coach-details/coach-details.component';
 import { ApiService } from 'src/app/services/api/api.service';
 import { CoursService } from 'src/app/services/cours/cours.service';
 import { UserDataService } from 'src/app/services/user-data/user-data.service';
@@ -21,10 +22,21 @@ export class CoursDetailsPage implements OnInit {
   public nbrCorrect: number = 0;
   public nbrIncorrect: number = 0;
   public showMore: boolean = false;
+  public sending: boolean = false;
+
+  questionSlides = {
+    initialSlide: 0,
+    direction: 'horizontal',
+    speed: 300,
+    // spaceBetween: 8,
+    // loop:true,
+    slidesPerView: 1,
+  };
 
   constructor(private r: ActivatedRoute, private platform: Platform, 
     private userData: UserDataService, private alertCtrl: AlertController, private api: ApiService, 
-    private coursService: CoursService, private loadingController: LoadingController, public navCtrl: NavController) { 
+    private coursService: CoursService, private loadingController: LoadingController, private popoverController: PopoverController,
+    public navCtrl: NavController) { 
     this.r.queryParams.forEach(p => {
       this.item = p
       console.log({iiiiiiiiii: this.item})
@@ -79,7 +91,103 @@ export class CoursDetailsPage implements OnInit {
     })
   }
   lineCount(str: string){
-    return str.split(/\r\n|\n|\r/).length;
+    if(str)
+      return str.split(/\r\n|\n|\r/).length;
+    else
+      return 2;
+  }
+  setComprehension(item, value: number){
+    // item.loadingComprehension = true;
+    this.coursService.setComprehension(item, value).then((data)=>{
+      let json;
+      
+      try {
+        json = JSON.parse(data.data);
+      } catch (error) {
+        alert(data.data)
+      }
+      console.log(json);
+      if(json.status == "ok"){
+        console.log(this.item);
+        this.item = Object.assign({}, this.item)
+        console.log(value);
+        
+        this.item.comprehension = value;
+        console.log(this.item);
+      }
+      else{
+        console.log(json.status);
+      }
+    }).finally(() => {
+      // item.loadingComprehension = false;
+    })
+  }
+  public async sendResponseExo(q, elt: any, last=0, item: any = {}){
+    // console.log(slide);
+    if(q?.validated_time != null){
+      let slides: IonSlides = elt.parentNode.parentNode.parentNode.parentNode.parentNode;
+      slides.getActiveIndex().then(async index=>{
+        let slidesLength: number = await slides.length()
+
+        if(slidesLength - 1 == index)
+          slides.slideTo(0);
+        else
+        {
+          console.log(index)
+          slides.slideNext().then(()=>{
+    
+          }, (err) => {
+            console.error(err)
+            // slides.slideTo(0)
+          })
+        }
+      })
+      return;
+    }
+    let rep = elt.parentNode.querySelector('ion-textarea, ion-radio-group').value;
+    if(rep?.length < 1){
+      return;
+    }
+    q.loading = true;
+    console.log({q: q});
+    this.coursService.sendResponse(rep, q).then((data)=>{
+      let  json;
+      try {
+        console.log(data)
+        json = typeof(data?.data) == "string" ? JSON.parse(data.data) : data;
+        q.content = rep;
+        if(json.status == "ok"){
+          if(last == 1){
+            this.validerExo()
+          }
+          elt.parentNode.parentNode.parentNode.parentNode.parentNode.slideNext();
+        }
+        else{
+          this.alertCtrl.create({message: json.status, buttons: ["ok"]}).then(a => a.present());
+        }
+      } catch (error) {
+        this.alertCtrl.create({message: data.data, buttons: ["ok"], cssClass:"alert-danger"}).then(a => a.present());
+      }
+    }, (err)=>{
+      this.alertCtrl.create({message:err.error, buttons: ["OK"]}).then(a => a.present());
+    }).finally(()=>{
+      q.loading = false;
+    })
+  }
+  isLast(questions: any[], q): boolean{
+    if(questions.length == 1) return true;
+    let rep: boolean = true;
+    if(q?.isCorrect != null){
+      return false;
+    }
+    questions.forEach((elt) => {
+      if(elt.id != q.id){
+        if(elt.content == null || elt.content == ""){
+          rep = false;
+        }
+      }
+    });
+    return rep;
   }
   async validerExo(){
     let l = await this.loadingController.create({
@@ -115,7 +223,9 @@ export class CoursDetailsPage implements OnInit {
             string.substring(0, length) + '...' + btn :
             string;
   }
-
+  getQuestions(resp: any[]): Array<any>{
+    return resp?.filter((elt) => elt.question);
+  }
   public sendResponse(idComment)
   {
     if(!this.comment_response)
@@ -125,12 +235,10 @@ export class CoursDetailsPage implements OnInit {
     this.api.postData("bac/action.php",
      {action:"comment_response", content:this.comment_response, comment:idComment, sender:this.userProfile.userId, 
      cours:this.item.id}, {}).subscribe((response)=>{
-      // this.loader.dismiss();  
       let resultat;
       try
       {
-        // alert(response.data)
-        resultat = JSON.parse((response.data).trim());
+        resultat = response?.data ? JSON.parse(response.data.trim()) : response;
       }catch(err)
       {
         this.alertCtrl.create({header:'Erreur :'+JSON.stringify(err), message:response.data, buttons: ["OK"]}).then(a => a.present());
@@ -157,6 +265,8 @@ export class CoursDetailsPage implements OnInit {
         a.present();
       });
       
+     }, ()=>{
+      this.sending = false;
      })
   }
   public deleteComment(idComment)
@@ -170,7 +280,7 @@ export class CoursDetailsPage implements OnInit {
         try
         {
           // alert(response.data)
-          resultat = JSON.parse((response.data).trim());
+          resultat = response?.data ? JSON.parse(response.data.trim()) : response;
         }catch(err)
         {
           this.alertCtrl.create({header:'Erreur :'+JSON.stringify(err), message:response.data, buttons: ["OK"]}).then(a => a.present());
@@ -218,27 +328,36 @@ export class CoursDetailsPage implements OnInit {
         event.target.complete();
         // this.loader.dismiss();  
         let resultat;
-        response.data = (response.data).trim();
-        if(response.data=="")
-        return false;
+        console.log(response);
         
-        try
-        {
-          resultat = JSON.parse(response.data);
-          console.log(resultat)
-        if(this.comments.length == 0)
-          this.comments = resultat.data;
+        if(response === "" || response?.data == "")
+          return;
+        let r = response?.data ? response.data : response;
+
+      try
+      {
+        resultat = typeof(r) === "string" ? JSON.parse(r.trim()) : r;
+        if(this.comments?.length == 0)
+        {  
+          console.log({c_ici_k_il_y_a_le_soucis: resultat})
+          this.comments = resultat?.data ?? resultat;
+
+        }
         else
         {
           if(resultat?.data)
-          {  
-            this.comments = [...this.comments, ...resultat.data];
+          {
+            if(typeof(this.comments) == "undefined")
+              this.comments = [];
+            this.comments = [...this.comments, ...resultat?.data];
           }
         }
-        // alert(JSON.stringify(this.comments))
-      }catch(err)
+      }
+      catch(err)
       {
-        this.alertCtrl.create({header:'Erreur :'+JSON.stringify(err), message:response.data, buttons: ["OK"]}).then(a => a.present());
+        console.error(err);
+        console.log(response);
+        this.alertCtrl.create({header:'Erreur :'+JSON.stringify(err), message:response, buttons: ["OK"]}).then(a => a.present());
         return false;
       }
 
@@ -281,22 +400,22 @@ export class CoursDetailsPage implements OnInit {
       .subscribe(response => {
 
         try {
-
-          let dat = response.data.trim();
-
-          let data = JSON.parse(dat);
+          let d = response?.data ? response.data : response;
+          let data = typeof(d) == "string" ? JSON.parse(d.trim()) : d;
+          console.log(data);
+          
           if(refresh == 0)
-            item.responses = data.data;
+            item.responses = data?.data || data;
           else
           {
-            item.responses = [...item.responses, ...data.data];
+            item.responses = [...item.responses, ...data?.data || data];
           }
 
         }
         catch (error) {
           if(response.data && refresh == 0)
           {
-            this.alertCtrl.create({subHeader:'Erreur', message:response.data, buttons: ["OK"]}).then(a => a.present());
+            this.alertCtrl.create({subHeader:typeof(error) == 'string' ? error : JSON.stringify(error), message:response.data, buttons: ["OK"]}).then(a => a.present());
           }
         }
       }, (error) => {
@@ -316,16 +435,18 @@ export class CoursDetailsPage implements OnInit {
     {
       return false;
     }
+    this.sending = true;
+
     this.api.postData("bac/action.php",
      {action:"comment", content:this.comment, sender:this.userProfile.userId, 
       cours:this.item.id}, {}).subscribe((response)=>{
+      this.sending = false;
       // this.loader.dismiss();  
       let resultat;
       try
       {
         // alert(response.data)
-        resultat = JSON.parse((response.data).trim());
-        console.log({resultats: resultat})
+        resultat = response?.data ? JSON.parse(response.data.trim()) : response;
       }catch(err)
       {
         this.alertCtrl.create({header:'Erreur :'+JSON.stringify(err), message:response.data, buttons:["OK"], cssClass:"alert-danger"}).then(a => a.present());
@@ -336,6 +457,7 @@ export class CoursDetailsPage implements OnInit {
       if(resultat.status === "ok")
       {
         this.comment = ""; 
+        console.log(resultat)
         this.load();
       }
       else
@@ -346,6 +468,8 @@ export class CoursDetailsPage implements OnInit {
       }
      }, (err)=>{
       //  this.loader.dismiss();
+      this.sending = false;
+
        this.alertCtrl.create({
         subHeader: "Echec de connexion",
         message: JSON.stringify(err),
@@ -355,11 +479,23 @@ export class CoursDetailsPage implements OnInit {
         a.present();
       });
       
+     }, () => {
+      this.sending = false;
      })
   }
+  async presentPopover(ev: any, obj: any) {
+    const popover = await this.popoverController.create({
+      component: CoachDetailsComponent,
+      cssClass: 'coach-details',
+      event: ev,
+      translucent: true,
+      componentProps: obj,
+    });
+    return await popover.present();
+  }
 
-  public isValidated(items:any[]){
-    return items.filter(elt => elt.isCorrect == null).length == 0;
+  public isValidated(){
+    return this.item.responses.filter(elt => elt.isCorrect == null).length == 0;
   }
   ngOnInit() {
   }

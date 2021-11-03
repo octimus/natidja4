@@ -1,0 +1,22 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-back-button></ion-back-button>
+        </ion-buttons>
+        <ion-title>Révision</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-list>
+        <ion-item *ngFor="let item of matieres" (click)="navCtrl.navigateForward('feed', {queryParams:{matiere:item}})" detail="true">
+            <ion-icon slot="start" [name]="item.ionicon" *ngIf="item.ionicon" [color]="item.color"></ion-icon>
+            <ion-avatar *ngIf="item.avatar">
+                <img [src]="item.avatar" />
+            </ion-avatar>
+            <ion-label>
+                {{item.nom}} <br>
+                <ion-progress-bar type="determinate" [value]="item.progress" reversed="false" [color]="item.progressColor"></ion-progress-bar>
+            </ion-label>
+        </ion-item>
+    </ion-list>
+</ion-content>

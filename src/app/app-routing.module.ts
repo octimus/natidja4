@@ -134,6 +134,42 @@ const routes: Routes = [
   {
     path: 'coach-search',
     loadChildren: () => import('./pages/coach-search/coach-search.module').then( m => m.CoachSearchPageModule)
+  },
+  {
+    path: 'sliders',
+    loadChildren: () => import('./pages/sliders/sliders.module').then( m => m.SlidersPageModule)
+  },
+  {
+    path: 'sliders/:id',
+    loadChildren: () => import('./pages/sliders/sliders.module').then( m => m.SlidersPageModule)
+  },
+  {
+    path: 'ecolages',
+    loadChildren: () => import('./pages/ecolages/ecolages.module').then( m => m.EcolagesPageModule)
+  },
+  {
+    path: 'modal',
+    loadChildren: () => import('./modals/modal/modal.module').then( m => m.ModalPageModule)
+  },
+  {
+    path: 'referal',
+    loadChildren: () => import('./pages/referal/referal.module').then( m => m.ReferalPageModule)
+  },
+  {
+    path: 'referal/:id',
+    loadChildren: () => import('./pages/referal/referal.module').then( m => m.ReferalPageModule)
+  },
+  {
+    path: 'affiliate',
+    loadChildren: () => import('./pages/affiliate/affiliate.module').then( m => m.AffiliatePageModule)
+  },
+  {
+    path: 'matieres',
+    loadChildren: () => import('./pages/matieres/matieres.module').then( m => m.MatieresPageModule)
+  },
+  {
+    path: 'feed',
+    loadChildren: () => import('./pages/feed/feed.module').then( m => m.FeedPageModule)
   }
 ];
 

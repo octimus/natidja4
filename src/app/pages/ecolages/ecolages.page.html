@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Écolages</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-img [src]="item.photo.replace('thumbnail', 'full')" *ngIf="item" (ionError)="imgError($event)"></ion-img>
+  </ion-card>
+  <ion-grid  class="ion-no-margin">
+    <ion-row class="ion-no-margin">
+      <ion-col size="6" class="ion-no-margin">
+        <ion-card color="success" class="ion-no-margin">
+          <ion-card-header>
+            <ion-card-subtitle>Total payé(KMF)</ion-card-subtitle>
+            <ion-card-title>{{total}}</ion-card-title>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+      <ion-col size="6" class="ion-no-margin">
+        <ion-card color="warning" class="ion-no-margin">
+          <ion-card-header>
+            <ion-card-subtitle>Reste à payer(KMF)</ion-card-subtitle>
+            <ion-card-title>{{reste}}</ion-card-title>
+          </ion-card-header>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-list class="ion-no-padding">
+    <ion-item-sliding *ngFor="let item of ecolages" class="ion-no-padding">
+      <ion-item>
+        <ion-label>
+          <ion-note class="small">{{item?.mois}}</ion-note> <br/>
+          <ion-text color="primary">
+            <h3>{{item.montant}} kmf</h3>
+          </ion-text>
+          <ion-note>{{item.date | moment:'DD/MM/YYYY'}}</ion-note>
+        </ion-label>
+        <ion-note slot="end"><small>{{item.date_ajout | moment:''}}</small></ion-note>
+      </ion-item>
+    </ion-item-sliding>
+  </ion-list>
+</ion-content>

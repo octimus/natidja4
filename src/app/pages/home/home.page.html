@@ -1,31 +1,31 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="transparent">
-      <ion-buttons slot="start">
-        <ion-menu-button></ion-menu-button>
-        <ion-button fill="clear" size="small" (click)="navCtrl.navigateForward('notifications', {queryParams: {}})" *ngIf="logedIn">
-            <ion-icon [name]="notifCount > 0 ? 'notifications' : 'notifications-outline'" slot="icon-only" size="small"></ion-icon>
-            <ion-badge color="danger" mode="ios" slot="start" *ngIf="notifCount>0">{{notifCount}}</ion-badge>
-        </ion-button>
-      </ion-buttons>
-      <ion-title>
-        <ion-select size="small" [(ngModel)]="annee" (ionChange)="check()" interface="popover">
-            <ion-select-option *ngFor="let year of years;let index=index" value="{{year}}" class="year" id="select-year">
-                {{year}}
-            </ion-select-option>
-        </ion-select>
-      </ion-title>
-      <ion-buttons slot="end" *ngIf="logedIn">
-        <!-- <ion-button fill="clear" size="small" (click)="navCtrl.navigateForward('cours', {queryParams: {}})">
-            <ion-icon [name]="coursCount > 0 ? 'flask' : 'flask-outline'" slot="icon-only" size="small"></ion-icon>
-            <ion-badge color="danger" mode="ios" slot="start" *ngIf="coursCount>0">{{coursCount}}</ion-badge>
-        </ion-button> -->
-        <ion-button (click)="navCtrl.navigateForward('chats');" fill="clear" size="small">
-            <ion-badge color="danger" *ngIf="msgCount > 0" mode="ios">{{msgCount}}</ion-badge>
-            <ion-icon slot="icon-only" size="small" [name]="msgCount > 0 ? 'chatbubbles' : 'chatbubbles-outline'"></ion-icon>
-        </ion-button>
-      </ion-buttons>
+    <ion-buttons slot="start">
+    <ion-menu-button></ion-menu-button>
+    <ion-button fill="clear" size="small" (click)="navCtrl.navigateForward('notifications', {queryParams: {}})" *ngIf="logedIn">
+        <ion-icon [name]="notifCount > 0 ? 'notifications' : 'notifications-outline'" slot="icon-only" size="small"></ion-icon>
+        <ion-badge color="danger" mode="ios" slot="start" *ngIf="notifCount>0">{{notifCount}}</ion-badge>
+    </ion-button>
+    </ion-buttons>
+    <ion-title>
+    <ion-select size="small" [(ngModel)]="annee" (ionChange)="check()" interface="popover">
+        <ion-select-option *ngFor="let year of years;let index=index" value="{{year}}" class="year" id="select-year">
+            {{year}}
+        </ion-select-option>
+    </ion-select>
+    </ion-title>
+    <ion-buttons slot="end" *ngIf="logedIn">
+    <!-- <ion-button fill="clear" size="small" (click)="navCtrl.navigateForward('cours', {queryParams: {}})">
+        <ion-icon [name]="coursCount > 0 ? 'flask' : 'flask-outline'" slot="icon-only" size="small"></ion-icon>
+        <ion-badge color="danger" mode="ios" slot="start" *ngIf="coursCount>0">{{coursCount}}</ion-badge>
+    </ion-button> -->
+    <ion-button (click)="navCtrl.navigateForward('chats');" fill="clear" size="small">
+        <ion-badge color="danger" *ngIf="msgCount > 0" mode="ios">{{msgCount}}</ion-badge>
+        <ion-icon slot="icon-only" size="small" [name]="msgCount > 0 ? 'chatbubbles' : 'chatbubbles-outline'"></ion-icon>
+    </ion-button>
+    </ion-buttons>
   </ion-toolbar>
-  <ion-segment [value]="coursesType" (ionChange)="segmentChanged($event)" mode="ios" color="tertiary" swipe-gesture="true">
+  <!-- <ion-segment [value]="coursesType" (ionChange)="segmentChanged($event)" mode="ios" color="tertiary" swipe-gesture="true" *ngIf="ecole?.id != 3">
       <ion-segment-button value="">
           <ion-label>tous</ion-label>
       </ion-segment-button>
@@ -38,46 +38,59 @@
       <ion-segment-button value="exams">
           <ion-label>exams</ion-label>
       </ion-segment-button>
-  </ion-segment>
+  </ion-segment> -->
 </ion-header>
 
-<ion-content [class]="'ion-text-center'+' '+bgClasse"
-[scrollEvents]="true"
-(ionScrollStart)="logScrollStart($event)"
-(ionScroll)="logScrolling($event)"
-(ionScrollEnd)="logScrollEnd()" >
-
-<ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.8" pullMin="60" pullMax="120">
-    <ion-refresher-content></ion-refresher-content>
-</ion-refresher>
+<ion-content [class]="'ion-text-center'+' '+bgClasse">
+    <!-- <div class="circle-element top"></div>
+    <div class="circle-element bottom"></div> -->
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.8" pullMin="60" pullMax="120">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
     <div class="ion-padding"  *ngIf="examen!='AUTRES' && disponibility.text">
         <ion-badge [color]="disponibility.color" class="" (click)="navCtrl.navigateForward('search', {queryParams:{etablissement:disponibility.etablissement, annee:annee, mention:disponibility.mention, examen:examen, ile:disponibility.ile}})">{{disponibility.text}}</ion-badge>
     </div>
+    <!-- <div class="ion-padding-horizontal" *ngIf="logedIn && cadeaux?.length">
+        <div class="progress-container">
+            <ion-progress-bar type="determinate" *ngIf="cadeau_money && cadeaux.length" [value]="cadeau_money/cadeau_money_limit" buffer="0.5" style="height:100%;border-radius: 12px;" reversed="false" color="primary">{{cadeau_money*100/cadeaux[cadeaux.length - 1].price}}%</ion-progress-bar>
+            <ion-label class="percentage">{{(cadeau_money*100/cadeau_money_limit)}}%</ion-label>
+        </div>
+        <div class="cadeau-row" *ngIf="cadeaux.length">
+            <div class="cadeau" [class.last]="i == cadeaux.length - 1" [class.start]="i == 0" *ngFor="let item of cadeaux; let i = index;" [style]="'left:'+item.price*100/cadeaux[cadeaux.length - 1].price+'%'"
+            (click)="presentPopover($event, {photo:item.photo,nom:item.titre, slogan:item.description})">
+                <img [src]="item.photo" style="border-radius: 100%;transform:translateY(-10%);">
+            </div>
+        </div>
+    </div> -->
     <!-- <app-check-list></app-check-list> -->
     <div *ngIf="coachs.length === 0">
         <br>
     </div>
-    <div class="ion-text-left">
-        <ion-slides mode="ios" #slider pager="false" scrollbar="false" [options]="slidesOpt" class="ion-no-padding coach-slides">
-            <ion-slide *ngFor="let item of coachs" class="ion-no-padding" 
-            (click)="navCtrl.navigateForward('coach-profile', {queryParams:item});" >
-                <ion-card style="height: 28vh;" class="ion-text-left">
+    <ion-card class="ion-text-left" mode="ios" *ngIf="ecole?.id != 3">
+        <ion-card-header *ngIf="logedIn">
+            Révision
+        </ion-card-header>
+        <ion-card-content>
+            <!-- <ion-slides mode="ios" #slider pager="false" scrollbar="false" [options]="slidesOpt" class="ion-no-padding">
+                <ion-slide *ngFor="let item of myCoachs" class="ion-no-padding" 
+                (click)="navCtrl.navigateForward('coach-profile', {queryParams:item});" >
                     <img [src]="item.photo" />
-                    <ion-card-header class="ion-no-padding" style="padding: 8px;">
-                        <span>{{item.nom_matiere}}</span><br>
-                        <ion-text color="primary">{{item.nom_classe}}</ion-text>
-                        <ion-card-subtitle>{{item.nom}}</ion-card-subtitle>
-                    </ion-card-header>
-                    <!-- <div class="ion-text-center">
-                        <ion-button (click)="navCtrl.navigateForward('payement', {queryParams:{item:item, reason: 'coaching'}});" 
-                        size="small" fill="clear">
-                            <ion-icon slot="start" name="notifications"></ion-icon>
-                            S'abonner
-                        </ion-button>
-                    </div> -->
-                </ion-card>
-            </ion-slide>
-        </ion-slides>
+                </ion-slide>
+            </ion-slides> -->
+            <div>
+                <ion-button (click)="navCtrl.navigateForward('matieres')" expand="block" fill="solid" *ngIf="logedIn">
+                    <ion-icon slot="start" name="book"></ion-icon>
+                    Cours/exos/sujets
+                </ion-button>
+                <ion-button (click)="navCtrl.navigateForward('sliders')" expand="block" fill="solid" *ngIf="!logedIn">
+                    <ion-icon slot="start" name="rocket-outline"></ion-icon>
+                    Commencer
+                </ion-button>
+            </div>
+        </ion-card-content>
+    </ion-card>
+    <div class="ion-text-left" *ngIf="ecole?.id != 3">
+        
     </div>
     <ion-card *ngIf="msgAccueil" href="{{msgAccueil.url || '#'}}" class="ion-text-start" [color]="msgAccueil.color">
         <img *ngIf="msgAccueil.img" [src]="msgAccueil.img" />
@@ -90,260 +103,283 @@
         </ion-card-content>
     </ion-card>
 
-  <!-- <div id="progress">
+    <!-- <div id="progress">
 
-  </div> -->
-  <div class="ion-padding-top ion-text-center" style="margin:auto; width:100%;" *ngIf="octicoin">
-    <app-flip-card [value]="octicoin" *ngIf="octicoin != null"></app-flip-card> <br>
-  </div>
-  <div *ngIf="logedIn && canActivateNotes">
-    <ion-button fill="outline" shape="round" (click)="openLogin('params-candidat');">
-        <ion-icon name="document-text" slot="start"></ion-icon>  
-        Accès aux notes
-     </ion-button>
-      <ion-button *ngIf="!logedIn && canActivateNotes" shape="round" fill="outline" (click)="openLogin();">Accès aux notes</ion-button>
-  </div>
-  <!-- <h5 class="exam-title" (click)="openModalExam(1)" *ngIf="examen!='AUTRES'">
-      {{examen}}
-  </h5> -->
-
-  <!-- <ion-button *ngFor="let item of btnsRecherche" [disabled]="disponibility.nbr==0" [color]="disponibility.color" fill="clear" class="btn-gsa" (click)="navCtrl.navigateForward('search', {queryParams: {etablissement:item.etablissement, annee:annee, examen:examen, ile:ile, mention: item.mention}})">{{item.btnText}}</ion-button> -->
-    
-
-
-  <ion-item *ngIf="examen=='AUTRES' && 0" style="margin:auto;">
-    <ion-label>Trimestre</ion-label>
-    <ion-select mode="ios" [(ngModel)]="trimestre" id="trimestreSelect" (ionChange)="filtrer();">
-        <ion-select-option selected value="1">
-            1 ère
-        </ion-select-option>
-        <ion-select-option value="2">
-            2 ème
-        </ion-select-option>
-        <ion-select-option value="3">
-            3 ème
-        </ion-select-option>
-    </ion-select>
-  </ion-item>
-  
-  <!-- <p>
-      <ion-searchbar placeholder="Nom ou numéro" [(ngModel)]="recherche">
-
-      </ion-searchbar>
-      <ion-button icon-right round (click)="rechercher();" color="secondary" class="search-btn">
-          <ion-icon name="search"></ion-icon>  Rechercher
-      </ion-button>
-
-  </p> -->
-  <ion-card *ngIf="examen != 'AUTRES' && (coursesType == '' || coursesType == 'exams')" class="ion-padding-bottom" mode="ios">
-    <ion-card-header>
-        <ion-card-title>
-            <a class="circle" (click)="openModalExam(1)" *ngIf="examen != 'AUTRES'">
-                <img src='https://ecole.natidja.app/photos/bac.png' style="max-width: 65%;" *ngIf="examen=='BAC'" alt="{{userProfile.photo}}" />
-                <img src='https://ecole.natidja.app/photos/bepc.png' *ngIf="examen=='BEPC'" alt="{{userProfile.photo}}" />
-                <img src='https://ecole.natidja.app/photos/sixieme.png' *ngIf="examen=='SIXIEME'" alt="{{userProfile.photo}}" />
-                <!-- <ion-icon color="fourth" name="camera"></ion-icon> -->
-                <ion-button expand="block" fill="clear" shape="round" class="top-right" size="small">
-                    <ion-icon name="swap-horizontal-outline" slot="icon-only" class=" btn-rotate-animation"></ion-icon>
-                </ion-button>
-            </a>
-        </ion-card-title>
-        <ion-card-subtitle>
-            <p *ngIf="etudiants.length>2">
-                <ion-note>{{nbrResultat}} Résultats({{examen}})</ion-note>
-            </p>
-        </ion-card-subtitle>
-    </ion-card-header>
-    <ion-card-content class="ion-no-padding">
-        <div *ngIf="examen!='AUTRES'" class="ile ion-padding">
-            <ion-item style="display: none;">
-                <ion-label>Ile</ion-label>
-                <ion-select [(ngModel)]="ile" name="ile" id="ileSelect" (ionChange)="check();filtrer();">
-                    <ion-select-option *ngFor="let item of iles" value="{{item}}">
-                        {{item}}
-                    </ion-select-option>
-                </ion-select>
-            </ion-item>
-            <ion-chip class="ion-text-center" *ngFor="let item of iles" (click)="ile = item;" [outline]="item != ile" style="width:30%;" color="primary">
-                <!-- <ion-icon name="checkmark-outline" size="small" *ngIf="item == ile"></ion-icon> -->
-                <ion-label size="small">{{item}}</ion-label>
-            </ion-chip>
-            
-        </div>
-        <form (ngSubmit)="rechercher();" *ngIf="examen!='AUTRES'" style="margin:auto;">
-            <ion-searchbar animated="true" placeholder="Nom ou numéro" type="search" [debounce]="250" name="search" [(ngModel)]="recherche"></ion-searchbar>
-            <!-- <ion-searchbar placeholder="Nom ou numéro" inputmode="text" type="text" [(ngModel)]="recherche" [debounce]="250" showCancelButton="always"></ion-searchbar> -->
-            <!-- <div class="search-bar">
-                <ion-icon *ngIf="recherche==''" name="search" color="disabled"></ion-icon>
-                <ion-input placeholder="Nom ou numéro" name="recherche" [(ngModel)]="recherche" id="champRecherche" class="ion-searchbar" animated=true>
-                </ion-input>
-                <ion-button class='non-btn scan-btn' *ngIf="recherche==''" clear color="danger" (click)="scanBarCode()">
-                    <ion-icon  name="barcode"></ion-icon>
-                </ion-button>
-                <br><br>
-            </div> -->
-            <ion-button color="primary" (click)="rechercher();" fill="solid" shape="round">
-                <ion-icon  name="search" slot="start"></ion-icon>
-                Rechercher
-            </ion-button>
-        </form>
-        <p *ngIf="loading" class="text-center loader">
-            <ion-icon name="heart" color="danger"></ion-icon><br>
-            <ion-text color="primary">chargement...</ion-text>
-        </p>
-        <ion-list class="list" *ngIf="etudiants.length>0">
-            <ion-item (click)="openItem(item)" *ngFor="let item of etudiants">
-            <ion-label slot="start" class="ion-item-left" class="num_nom">
-                <h5>{{item.numero}}</h5>
-                <ion-text size="small" color="primary">{{item.nom}}</ion-text> <br/>
-                <ion-note *ngIf="item.serie && item.serie != 'Non précisé'">serie {{item.serie}}</ion-note>
-            </ion-label>
-    
-            <ion-badge slot="end" color="success" *ngIf="item.decision=='Admis'">{{item.decision}}</ion-badge>
-            <ion-badge slot="end" color="warning" *ngIf="item.decision=='Autorise'">{{item.decision}}</ion-badge>
-            <ion-badge slot="end" color="danger" *ngIf="item.decision!='Admis' && item.decision != 'Autorise'">{{item.decision}}</ion-badge>
-            </ion-item>
-        </ion-list>
-        <ion-infinite-scroll threshold="10px" (ionInfinite)="filtrer(false, $event)" *ngIf="nbrResultat > etudiants.length">
-            <ion-infinite-scroll-content
-              loadingSpinner="bubbles"
-              loadingText="Chargement...">
-            </ion-infinite-scroll-content>
-        </ion-infinite-scroll>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-card class="autre-card" mode="ios" *ngIf="ecole?.url && examen == 'AUTRES'">
-    <ion-card-header>
-    <ion-card-subtitle></ion-card-subtitle>
-    <ion-card-title>
-        <img (click)="openModalExam(1)" [src]="ecole?.logo" class="logo-ecole ion-padding-top" />
-        <ion-button (click)="openModalExam(1)" expand="block" fill="clear" shape="round" class="top-right" size="small">
-            <ion-icon name="swap-horizontal-outline" slot="icon-only"></ion-icon>
+    </div> -->
+    <!-- <div class="ion-padding-top ion-text-center" style="margin:auto; width:100%;">
+        <app-flip-card [value]="octicoin" *ngIf="octicoin != null && ecole?.id != 3"></app-flip-card> <br>
+    </div> -->
+    <div *ngIf="logedIn && canActivateNotes">
+        <ion-button fill="outline" shape="round" (click)="openLogin('params-candidat');">
+            <ion-icon name="document-text" slot="start"></ion-icon>  
+            Accès aux notes
         </ion-button>
-    </ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-    <ion-button color="primary" (click)="navCtrl.navigateForward('login');" *ngIf="!logedIn">
-        <ion-icon slot="start" name="log-in-outline"></ion-icon>
-        Se connecter
-    </ion-button>
-    <div class="ion-padding ion-text-center my-kids" *ngIf="examen == 'AUTRES'">
-        <div class="kid"  *ngFor="let kid of kids" (click)="openVieScolaire(kid)">
-        <ion-avatar>
-            <img [src]="kid.photo" [alt]="kid.nom" onerror="this.src='assets/img/default-user.png'"/>
-        </ion-avatar>
-        <p>{{kid.nom + " " + kid.prenom}}</p>
-        </div>
+        <ion-button *ngIf="!logedIn && canActivateNotes" shape="round" fill="outline" (click)="openLogin();">Accès aux notes</ion-button>
     </div>
-    </ion-card-content>
-  </ion-card>
-  <div id="autre"></div>
-  <div *ngIf="url.url" class="btn-url">
-      <ion-button (click)="openUrl(url.url)" fill="outline">
-          {{url.btn}}
-      </ion-button>
-  </div>
-  <ion-card id="reponseNegatif" color="danger">
+    <!-- <h5 class="exam-title" (click)="openModalExam(1)" *ngIf="examen!='AUTRES'">
+        {{examen}}
+    </h5> -->
 
-  </ion-card>
-  <!-- <div *ngIf="connexionError==1" class="ion-padding">
-      {{btns[0].text}} <br>
-      <ion-button (click)="callNum(btns[0].number);" shape="round" fill="outline">{{btns[0].btnText}}</ion-button>
-  </div>
-  <div *ngIf="connexionError==1" class="ion-padding">
-      {{btns[1].text}} <br>
-      <ion-button (click)="callNum(btns[1].number);" shape="round" fill="outline">{{btns[1].btnText}}</ion-button>
-  </div> -->
-  <div id="autre" class="ion-no-padding">
-  </div>
-  <div class="sliders-container" *ngIf="slidesPub.length>0">
-    <ion-slides pager [options]="slideOpts">
-        <ion-slide *ngFor="let item of slidesPub" class="slide">
-            <a href="{{item.url}}">
-                <img src="{{item.src}}" alt="{{item.src}}" class="slide-img" />
-            </a>
-        </ion-slide>
-    </ion-slides>
-  </div>
-  <div class="ion-text-left courses">
-    <ion-card class="ion-no-margin-vertical" [class.ion-text-right]="item.direction == 'rtl'" 
-    mode="ios" [class.rtl]="item.direction == 'rtl'" *ngFor="let item of getListTemplate()" 
-    [class]="item.type == 'exos' ? 'bg-white' : ''">
-        <app-file-component [src]="item.url" [title]="item.titre" [scheme]="'dark'" alt="contenu" *ngIf="item.url"></app-file-component>
-        <ion-item>
-            <ion-icon [name]="item.type == 'cours' ? 'library-outline' : 'barbell-outline'" color="primary" slot="start"></ion-icon>
-            <ion-label>{{item.type == 'exos' ? 'Exercice' : 'Cours'}} {{item.coach_label_offre2}}</ion-label>
-            <ion-button fill="outline" slot="end" (click)="openCours(item)">ouvrir</ion-button>
+    <!-- <ion-button *ngFor="let item of btnsRecherche" [disabled]="disponibility.nbr==0" [color]="disponibility.color" fill="clear" class="btn-gsa" (click)="navCtrl.navigateForward('search', {queryParams: {etablissement:item.etablissement, annee:annee, examen:examen, ile:ile, mention: item.mention}})">{{item.btnText}}</ion-button> -->
+        
 
-            <ion-avatar style="width: 32px;height:32px;" slot="end">
-                <img [src]="item.photo_coach" 
-                (click)="presentPopover($event, {photo:item.photo_coach,nom:item.nom_coach, label_offre:item.coach_label_offre,label_offre2:item.coach_label_offre2,
-                    id:item?.id_coach, prix_hebdo:item?.coach_prix_hebdo, slogan:item.slogan, 
-                    prix_tarzan:item.coach_prix_tarzan, prix_technicien: item.coach_prix_technicien, nom_matiere: item.nom, classe:item.classe})"/>
-            </ion-avatar>
-        </ion-item>
+
+    <ion-item *ngIf="examen=='AUTRES' && 0" style="margin:auto;">
+        <ion-label>Trimestre</ion-label>
+        <ion-select mode="ios" [(ngModel)]="trimestre" id="trimestreSelect" (ionChange)="filtrer();">
+            <ion-select-option selected value="1">
+                1 ère
+            </ion-select-option>
+            <ion-select-option value="2">
+                2 ème
+            </ion-select-option>
+            <ion-select-option value="3">
+                3 ème
+            </ion-select-option>
+        </ion-select>
+    </ion-item>
+    
+    <!-- <p>
+        <ion-searchbar placeholder="Nom ou numéro" [(ngModel)]="recherche">
+
+        </ion-searchbar>
+        <ion-button icon-right round (click)="rechercher();" color="secondary" class="search-btn">
+            <ion-icon name="search"></ion-icon>  Rechercher
+        </ion-button>
+
+    </p> -->
+    <ion-card *ngIf="examen != 'AUTRES' && (coursesType == '' || coursesType == 'exams')" class="ion-padding-bottom" mode="ios">
         <ion-card-header>
-            <ion-card-subtitle>{{item.date | moment : ''}}</ion-card-subtitle>
-            <ion-card-title>{{item.titre}}</ion-card-title>
+            <ion-card-title>
+                <a class="circle" (click)="openModalExam(1)" *ngIf="examen != 'AUTRES'">
+                    <img src='https://ecole.natidja.app/photos/bac.png' style="max-width: 65%;" *ngIf="examen=='BAC'" alt="{{userProfile.photo}}" />
+                    <img src='https://ecole.natidja.app/photos/bepc.png' *ngIf="examen=='BEPC'" alt="{{userProfile.photo}}" />
+                    <img src='https://ecole.natidja.app/photos/sixieme.png' *ngIf="examen=='SIXIEME'" alt="{{userProfile.photo}}" />
+                    <!-- <ion-icon color="fourth" name="camera"></ion-icon> -->
+                    <ion-button expand="block" fill="clear" shape="round" class="top-right" size="small">
+                        <ion-icon name="swap-horizontal-outline" slot="icon-only" class=" btn-rotate-animation"></ion-icon>
+                    </ion-button>
+                </a>
+            </ion-card-title>
+            <ion-card-subtitle>
+                <p *ngIf="etudiants.length>2">
+                    <ion-note>{{nbrResultat}} Résultats({{examen}})</ion-note>
+                </p>
+            </ion-card-subtitle>
         </ion-card-header>
-        <ion-card-content class="size-animation">
-            <div [innerHtml]="item.content | textHtml" *ngIf="item.showMore" (click)="item.showMore = !item.showMore"></div>
-            <div [innerHtml]="trimString(item.content, 100) | textHtml" *ngIf="!item.showMore" (click)="item.showMore = !item.showMore"></div>
-            <ion-slides mode="ios" [pager]="false" scrollbar="false" [options]="questionSlides" class="ion-no-padding ion-text-left">
-                <ion-slide *ngFor="let q of item.responses; let i = index;" class="ion-text-left ion-no-padding">
-                    <div>
-                        <h4>
-                            {{q.question}}
-                        </h4>
-                        <ion-item class="ion-no-padding"  *ngIf="logedIn">
-                            <ion-textarea *ngIf="q.others?.length <= 1" name="response" [value]="q.content" type="text" 
-                            placeholder="Saisissez votre réponse ici" [disabled]="q?.validated_time != null" [class.hidden]="q?.validated_time != null"></ion-textarea>
-
-                            <ion-text slot="start" [color]="q.isCorrect == true ? 'primary' : 'false'" *ngIf="q?.validated_time != null">
-                                {{q?.content}}
-                            </ion-text>
-
-                            <ion-radio-group *ngIf="q.others?.length > 1" name="response" [value]="q.content" [class.hidden]="q?.validated_time != null">
-                                <ion-item *ngFor="let o of q.others">
-                                    <ion-label class="ion-text-wrap">{{o.content}}</ion-label>
-                                    <ion-radio [value]="o.content"></ion-radio>
-                                </ion-item>
-                            </ion-radio-group>
-                            <ion-icon style="margin:auto;" slot="end" *ngIf="q?.isCorrect != null" 
-                            [color]="q?.isCorrect == 1 ? 'success' : 'danger'" 
-                            [name]="q?.isCorrect == 1 ? 'checkmark-circle' : 'close-circle'">
-                            </ion-icon>
-                            <p *ngIf="q?.loading == true" class="text-center loader">
-                                <ion-icon name="heart" size="small" color="danger"></ion-icon><br>
-                            </p>
-                            <ion-button [class.hidden]="q?.loading == true" (click)="sendResponse(q, $event.target)" 
-                            class="send-btn" slot="end" fill="clear" *ngIf="!isLast(item.responses, q) || isValidated(item.responses)">
-                                <ion-icon slot="icon-only" [name]="q?.content ? 'arrow-forward-outline' : 'send'"></ion-icon>
-                            </ion-button>
-                            <ion-button  [class.hidden]="q?.loading == true" 
-                            (click)="sendResponse(q, $event.target, 1, item)" class="send-btn" slot="end" fill="clear" 
-                            *ngIf="isLast(item.responses, q) && !isValidated(item.responses)">
-                                <ion-icon slot="icon-only" [name]="'paper-plane-outline'"></ion-icon>
-                            </ion-button>
-                        </ion-item>
-                        <ion-text color="primary" *ngIf="q?.isCorrect != null">
-                            {{q?.correct}}
-                        </ion-text>
-                        <ion-button color="warning" (click)="navCtrl.navigateForward('login');" *ngIf="!logedIn" fill="clear">
-                            <ion-icon slot="start" name="log-in-outline"></ion-icon>
-                            Corriger les exercices
-                        </ion-button>
-                    </div>
-                </ion-slide>
-            </ion-slides>
+        <ion-card-content class="ion-no-padding">
+            <div *ngIf="examen!='AUTRES'" class="ile ion-padding">
+                <ion-item style="display: none;">
+                    <ion-label>Ile</ion-label>
+                    <ion-select [(ngModel)]="ile" name="ile" id="ileSelect" (ionChange)="check();filtrer();">
+                        <ion-select-option *ngFor="let item of iles" value="{{item}}">
+                            {{item}}
+                        </ion-select-option>
+                    </ion-select>
+                </ion-item>
+                <ion-chip class="ion-text-center" *ngFor="let item of iles" (click)="ile = item;" [outline]="item != ile" style="width:30%;" color="primary">
+                    <!-- <ion-icon name="checkmark-outline" size="small" *ngIf="item == ile"></ion-icon> -->
+                    <ion-label size="small">{{item}}</ion-label>
+                </ion-chip>
+                
+            </div>
+            <form (ngSubmit)="rechercher();" *ngIf="examen!='AUTRES'" style="margin:auto;">
+                <ion-searchbar animated="true" placeholder="Nom ou numéro" type="search" [debounce]="250" name="search" [(ngModel)]="recherche"></ion-searchbar>
+                <!-- <ion-searchbar placeholder="Nom ou numéro" inputmode="text" type="text" [(ngModel)]="recherche" [debounce]="250" showCancelButton="always"></ion-searchbar> -->
+                <!-- <div class="search-bar">
+                    <ion-icon *ngIf="recherche==''" name="search" color="disabled"></ion-icon>
+                    <ion-input placeholder="Nom ou numéro" name="recherche" [(ngModel)]="recherche" id="champRecherche" class="ion-searchbar" animated=true>
+                    </ion-input>
+                    <ion-button class='non-btn scan-btn' *ngIf="recherche==''" clear color="danger" (click)="scanBarCode()">
+                        <ion-icon  name="barcode"></ion-icon>
+                    </ion-button>
+                    <br><br>
+                </div> -->
+                <ion-button color="primary" (click)="rechercher();" fill="solid" shape="round">
+                    <ion-icon  name="search" slot="start"></ion-icon>
+                    Rechercher
+                </ion-button>
+            </form>
+            <p *ngIf="loading" class="text-center loader">
+                <ion-icon name="heart" color="danger"></ion-icon><br>
+                <ion-text color="primary">chargement...</ion-text>
+            </p>
+            <ion-list class="list" *ngIf="etudiants.length>0">
+                <ion-item (click)="openItem(item)" *ngFor="let item of etudiants">
+                <ion-label slot="start" class="ion-item-left" class="num_nom">
+                    <h5>{{item.numero}}</h5>
+                    <ion-text size="small" color="primary">{{item.nom}}</ion-text> <br/>
+                    <ion-note *ngIf="item.serie && item.serie != 'Non précisé'">serie {{item.serie}}</ion-note>
+                </ion-label>
+        
+                <ion-badge slot="end" color="success" *ngIf="item.decision=='Admis'">{{item.decision}}</ion-badge>
+                <ion-badge slot="end" color="warning" *ngIf="item.decision=='Autorise'">{{item.decision}}</ion-badge>
+                <ion-badge slot="end" color="danger" *ngIf="item.decision!='Admis' && item.decision != 'Autorise'">{{item.decision}}</ion-badge>
+                </ion-item>
+            </ion-list>
+            <ion-infinite-scroll threshold="10px" (ionInfinite)="filtrer(false, $event)" *ngIf="nbrResultat > etudiants.length">
+                <ion-infinite-scroll-content
+                loadingSpinner="bubbles"
+                loadingText="Chargement...">
+                </ion-infinite-scroll-content>
+            </ion-infinite-scroll>
         </ion-card-content>
     </ion-card>
-    <ion-infinite-scroll threshold="100px" (ionInfinite)="getListCoursExos($event)" *ngIf="courses.length > 0 && coursesType != 'exams'">
-        <ion-infinite-scroll-content
-          loadingSpinner="bubbles"
-          loadingText="Chargement...">
-        </ion-infinite-scroll-content>
-    </ion-infinite-scroll>
-  </div>
+
+    <ion-card class="autre-card" mode="ios" *ngIf="ecole?.url && examen == 'AUTRES'">
+        <ion-card-header>
+            <ion-card-title>
+                <img (click)="openModalExam(1)" [src]="ecole?.logo" class="logo-ecole ion-padding-top" />
+                <ion-button (click)="openModalExam(1)" expand="block" fill="clear" shape="round" class="top-right" size="small">
+                    <ion-icon name="swap-horizontal-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+            </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+            <ion-button color="primary" (click)="navCtrl.navigateForward('login');" *ngIf="!logedIn">
+                <ion-icon slot="start" name="log-in-outline"></ion-icon>
+                Se connecter
+            </ion-button>
+            <div class="ion-padding ion-text-center my-kids" *ngIf="examen == 'AUTRES'">
+                <div class="kid"  *ngFor="let kid of kids" (click)="openVieScolaire(kid)">
+                    <ion-avatar>
+                        <img [src]="kid.photo" [alt]="kid.nom" onerror="this.src='assets/img/default-user.png'"/>
+                    </ion-avatar>
+                    <p>{{kid.nom + " " + kid.prenom}}</p>
+                </div>
+            </div>
+        </ion-card-content>
+    </ion-card>
+    <div *ngIf="url.url" class="btn-url">
+        <ion-button (click)="openUrl(url.url)" fill="outline">
+            {{url.btn}}
+        </ion-button>
+    </div>
+    <ion-card id="reponseNegatif" color="danger"></ion-card>
+
+    <div id="autre" class="ion-no-padding">
+    </div>
+    <div class="sliders-container" *ngIf="slidesPub.length>0">
+        <ion-slides pager [options]="slideOpts">
+            <ion-slide *ngFor="let item of slidesPub" class="slide">
+                <a href="{{item.url}}">
+                    <img src="{{item.src}}" alt="{{item.src}}" class="slide-img" />
+                </a>
+            </ion-slide>
+        </ion-slides>
+    </div>
+    <!-- <div class="ion-text-left courses" *ngIf="ecole?.id != 3">
+        <ion-card class="ion-no-margin-vertical" [class.ion-text-right]="item.direction == 'rtl'" 
+        mode="ios" [class.rtl]="item.direction == 'rtl'" *ngFor="let item of getListTemplate()">
+            <app-file-component [src]="item.url" [poster]="item.poster" [title]="item.titre" [scheme]="'dark'" alt="contenu" *ngIf="item.url"></app-file-component>
+            <ion-item>
+                <ion-icon [name]="item.type == 'cours' ? 'library-outline' : 'barbell-outline'" color="primary" slot="start"></ion-icon>
+                <ion-label>{{item.type == 'exos' ? 'Exo' : 'Cours'}}</ion-label>
+                <ion-button fill="outline" slot="end" (click)="openCours(item)">
+                    <ion-label>Ouvrir</ion-label>
+                    <ion-badge color="light" mode="ios" *ngIf="item.nbr_comments && item.nbr_comments != 0">{{item.nbr_comments}}</ion-badge>
+                </ion-button>
+
+                <ion-avatar style="width: 32px;height:32px;" slot="end">
+                    <img [src]="item.photo_coach" 
+                    (click)="presentPopover($event, {photo:item.photo_coach,nom:item.nom_coach, label_offre:item.coach_label_offre,label_offre2:item.coach_label_offre2,
+                        id:item?.id_coach, prix_hebdo:item?.coach_prix_hebdo, slogan:item.slogan, 
+                        prix_tarzan:item.coach_prix_tarzan, prix_technicien: item.coach_prix_technicien, nom_matiere: item.nom, classe:item.classe})"/>
+                </ion-avatar>
+            </ion-item>
+            <ion-card-header>
+                <ion-note>{{item.date | moment : ''}}</ion-note>
+                <ion-card-title>
+                    <span>{{item.titre}}</span>
+                </ion-card-title>
+            </ion-card-header>
+            <ion-card-content class="size-animation">
+                <div [innerHtml]="item.content | textHtml" *ngIf="item.showMore" (click)="item.showMore = !item.showMore"></div>
+                <div [innerHtml]="trimString(item.content, 100) | textHtml" *ngIf="!item.showMore" (click)="item.showMore = !item.showMore"></div>
+                <ion-slides mode="ios" [pager]="false" scrollbar="false" [options]="questionSlides" class="ion-no-padding ion-text-left">
+                    <ion-slide *ngFor="let q of getQuestions(item.responses); let i = index;" class="ion-text-left ion-no-padding">
+                        <div>
+                            <h4 (click)="co(item.responses)">
+                                {{q.question}}
+                            </h4>
+                            <ion-item class="ion-no-padding"  *ngIf="logedIn">
+                                <ion-textarea [rows]="lineCount(q?.content)+1" *ngIf="q.others?.length <= 1" name="response" [value]="q.content" type="text" 
+                                placeholder="Saisissez votre réponse ici" [disabled]="q?.validated_time != null" 
+                                [class.hidden]="q?.validated_time != null"></ion-textarea>
+
+                                <ion-text [innerHtml]="q?.content | textHtml" slot="start" [color]="q.isCorrect > 50 ? 'primary' : 'danger'" *ngIf="q?.validated_time != null"></ion-text>
+
+                                <ion-radio-group *ngIf="q.others?.length > 1" name="response" [value]="q.content" [class.hidden]="q?.validated_time != null">
+                                    <ion-item *ngFor="let o of q.others">
+                                        <ion-label class="ion-text-wrap" color="dark">{{o.content}}</ion-label>
+                                        <ion-radio [value]="o.content"></ion-radio>
+                                    </ion-item>
+                                </ion-radio-group>
+                                <ion-icon style="margin:auto;" slot="end" *ngIf="q?.isCorrect != null" 
+                                [color]="q?.isCorrect > 50 ? 'success' : 'danger'" 
+                                [name]="q?.isCorrect > 50 ? 'checkmark-circle' : 'close-circle'">
+                                </ion-icon>
+                                <p *ngIf="q?.loading == true" class="text-center loader">
+                                    <ion-icon name="heart" size="small" color="danger"></ion-icon><br>
+                                </p>
+                                <ion-button [class.hidden]="q?.loading == true" (click)="sendResponse(q, $event.target)" 
+                                class="send-btn" slot="end" fill="clear" *ngIf="!isLast(item.responses, q) || isValidated(item.responses)">
+                                    <ion-icon slot="icon-only" [name]="q?.content ? 'arrow-forward-outline' : 'send'"></ion-icon>
+                                </ion-button>
+                                <ion-button  [class.hidden]="q?.loading == true" 
+                                (click)="sendResponse(q, $event.target, 1, item)" class="send-btn" slot="end" fill="clear" 
+                                *ngIf="isLast(item.responses, q) && !isValidated(item.responses)">
+                                    <ion-icon slot="icon-only" [name]="'paper-plane-outline'"></ion-icon>
+                                </ion-button>
+                            </ion-item>
+                            <ion-text color="primary" *ngIf="q?.isCorrect != null">
+                                {{q?.correct}}
+                            </ion-text>
+                            <ion-button color="warning" (click)="navCtrl.navigateForward('login');" *ngIf="!logedIn" fill="clear">
+                                <ion-icon slot="start" name="log-in-outline"></ion-icon>
+                                Corriger les exercices
+                            </ion-button>
+                        </div>
+                    </ion-slide>
+                </ion-slides>
+                
+                <div *ngIf="logedIn && item.type == 'cours'" class="comprehension">
+                    <h2 style="font-weight: bold;">À quel % avez-vous compris ?</h2>
+                    <ion-item class="ion-no-padding">
+                        <ion-button size="small" [color]="item?.comprehension == 0 ? 'danger' : ''" (click)="setComprehension(item, 0)" fill="outline">
+                            0%
+                        </ion-button>
+                        <ion-button size="small" [color]="item?.comprehension == 25 ? 'danger' : ''" (click)="setComprehension(item, 25)" fill="outline">
+                            25%
+                        </ion-button>
+                        <ion-button size="small" [color]="item?.comprehension == 50 ? 'warning' : ''" (click)="setComprehension(item, 50)" fill="outline">
+                            50%
+                        </ion-button>
+                        <ion-button size="small" [color]="item?.comprehension == 75 ? 'success' : ''" (click)="setComprehension(item, 75)" fill="outline">
+                            75%
+                        </ion-button>
+                        <ion-button size="small" [color]="item?.comprehension == 100 ? 'success' : ''" (click)="setComprehension(item, 100)" fill="outline">
+                            100%
+                        </ion-button>
+                    </ion-item>
+                    <p *ngIf="item?.loadingComprehension == true" class="text-center loader ion-text-center">
+                        <ion-icon name="heart" size="small" color="danger"></ion-icon><br>
+                    </p>
+                </div>
+
+            </ion-card-content>
+        </ion-card>
+        <ion-infinite-scroll threshold="100px" (ionInfinite)="getListCoursExos($event)" *ngIf="courses.length > 0 && coursesType != 'exams'">
+            <ion-infinite-scroll-content
+            loadingSpinner="bubbles"
+            loadingText="Chargement...">
+            </ion-infinite-scroll-content>
+        </ion-infinite-scroll>
+    </div> -->
+    <div id="autre"></div>
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="supportWsp">
+        <ion-fab-button href="https://wa.me/{{supportWsp}}">
+            <ion-icon name="logo-whatsapp"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
 </ion-content>

@@ -10,72 +10,186 @@
   <ion-content [class.rtl]="item.direction == 'rtl'" [class.ion-text-right]="item.direction == 'rtl'">
     <app-file-component [src]="item.url" [title]="item.titre" alt="contenu" *ngIf="item.url" [scheme]="'dark'"></app-file-component>
     <div class="ion-padding">
-        <ion-note *ngIf="item.date">
-           <small>{{item.date | moment : ''}}</small>
-        </ion-note><br>
-        <ion-chip color="primary" mode="ios" outline="true">
-            <ion-avatar>
-                <img [src]="item.photo_coach" />
-            </ion-avatar>
-            <ion-label>{{item.nom_coach}}</ion-label>
-        </ion-chip>
+        <h1 color="primary">
+            <div [class.rtl]="item.direction == 'rtl'" [class.ion-text-right]="item.direction == 'rtl'">{{item.titre}}</div>
+            <ion-note *ngIf="item.date">
+               <small style="font-size: 14px">
+                   {{item.date | moment : ''}}
+                   <ion-label color="secondary"
+                   (click)="presentPopover($event, {photo:item.photo_coach,nom:item.nom_coach, label_offre:item.coach_label_offre,label_offre2:item.coach_label_offre2,
+                       id:item?.id_coach, prix_hebdo:item?.coach_prix_hebdo, slogan:item.slogan, 
+                       prix_tarzan:item.coach_prix_tarzan, prix_technicien: item.coach_prix_technicien, nom_matiere: item.nom, classe:item.classe})">
+                       Par {{item.nom_coach}} 
+                       <ion-avatar style="width: 14px;height:14px;display:inline-block;">
+                           <img [src]="item.photo_coach"/>
+                       </ion-avatar>
+                   </ion-label>
+                </small>
+            </ion-note>
+        </h1>
         <div *ngIf="item.content" [innerHtml]="item.content | textHtml" class="content"></div>
     </div>
-    <ion-list *ngIf="item?.responses?.length > 0">
-        <ion-item-group *ngFor="let q of item?.responses">
-            <ion-item-divider color="light">
-                <ion-label class="ion-text-wrap">{{q.question}}</ion-label>
-            </ion-item-divider>
-            <ion-item lines="none">
-                <!-- <ion-icon style="margin:auto;" slot="start" *ngIf="q?.isCorrect != null" 
-                [color]="q?.isCorrect == 1 ? 'success' : 'danger'" [name]="q?.isCorrect == 1 ? 'checkmark-circle' : 'close-circle'"></ion-icon> -->
-                <ion-label class="ion-text-wrap">
-                    <h5>vous</h5>
-                    <ion-text [class.barree]="q?.isCorrect === 1" [color]="q.isCorrect == 1 ? 'success' : q?.isCorrect == 0 ? 'danger' : ''" [innerHtml]="q?.content | textHtml"></ion-text>
-                </ion-label>
-                <ion-label class="ion-text-wrap" *ngIf="q.isCorrect != null && q.isCorrect !== ''">
-                    <h5>coach</h5>
-                    <ion-text color="primary" *ngIf="q.correct" [innerHtml]="q.correct | textHtml"></ion-text>
-                </ion-label>
-            </ion-item>
-            <ion-card-content class="teacher-comment ion-no-padding ion-text-left" *ngIf="q?.teacher_comment">
-                <ion-item>
-                    <ion-grid>
-                        <ion-row>
-                            <ion-col size="2">
-                              <ion-avatar class="avatar ion-item-left" style="float:left;">
-                                <img src="{{item.photo_coach}}" (error)="defaultImg($event.target)">
-                              </ion-avatar>
-                            </ion-col>
-                            <ion-col size="10">
-                              <div class="aLabel">
-                                <h5>{{item.nom_coach}}</h5>
-                                <ion-note>{{item.nom}}</ion-note>
-                              </div>
-                            </ion-col>
-                        </ion-row>
-                        <ion-row>
-                            <ion-col size="12">
-                              <div class="comment" (click)="openPage('response')">
-                                  {{q.teacher_comment}}
-                                  <div class="date">
-                                      <!-- <small>{{q?.date | moment : ''}}</small> -->
-                                  </div>
-                              </div>
-                            </ion-col>
-                        </ion-row>
-                    </ion-grid>
+    
+    <div *ngIf="item?.responses?.length > 0">
+        <ion-list *ngIf="isValidated()">
+            <ion-item-group *ngFor="let q of item?.responses">
+                <ion-item-divider color="light">
+                    <ion-label class="ion-text-wrap">{{q.question}}</ion-label>
+                </ion-item-divider>
+                <ion-item lines="none">
+                    <!-- <ion-icon style="margin:auto;" slot="start" *ngIf="q?.isCorrect != null" 
+                    [color]="q?.isCorrect == 1 ? 'success' : 'danger'" [name]="q?.isCorrect == 1 ? 'checkmark-circle' : 'close-circle'"></ion-icon> -->
+                    <ion-label class="ion-text-wrap">
+                        <h5>vous</h5>
+                        <ion-text [class.barree]="q?.isCorrect === 1" [color]="q.isCorrect == 1 ? 'success' : q?.isCorrect == 0 ? 'danger' : ''" [innerHtml]="q?.content | textHtml"></ion-text>
+                    </ion-label>
+                    <ion-label class="ion-text-wrap" *ngIf="q.isCorrect != null && q.isCorrect !== ''">
+                        <h5>coach</h5>
+                        <ion-text color="primary" *ngIf="q.correct" [innerHtml]="q.correct | textHtml"></ion-text>
+                    </ion-label>
                 </ion-item>
-            </ion-card-content>
-        </ion-item-group>
-        <!-- <div class="ion-padding" *ngIf="!isValidated(item.responses) && logedIn">
-            <ion-button *ngIf="item?.responses.length > 0" (click)="validerExo()" expand="block">
-                Valider l'exercice
-                <ion-icon slot="end" name="paper-plane"></ion-icon>
-            </ion-button>
-        </div> -->
-        
-    </ion-list>
+                <ion-card-content class="teacher-comment ion-no-padding ion-text-left" *ngIf="q?.teacher_comment">
+                    <ion-item>
+                        <ion-grid>
+                            <ion-row>
+                                <ion-col size="2">
+                                  <ion-avatar class="avatar ion-item-left" style="float:left;">
+                                    <img src="{{item.photo_coach}}" (error)="defaultImg($event.target)">
+                                  </ion-avatar>
+                                </ion-col>
+                                <ion-col size="10">
+                                  <div class="aLabel">
+                                    <h5>{{item.nom_coach}}</h5>
+                                    <ion-note>{{item.nom}}</ion-note>
+                                  </div>
+                                </ion-col>
+                            </ion-row>
+                            <ion-row>
+                                <ion-col size="12">
+                                  <div class="comment" (click)="openPage('response')">
+                                      {{q.teacher_comment}}
+                                      <div class="date">
+                                          <!-- <small>{{q?.date | moment : ''}}</small> -->
+                                      </div>
+                                  </div>
+                                </ion-col>
+                            </ion-row>
+                        </ion-grid>
+                    </ion-item>
+                </ion-card-content>
+            </ion-item-group>
+        </ion-list>
+    
+        <div class="ion-text-left" *ngIf="!isValidated()">
+            <ion-slides mode="ios" [pager]="false" scrollbar="false" [options]="questionSlides" class="ion-no-padding ion-text-left">
+                <ion-slide *ngFor="let q of getQuestions(item.responses); let i = index;" 
+                class="ion-text-left ion-no-padding">
+                    <div>
+                        <h4 class="ion-padding-horizontal">
+                            {{q.question}}
+                        </h4>
+                        <ion-item  *ngIf="logedIn">
+                            <ion-textarea [rows]="lineCount(q?.content)+1" *ngIf="q.others?.length <= 1" name="response" 
+                            [(ngModel)]="q.content" type="text" 
+                            placeholder="Saisissez votre réponse ici" [disabled]="q?.validated_time != null" 
+                            [class.hidden]="q?.validated_time != null"></ion-textarea>
+    
+                            <ion-text [innerHtml]="q?.content | textHtml" slot="start" [color]="q.isCorrect > 50 ? 'success' : 'danger'" *ngIf="q?.validated_time != null"></ion-text>
+    
+                            <ion-radio-group *ngIf="q.others?.length > 1" name="response" [value]="q.content" [class.hidden]="q?.validated_time != null">
+                                <ion-item *ngFor="let o of q.others">
+                                    <ion-label class="ion-text-wrap">{{o.content}}</ion-label>
+                                    <ion-radio [value]="o.content"></ion-radio>
+                                </ion-item>
+                            </ion-radio-group>
+                            <ion-icon style="margin:auto;" slot="end" *ngIf="q?.isCorrect != null" 
+                            [color]="q?.isCorrect > 50 ? 'success' : 'danger'" 
+                            [name]="q?.isCorrect > 50 ? 'checkmark-circle' : 'close-circle'">
+                            </ion-icon>
+                            <p *ngIf="q?.loading == true" class="text-center loader">
+                                <ion-icon name="heart" size="small" color="danger"></ion-icon><br>
+                            </p>
+                            <ion-button [class.hidden]="q?.loading == true" (click)="sendResponseExo(q, $event.target)" 
+                            class="send-btn" slot="end" fill="clear" *ngIf="!isLast(item.responses, q) || isValidated()">
+                                <ion-icon slot="icon-only" [name]="q?.content ? 'arrow-forward-outline' : 'send'"></ion-icon>
+                            </ion-button>
+                            <ion-button  [class.hidden]="q?.loading == true" 
+                            (click)="sendResponseExo(q, $event.target, 1, item)" class="send-btn" slot="end" fill="clear" 
+                            *ngIf="isLast(item.responses, q) && !isValidated()">
+                                <ion-icon slot="icon-only" [name]="'paper-plane-outline'"></ion-icon>
+                            </ion-button>
+                        </ion-item>
+                        <ion-text color="primary" *ngIf="q?.isCorrect != null">
+                            {{q?.correct}}
+                        </ion-text>
+                        <ion-button color="warning" (click)="navCtrl.navigateForward('login');" *ngIf="!logedIn" fill="clear">
+                            <ion-icon slot="start" name="log-in-outline"></ion-icon>
+                            Corriger les exercices
+                        </ion-button>
+                    </div>
+                </ion-slide>
+            </ion-slides>
+        </div>
+
+        <ion-item lines="top" *ngIf="item.score || item.score == 0">
+            <ion-icon name="flag-outline" color="primary" slot="start"></ion-icon>
+            <ion-label>
+                Votre note
+            </ion-label>
+            <ion-chip slot="end" fill="outline" color="primary" *ngIf="item.score">
+                <ion-label>{{item.score}}</ion-label>
+            </ion-chip>
+        </ion-item>
+        <ion-item lines="top" (click)="presentPopover($event, {photo:item.best_score.photo,nom:item.best_score.nom, slogan: item.best_score.slogan})" *ngIf="item.best_score">
+            <ion-icon color="warning" name="trophy-outline" slot="start"></ion-icon>
+            <ion-label color="warning">
+                Meilleure note
+            </ion-label>
+            <ion-chip color="warning" slot="end" fill="outline" *ngIf="item.best_score">
+                <ion-avatar style="width:32px;height:32px;" slot="start" *ngIf="item.best_score.photo">
+                    <img [src]="item.best_score.photo" [alt]="item.best_score.photo">
+                </ion-avatar>
+                <ion-label>{{item.best_score.value}}</ion-label>
+            </ion-chip>
+        </ion-item>
+    </div>
+    <br>
+    <div *ngIf="logedIn && item.type == 'cours'" class="comprehension">
+        <h2 style="font-weight: bold;padding:12px;">À quel % avez-vous compris ?</h2>
+        <ion-grid>
+            <ion-row>
+                <ion-col>
+                    <ion-button expand="block" size="small" [color]="item?.comprehension == 0 ? 'danger' : ''" (click)="setComprehension(item, 0)" fill="outline">
+                        0%
+                    </ion-button>
+                </ion-col>
+                <ion-col>
+                    <ion-button expand="block" size="small" [color]="item?.comprehension == 25 ? 'danger' : ''" (click)="setComprehension(item, 25)" fill="outline">
+                        25%
+                    </ion-button>
+                </ion-col>
+                <ion-col>
+                    <ion-button expand="block" size="small" [color]="item?.comprehension == 50 ? 'warning' : ''" (click)="setComprehension(item, 50)" fill="outline">
+                        50%
+                    </ion-button>
+                </ion-col>
+                <ion-col>
+                    <ion-button expand="block" size="small" [color]="item?.comprehension == 75 ? 'success' : ''" (click)="setComprehension(item, 75)" fill="outline">
+                        75%
+                    </ion-button>
+                </ion-col>
+                <ion-col>
+                    <ion-button expand="block" size="small" [color]="item?.comprehension == 100 ? 'success' : ''" (click)="setComprehension(item, 100)" fill="outline">
+                        100%
+                    </ion-button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+        <p *ngIf="item?.loadingComprehension == true" class="text-center loader ion-text-center">
+            <ion-icon name="heart" size="small" color="danger"></ion-icon><br>
+        </p>
+    </div>
+
     <div class="ion-text-left">
         <ion-card-header>
             <ion-card-subtitle>Avez-vous des</ion-card-subtitle>
@@ -100,7 +214,7 @@
                           <textarea [rows]="lineCount(comment)" name="comment" class="comment" [(ngModel)]="comment" placeholder="Écrivez votre question ici"></textarea>
                         </ion-col>
                         <ion-col size="2" class="ion-no-padding">
-                          <ion-button (click)="send()" fill="clear" class='btn-send'>
+                          <ion-button [disabled]="sending" (click)="send()" fill="clear" class='btn-send'>
                               <ion-icon name="send"></ion-icon>
                           </ion-button>
                         </ion-col>

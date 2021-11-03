@@ -25,30 +25,30 @@
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
 
-@font-face {
-    font-family: 'Montserrat';
-    font-style: bold;
-    font-weight: 400;
-    src: url('./assets/fonts/Montserrat-Black.ttf');
-}
-
 ion-content{
     scrollbar-width: none;
 }
-$font-family-base: "Montserrat",
-sans-serif !default;
 body {
-    font-family: "Montserrat" !important;
     font-weight: 20 !important;
     // background: linear-gradient(to right bottom, var(--ion-color-primary), var(ion-color-secondary));
     background: rgb(69,123,157);
     background: linear-gradient(0deg,rgba(168,218,219,1) 80%, rgba(69,123,157,1) 100%);
 }
+.content{
+    letter-spacing: 0.8px;
+}
 
 .courses ion-card .rtl{
     direction:rtl;
 }
+.rtl{
+    direction:rtl;
+    text-align: right;
 
+    .send-btn ion-icon, .btn-send ion-icon{
+        transform:rotate(230deg);
+    }
+}
 .bg-transparent{
     --background: rgba(255,255,255, 0);
 }
@@ -129,14 +129,7 @@ a.circle {
 }
 
 ion-fab {
-    font-family: "Montserrat" !important;
     font-weight: 50 !important;
-}
-
-h1,
-h2,
-button {
-    font-family: "Montserrat" !important;
 }
 
 ion-header,

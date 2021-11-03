@@ -1,0 +1,75 @@
+ion-slides {
+    height: 100%;
+}
+
+.swiper-slide {
+    display: block;
+}
+
+.swiper-slide h2 {
+    margin-top: 2.8rem;
+    font-size: larger;
+}
+
+.swiper-slide img {
+    max-height: 50%;
+    max-width: 80%;
+    margin: 60px 0 40px;
+    pointer-events: none;
+}
+.swiper-slide .svg{
+    margin-top: 0;
+    max-height: 25%;
+    margin-bottom: 0;
+}
+ion-avatar{
+    margin: auto;
+}
+.my-kids{
+    margin:auto;
+}
+.my-kids .kid{
+    display: inline-block;
+    text-align: center;
+    font-weight: 100;
+    background:rgba(255, 255, 255, 0.479);
+    box-shadow: 0px 2px 3px 1px rgba(151, 146, 146, 0.205);
+    border-radius: 12px;
+    width: 38%;
+    margin: 12px;
+}
+.kid img{
+    margin: 0;
+    width: 100%;
+}
+
+.my-kids ion-avatar{
+    margin: auto;
+    margin-top: 0;
+    position: relative;
+    border-radius: 100%;
+}
+b {
+    font-weight: 500;
+}
+
+p {
+    padding: 0 40px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ion-color-step-600, #60646b);
+}
+.my-kids .kid p{
+    padding:12px;
+    text-align: center;
+    border-radius: 12px;
+    font-weight: 300;
+    color: rgba(0,0, 0, .8);
+    background:rgba(255, 255, 255, .5);
+}
+.my-kids img{
+    border-radius: 12px;
+}
+p b {
+    color: var(--ion-text-color, #000000);
+}

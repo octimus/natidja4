@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
+import { CoachService } from 'src/app/services/coach/coach.service';
 import { CoursService } from 'src/app/services/cours/cours.service';
 
 @Component({
@@ -12,6 +13,7 @@ export class CoachProfilePage implements OnInit {
 
   public coach: any;
   public courses: any[] = [];
+  public validity:number = 7;
 
   public questionSlides = {
     initialSlide: 0,
@@ -22,7 +24,8 @@ export class CoachProfilePage implements OnInit {
     slidesPerView: 1,
   };
   
-  constructor(private route: ActivatedRoute, public navCtrl: NavController, private coursService: CoursService) { 
+  constructor(private route: ActivatedRoute, public navCtrl: NavController, 
+    private coursService: CoursService, private coachService: CoachService) { 
 
   }
   public getListCoursExos(event = null, vider: boolean = false){
@@ -30,7 +33,8 @@ export class CoachProfilePage implements OnInit {
 
     this.coursService.getListCoachingFree("", this.coach.id, offset).then((data)=>{
       try {
-        const json = JSON.parse(data.data);
+        let j = data?.data ? data.data : data;
+        const json = typeof(j) === "string" ? JSON.parse(j) : j;
         console.log({exo:json});
         
         if(json.status == "ok"){
@@ -56,8 +60,14 @@ export class CoachProfilePage implements OnInit {
     this.route.queryParams.forEach((dat) => {
       this.coach = dat;
       this.getListCoursExos();
-      console.log(dat);
-      
+      this.coachService.getList(0, {id:this.coach.id}).then((d) => {
+        let data = d.data || d;
+        let json = typeof(data) == "string" ? JSON.parse(data) : data;
+        
+        this.coach = json.data[0];
+        console.log(this.coach);
+        
+      })
     })
   }
 

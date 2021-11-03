@@ -1,0 +1,150 @@
+<ion-header>
+  <ion-buttons slot="start">
+  </ion-buttons>
+</ion-header>
+<ion-content class="ion-padding-top">
+  <ion-button (click)="back()" fill="clear" size="small">
+    <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+  </ion-button>
+  <ion-slides mode="ios" pager="ios" #slides>
+    <ion-slide *ngIf="!logedIn">
+      <div>
+        <img src="assets/girl-with-book.png" style="max-width:35%;margin: 0;"/>
+        <h2>Bienvenu</h2>
+        <p>Nous allons vous guider dans la configuration de votre compte 🤗.</p>
+        <ion-button (click)="next();" fill="clear">Continuer <ion-icon slot="end" name="arrow-forward"></ion-icon></ion-button>
+      </div>
+    </ion-slide>
+
+    <ion-slide *ngIf="!logedIn && !telephone">
+      <img src="assets/phone_number.svg" style="margin-bottom:0;margin-top:0;"/>
+      <h3 class="ion-padding">Quel est votre numéro de Téléphone ?</h3>
+        <form [formGroup]="formGroup">
+          <ion-item>
+            <ion-label position="floating">Téléphone</ion-label>
+            <ion-input formControlName="login" placeholder="téléphone"></ion-input>
+          </ion-item>
+        </form>
+      <ion-button (click)="checkAccount();" fill="clear">Continuer <ion-icon slot="end" name="arrow-forward"></ion-icon></ion-button>
+      <p *ngIf="loading" class="text-center loader">
+        <ion-icon name="heart" color="danger"></ion-icon><br>
+        <ion-text color="primary">chargement...</ion-text>
+      </p>
+    </ion-slide>
+
+    <ion-slide *ngIf="subscribed == false">
+      <img src="./assets/undraw_personal_information_re_vw8a.svg" class="svg"/>
+      <h2 class="ion-padding">Comment vous appelez-vous ?</h2>
+        <form [formGroup]="formGroup">
+          <ion-item>
+            <ion-label position="floating">Nom et prénom</ion-label>
+            <ion-input formControlName="nom_prenom" required placeholder="Nom et prénom" (ionChange)="nom_prenom=$event.target.value"></ion-input>
+          </ion-item>
+        </form>
+      <ion-button (click)="next();" fill="clear" [disabled]="formGroup.value['nom_prenom']?.length < 3">Continuer <ion-icon slot="end" name="arrow-forward"></ion-icon></ion-button>
+    </ion-slide>
+
+    <ion-slide *ngIf="subscribed == false">
+      <img src="./assets/undraw_personal_information_re_vw8a.svg" class="svg"/>
+      <h2>Où habitez-vous ?</h2>
+        <form [formGroup]="formGroup">
+          <ion-item>
+            <ion-label position="floating">Domicile</ion-label>
+            <ion-input formControlName="ville" placeholder="" required (ionChange)="domicile=$event.target.value"></ion-input>
+          </ion-item>
+        </form>
+      <ion-button (click)="next();" fill="clear" [disabled]="formGroup.value['ville']?.length < 3">Continuer <ion-icon slot="end" name="arrow-forward"></ion-icon></ion-button>
+    </ion-slide>
+    <ion-slide *ngIf="subscribed == false">
+      <img src="assets/authentication.svg" style="margin:0;"/>
+      <h2 class="ion-padding">Créer votre mot de passe</h2>
+        <form [formGroup]="formGroup">
+          <ion-item>
+            <ion-label position="floating">Mot de passe</ion-label>
+            <ion-input formControlName="passwordConfirm" type="password" ></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="floating">Mot de passe</ion-label>
+            <ion-input formControlName="password" type="password"></ion-input>
+          </ion-item>
+        </form>
+      <ion-button (click)="signup();" fill="clear"[disabled]="formGroup.value['password']?.length < 4 && formGroup.value['passwordConfirm']?.length < 4" >Continuer <ion-icon slot="end" name="arrow-forward"></ion-icon></ion-button>
+      <p *ngIf="loading" class="text-center loader">
+        <ion-icon name="heart" color="danger"></ion-icon><br>
+        <ion-text color="primary">chargement...</ion-text>
+      </p>
+    </ion-slide>
+
+    <ion-slide *ngIf="subscribed == true && !logedIn">
+      <img src="assets/authentication.svg" style="margin:0;"/>
+      <h3>Coucou {{user.nom.split(' ')[0]}}!</h3>
+      <form [formGroup]="formGroup">
+        <ion-item>
+          <ion-label position="floating">Mot de passe</ion-label>
+          <ion-input formControlName="password" type="password"></ion-input>
+        </ion-item>
+        <p>
+          <a routerLink="../password-reset">Mot de passe oublié ?</a>
+        </p>
+      </form>
+      <ion-button (click)="login();" fill="clear">Continuer <ion-icon slot="end" name="arrow-forward"></ion-icon></ion-button>
+      <br>
+      <p>
+        <span>Besoin d'aide ? Appuyez sur</span><br/>👇🏽👇🏽
+        <ion-button [href]="wsp" expand="block" fill="clear" shape="round">
+          <ion-icon name="logo-whatsapp" slot="icon-only"></ion-icon>
+        </ion-button>
+      </p>
+    </ion-slide>
+
+    <!-- <ion-slide class="ion-text-center" *ngIf="kids?.length != 0">
+      <h2 class="ion-padding-bottom">Félicitation!</h2>
+
+      <div class="ion-text-center my-kids">
+        <div class="kid"  *ngFor="let kid of kids">
+          <div>
+            <img [src]="kid.photo" [alt]="kid.nom" onerror="this.src='assets/img/default-user.png'"/>
+          </div>
+          <p>{{kid.nom + " " + kid.prenom}}</p>
+        </div>
+          
+        <div class="ion-padding-bottom">
+          <ion-button (click)="next();" fill="clear" [disabled]="loading">Commencer <ion-icon slot="end" name="arrow-forward"></ion-icon></ion-button>
+        </div>
+        <br><br><br>
+      </div>
+      <p *ngIf="loading" class="text-center loader">
+        <ion-icon name="heart" color="danger"></ion-icon><br>
+        <ion-text color="primary">chargement...</ion-text>
+      </p>
+    </ion-slide> -->
+
+    <ion-slide class="ion-text-center">
+      <h2 class="ion-padding">Quel est votre<br> Niveau ?</h2>
+      <ion-item *ngFor="let item of classes" (click)="setLevel(item)">
+        <ion-label>{{item.nom_classe}}</ion-label>
+        <ion-badge color="primary" mode="ios" slot="end">{{item.nbr_coachs}}</ion-badge>
+      </ion-item>
+    </ion-slide>
+    <ion-slide class="ion-text-center"  *ngIf="!isApp">
+      <img src="assets/undraw_Download_re_li50.svg" style="margin:auto;max-width:70%;">
+      <div class="ion-text-center ion-padding">
+        <h2 style="font-size: 90%;">Pour une meilleure expérience <br> Utilisez 👇🏾</h2>
+        <div class="ion-padding-bottom">
+          <ion-button expand="block" (click)="next();" href="https://apple.co/32wklUu" color="light" [disabled]="loading">
+            <ion-icon slot="start" name="logo-apple"></ion-icon>
+            L'application iOS
+          </ion-button>
+          <ion-text color="primary" class="ion-text-center">
+            <h5>Ou</h5>
+          </ion-text>
+          <ion-button expand="block" (click)="next();" href="https://bit.ly/2P2NbZh" color="success" [disabled]="loading">
+            <ion-icon slot="start" name="logo-android"></ion-icon>
+            L'application Android
+          </ion-button>
+        </div>
+        <br><br><br>
+      </div>
+    </ion-slide>
+  </ion-slides>
+</ion-content>

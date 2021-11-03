@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { LoadingController, AlertController, NavController } from '@ionic/angular';
 import { HTTP } from '@ionic-native/http/ngx';
 import { Storage } from '@ionic/storage';
-import { SubjectSubscriber } from 'rxjs/internal/Subject';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ApiService } from '../api/api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +27,7 @@ export class UserDataService {
   step: any;
 
   constructor(public http: HTTP, public storage: Storage, 
-    public alertCtrl:AlertController
+    public alertCtrl:AlertController, private api: ApiService
   ,public loadingCtrl: LoadingController, private navCtrl: NavController)
   {
     this.getIle();    
@@ -72,6 +72,19 @@ export class UserDataService {
     }
    
   }
+
+  setLevel(level){
+    this.storage.set("level", level).catch((error)=>console.error(error));
+  }
+  getLevel(): Promise<any>{
+    return this.storage.get("level");
+  }
+
+  checkAccount(tel: string): Promise<any>{
+    let obs: Observable<any> = this.api.postDataAlt("octram/action_mobile.php", {action:"check_account", login:tel}, {});
+    obs.subscribe((response) => console.log(response));
+    return obs.toPromise();
+  }
   setPersonId(school: any, phoneNumber: string){
     this.http.post(school.url+"/action_mobile.php",
      {action:"get_person_id", telephone:phoneNumber, ecole:school.id}, {}).then((data) => {
@@ -107,18 +120,20 @@ export class UserDataService {
     }
   };
 
-  login(userInfo):  any {
+  login(userInfo):  Promise<any> {
     
     this.loader.present();
 
-    this.http.post(this.address_serveur + "/action_mobile.php",
-     {action:"login", login:userInfo.login, password:userInfo.password}, {}).then((response)=>{
+    let pp: Promise<any> = this.api.postDataAlt("octram/action_mobile.php",
+     {action:"login", login:userInfo.login, password:userInfo.password, referal:userInfo?.referal}, {}).toPromise();
+
+     pp.then((response)=>{
       this.loader.dismiss();      
       let resultat;
       try
       {
         // alert(response.data)
-        resultat = JSON.parse(response.data);
+        resultat = response?.data ? JSON.parse(response.data) : response;
       }catch(err)
       {
         this.alerter(response.data);
@@ -148,11 +163,11 @@ export class UserDataService {
         this.storage.set('user_id', resultat.id).then(()=>{
           this.loginState.next(1);
         })      
-        this.alertCtrl.create({
-          header: "Bienvenu!",
-          subHeader: "Vous êtes maintenant connecté.",
-          buttons: ["ok"]
-        }).then((alert)=>{alert.present();})
+        // this.alertCtrl.create({
+        //   header: "Bienvenu!",
+        //   subHeader: "Vous êtes maintenant connecté.",
+        //   buttons: ["ok"]
+        // }).then((alert)=>{alert.present();})
         // this.events.publish('user:login');
         // window.location.reload();
         // this.oneSignal.sendTags({"user_id": resultat.id});
@@ -174,6 +189,8 @@ export class UserDataService {
       });
       
      })
+
+     return pp;
   };
 
   signup(resultat:any): void {
@@ -435,8 +452,8 @@ export class UserDataService {
   };
   getOcticoin(): Promise<string> {
     return this.storage.get("user_id").then((user_i)=> {
-      return this.http.post(this.address_serveur+'/action_mobile.php', {action:"get_octicoin", user_id:user_i}, {}).then((value) => {
-        return value.data;
+      return this.api.postDataAlt('octram/action_mobile.php', {action:"get_octicoin", user_id:user_i}, {}).toPromise().then((value) => {
+        return value?.data ?? value;
       });
     })
   };
@@ -487,10 +504,8 @@ export class UserDataService {
   };
 
   checkHasSeenTutorial(): Promise<string> {
-    return this.storage.get(this.HAS_SEEN_TUTORIAL).then((value) => {
-      return value;
-    });
-  };
+    return this.storage.get(this.HAS_SEEN_TUTORIAL);
+  }
   checkHasSeenAddTut(): Promise<string> {
     return this.storage.get(this.HAS_SEEN_ADD_TUT).then((value) => {
       return value;

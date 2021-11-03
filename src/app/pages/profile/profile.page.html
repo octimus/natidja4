@@ -7,22 +7,39 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding ion-text-center">
-  <ion-item>
-    <ion-label position="floating">Nom</ion-label>
-    <ion-input type="text" [value]="nom" disabled></ion-input>
-  </ion-item>
-  <ion-item>
-    <ion-label position="floating">Téléphone</ion-label>
-    <ion-input type="text" [value]="telephone" disabled></ion-input>
-  </ion-item>
-  <ion-item>
-    <ion-label position="floating">Domicile</ion-label>
-    <ion-input type="text" [value]="domicile" disabled></ion-input>
-  </ion-item>
+<ion-content class="ion-text-center">
+  <div>
+    <ion-item>
+      <ion-label position="floating">Nom</ion-label>
+      <ion-input type="text" [value]="nom" disabled></ion-input>
+    </ion-item>
+    <ion-item (click)="slider4Level();">
+      <ion-label>Niveau</ion-label>
+      <ion-chip *ngIf="level" color="primary" mode="ios" outline="true">
+        <ion-label>{{level.nom_classe}}</ion-label>
+      </ion-chip>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Téléphone</ion-label>
+      <ion-input type="text" [value]="telephone" disabled></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Domicile</ion-label>
+      <ion-input type="text" [value]="domicile" disabled></ion-input>
+    </ion-item>
+    <div class="ion-text-center ion-padding" *ngIf="nbrAffiliates">
+      <ion-button routerLink="/affiliate" expand="block" fill="outline" color="tertiary" mode="ios">
+        {{'Vous avez '+nbrAffiliates+' affiliés'}}
+      </ion-button>
+    </div>
+  </div>
   <br>
-  <ion-button (click)="changePassword()" shape="round">
-    <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
-    Changer votre mot de passe
-  </ion-button>
+  <app-flip-card></app-flip-card>
+  <br>
+  <div class="ion-padding">
+    <ion-button (click)="changePassword()" expand="block">
+      <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
+      Changer votre mot de passe
+    </ion-button>
+  </div>
 </ion-content>

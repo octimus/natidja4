@@ -7,12 +7,14 @@ import { IonicModule } from '@ionic/angular';
 import { CoachSearchPageRoutingModule } from './coach-search-routing.module';
 
 import { CoachSearchPage } from './coach-search.page';
+import { PipesModule } from 'src/app/pipes/pipes.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
+    PipesModule,
     CoachSearchPageRoutingModule
   ],
   declarations: [CoachSearchPage]

@@ -1,3 +1,13 @@
+ion-toolbar{
+    --background: transparent;
+    --ion-color-base: transparent !important;
+}
+.header-md::after {
+    background-image: none;
+}
+.header-ios ion-toolbar:last-child {
+    --border-width: 0;
+}
 ion-content{
     
     .curve{
@@ -6,22 +16,23 @@ ion-content{
         padding-bottom: 100%;
         margin-top: -70%;
         border-radius: 50%;
-        transform: scale(1.4);
+        transform: scale(1.2);
     }
     ion-card ion-card-title{
         font-size: 1.3em;
     }
     .coach-details{
-    
+        margin-top: -33px;
     }
     .coach-pic{
         position: relative;
+        top: -33px;
         margin: auto;
         overflow: hidden;
         background-position: center center;
         background-size: cover;
-        height: 115px;
-        width: 115px;
+        height: 100px;
+        width: 100px;
         border-radius: 100%;
     }
     .offers{
@@ -143,7 +154,7 @@ ion-content{
         position: relative;
         width: 340px;
         max-width: calc(100% - 20px);
-        height: 510px;
+        height: 610px;
         -webkit-transform-style: preserve-3d;
         transform-style: preserve-3d;
         perspective: 1000px;

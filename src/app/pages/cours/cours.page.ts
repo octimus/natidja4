@@ -44,7 +44,7 @@ export class CoursPage implements OnInit {
         cours.subscribe((data)=>{
 
           try {
-            const json = JSON.parse(data.data);
+            const json = typeof(data?.data) == "string" ? JSON.parse(data.data) : data?.data ? data.data : data;
             console.log(json.request);
             console.log(json.post)
             

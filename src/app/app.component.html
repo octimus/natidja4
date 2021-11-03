@@ -5,7 +5,7 @@
         <div class="custom-header">
         </div>
         <div class="header-content" *ngIf="logedIn">
-          <img [src]="userProfile.photo" alt="" (click)="navCtrl.navigateForward('profile');closeSideMenu();">
+          <img [src]="userProfile.photo" onerror="this.src='assets/img/default-user.png'" alt="" (click)="navCtrl.navigateForward('profile');closeSideMenu();">
           <ion-label  (click)="navCtrl.navigateForward('profile');closeSideMenu();">
             <h2>{{userProfile.displayName}}</h2>
             <p>
@@ -26,7 +26,16 @@
             </ion-item>
           </ion-menu-toggle>
         </ion-list>
-
+        <ion-item size="small">
+          <ion-label>Problème de connexion ?</ion-label>
+          <ion-toggle slot="end" [(ngModel)]="httpNative" (ionChange)="change($event.target.checked)"></ion-toggle>
+        </ion-item>
+        <div class="ion-padding">
+          <ion-button (click)="share()" expand="block" fill="solid">
+            <ion-icon slot="start" name="share-social"></ion-icon>
+            Partager Natidja
+          </ion-button>
+        </div>
         <ion-list id="labels-list">
           <ion-list-header>Compte</ion-list-header>
           <ion-item *ngIf="!logedIn">
@@ -41,32 +50,18 @@
               Mon profil
             </ion-button>
           </ion-item>
+
           <div class="ion-padding">
             <ion-button size="small" [disabled]="bgClasse == ''" (click)="setBg('')" *ngIf="logedIn" color="light">
               bg
             </ion-button>
-            <ion-button size="small" [disabled]="bgClasse == 'bg-light'" (click)="setBg('bg-light')" *ngIf="logedIn" class="bg-light">
-              bg
-            </ion-button>
-            <ion-button size="small" [disabled]="bgClasse == 'bg-updown'" (click)="setBg('bg-updown')" *ngIf="logedIn" class="bg-updown">
-              bg
-            </ion-button>
             <ion-button size="small" [disabled]="bgClasse == 'bg-primary-secondary'" (click)="setBg('bg-primary-secondary')" *ngIf="logedIn" class="bg-primary-secondary">
-              bg
-            </ion-button>
-            <ion-button size="small" [disabled]="bgClasse == 'bg-primary-tertiary'" (click)="setBg('bg-primary-tertiary')" *ngIf="logedIn" class="bg-primary-tertiary">
               bg
             </ion-button>
             <ion-button size="small" [disabled]="bgClasse == 'bg-tertiary-primary'" (click)="setBg('bg-tertiary-primary')" *ngIf="logedIn" class="bg-tertiary-primary">
               bg
             </ion-button>
             <ion-button size="small" [disabled]="bgClasse == 'bg-transparent'" (click)="setBg('bg-transparent')" *ngIf="logedIn" class="bg-transparent">
-              bg
-            </ion-button>
-            <ion-button size="small" [disabled]="bgClasse == 'bg-code'" (click)="setBg('bg-code')" *ngIf="logedIn" class="bg-code">
-              bg
-            </ion-button>
-            <ion-button size="small" [disabled]="bgClasse == 'bg-light-medium'" (click)="setBg('bg-light-medium')" *ngIf="logedIn" class="bg-light-medium">
               bg
             </ion-button>
             <ion-button size="small" [disabled]="bgClasse == 'bg-img'" (click)="setBg('bg-img')" *ngIf="logedIn" class="bg-img">

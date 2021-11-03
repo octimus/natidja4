@@ -11,11 +11,15 @@
   <ion-avatar>
     <img [src]="item.photo" onerror="this.src='assets/img/default-user.png'" />
   </ion-avatar><br>
-  <span>{{item.nom + ' ' + item.prenom}}</span>
+  <h5>{{item.nom + ' ' + item.prenom}}</h5>
   <!-- <ion-item>
     <ion-label>Date</ion-label>
     <ion-datetime display-format="DD/MM/YYYY" [value]="today" ></ion-datetime>
   </ion-item> -->
+  <ion-button mode="ios" shape="round" fill="outline" (click)="navCtrl.navigateForward('ecolages', {queryParams:item});">
+    <ion-icon slot="start" name="wallet-outline"></ion-icon>
+    <ion-label>Écolages</ion-label>
+  </ion-button>
   <div class="ion-text-center">
     <ion-button (click)="openNotes()" fill="outline" shape="round" mode="ios">
       <ion-icon slot="start" name="thumbs-up-outline"></ion-icon>

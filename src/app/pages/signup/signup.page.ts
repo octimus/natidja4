@@ -74,17 +74,17 @@ export class SignupPage implements OnInit {
       });
       return false;
     }
-    if(this.telephone.length<7)
-    {
-      this.alertCtrl.create({
-        subHeader: "",
-        message: "Veuillez fournir votre vrai numero de telephone svp.",
-        buttons: ["compris"]
-      }).then(a => {
-        a.present();
-      });
-      return false;
-    }
+    // if(this.telephone.length<7)
+    // {
+    //   this.alertCtrl.create({
+    //     subHeader: "",
+    //     message: "Veuillez fournir votre vrai numero de telephone svp.",
+    //     buttons: ["compris"]
+    //   }).then(a => {
+    //     a.present();
+    //   });
+    //   return false;
+    // }
 
     if (this.password == this.confirm_password) {
       this.loader.present();

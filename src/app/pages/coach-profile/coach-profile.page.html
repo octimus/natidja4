@@ -1,105 +1,67 @@
-<ion-content class="ion-text-center">
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-text-center" fullscreen>
   <div class="curve">
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-back-button></ion-back-button>
-      </ion-buttons>
-    </ion-toolbar>
   </div>
   <div class="coach-pic" style="background-image: url({{coach.photo}});"></div>
-  <div class="ion-padding coach-details">
+  <div class="ion-padding-horizontal coach-details">
     <h5>
-      {{coach.nom}}
+      {{coach.nom}} 
     </h5>
-    <ion-note>{{coach.slogan}}</ion-note>
+    <ion-chip color="primary" mode="ios" outline="true" *ngIf="coach.nom_matiere">
+      <ion-label>{{coach.nom_matiere || ""}}</ion-label>
+    </ion-chip>
+    <ion-chip color="primary" mode="ios" outline="true">
+      <ion-label>{{coach.classe || coach.nom_classe}}</ion-label>
+    </ion-chip>
+    <div>
+      {{coach.nbrExos}} exos, {{coach.nbrLecons}} leçons
+    </div>
+    <ion-note>{{coach.slogan || ""}}</ion-note>
   </div>
   <div class="ion-text-left courses">
-    <ion-card class="ion-no-margin-vertical" [class.ion-text-right]="item.direction == 'rtl'" 
+    <ion-item detail="true" [class.ion-text-right]="item.direction == 'rtl'" 
+    mode="ios" [class.rtl]="item.direction == 'rtl'" *ngFor="let item of courses" (click)="navCtrl.navigateForward('cours-details', {
+      queryParams:item
+    })">
+      <ion-avatar slot="start" *ngIf="item.url">
+        <app-file-component style="max-width: 100%;" [src]="item.url" [title]="item.titre" [scheme]="'dark'" alt="contenu"></app-file-component>
+      </ion-avatar>
+      <ion-icon *ngIf="!item.url" [name]="item.type == 'cours' ? 'library-outline' : 'barbell-outline'" color="primary" slot="start"></ion-icon>
+      <ion-label>
+        {{item.titre}} <br>
+        <ion-note>{{item.type}} {{item.date | moment : ''}}</ion-note>
+      </ion-label>
+    </ion-item>
+    <!-- <ion-card class="ion-no-margin-vertical" [class.ion-text-right]="item.direction == 'rtl'" 
     mode="ios" [class.rtl]="item.direction == 'rtl'" *ngFor="let item of courses" 
     [class]="item.type == 'exos' ? 'bg-white' : ''">
-        <app-file-component [src]="item.url" [title]="item.titre" [scheme]="'dark'" alt="contenu" *ngIf="item.url"></app-file-component>
-        <ion-card-header>
-            <ion-card-subtitle>{{item.date | moment : ''}}</ion-card-subtitle>
-            <ion-card-title>{{item.titre}}</ion-card-title>
-        </ion-card-header>
-        <ion-card-content class="size-animation">
-          <div [innerHtml]="item.content | textHtml" *ngIf="item.showMore" (click)="item.showMore = !item.showMore"></div>
-          <div [innerHtml]="item.content | textHtml" *ngIf="!item.showMore" (click)="item.showMore = !item.showMore"></div>
-          <ion-slides mode="ios" [pager]="false" scrollbar="false" [options]="questionSlides" class="ion-no-padding ion-text-left">
-              <ion-slide *ngFor="let q of item.responses; let i = index;" class="ion-text-left ion-no-padding">
-                  <div>
-                      <h4>
-                          {{q.question}}
-                      </h4>
-                      <ion-text color="primary" *ngIf="q?.isCorrect != null">
-                          {{q?.correct}}
-                      </ion-text>
-                  </div>
-              </ion-slide>
+      <app-file-component [src]="item.url" [title]="item.titre" [scheme]="'dark'" alt="contenu" *ngIf="item.url"></app-file-component>
+      <ion-card-header>
+          <ion-card-subtitle>{{item.date | moment : ''}}</ion-card-subtitle>
+          <ion-card-title>{{item.titre}}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content class="size-animation">
+        <div [innerHtml]="item.content | textHtml" *ngIf="item.showMore" (click)="item.showMore = !item.showMore"></div>
+        <div [innerHtml]="item.content | textHtml" *ngIf="!item.showMore" (click)="item.showMore = !item.showMore"></div>
+        <ion-slides mode="ios" [pager]="false" scrollbar="false" [options]="questionSlides" class="ion-no-padding ion-text-left">
+            <ion-slide *ngFor="let q of item.responses; let i = index;" class="ion-text-left ion-no-padding">
+                <div>
+                    <h4>
+                        {{q.question}}
+                    </h4>
+                    <ion-text color="primary" *ngIf="q?.isCorrect != null">
+                        {{q?.correct}}
+                    </ion-text>
+                </div>
+            </ion-slide>
           </ion-slides>
       </ion-card-content>
-  </ion-card>
-  </div>
-  <div class="offers">
-    <div class="section over-hide">
-      <div class="container">
-        <div class="row full-height justify-content-center">
-          <div class="col-12 text-center align-self-center py-5">
-            <div class="section text-center py-5 py-md-0">
-                <input class="pricing" type="checkbox" id="pricing" name="pricing" *ngIf="coach.prix_tarzan"/>
-                <label for="pricing" *ngIf="coach.prix_tarzan"><span class="block-diff ion-text-start">{{coach.label_offre}}<span class="float-right">{{coach.label_offre2}}</span></span></label>
-              <div class="card-3d-wrap mx-auto">
-                <div class="card-3d-wrapper">
-                  <div class="card-front">
-                    <div class="pricing-wrap">
-                      <h4 class="mb-5">{{coach.label_offre}}</h4>
-                      <h2 class="mb-2"><sup>KMF</sup>{{coach.prix_technicien}} / <sup>{{coach.par}}</sup></h2>
-                      <p class="mb-4 ion-text-justify ion-padding">{{coach.text_technicien}}</p>
-                      <p class="mb-1"><i class="uil uil-location-pin-alt size-22"></i></p>
-                      <!-- <p class="mb-4">Drina, Serbia</p> -->
-                      <ion-button class="link" *ngIf="coach.prix_technicien" fill="clear" (click)="navCtrl.navigateForward('payement', {queryParams:{item:coach, reason: 'coaching', offre:'technicien'}});" >S'abonner</ion-button>
-                      <div class="img-wrap img-2">
-                        <img src="https://assets.codepen.io/1462889/sea.png" alt="">
-                      </div>
-                      <div class="img-wrap img-1">
-                        <img src="https://ecole.natidja.app/photos/sharing.png" style="margin-left: 100px; width:80vw;" alt="">
-                      </div>
-                      <div class="img-wrap img-3">
-                        <img src="https://assets.codepen.io/1462889/water.png" alt="">
-                      </div>
-                      <div class="img-wrap img-6">
-                        <img src="https://assets.codepen.io/1462889/Stone.png" alt="">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="card-back">
-                    <div class="pricing-wrap">
-                      <h4 class="mb-5">{{coach.label_offre2}}</h4>
-                      <h2 class="mb-2"><sup>KMF</sup>{{coach.prix_tarzan}} / <sup>{{coach.par}}</sup></h2>
-                      <p class="mb-4 ion-padding" *ngIf="coach.text_tarzan">{{coach.text_tarzan}}</p>
-                      <p class="mb-1"><i class="uil uil-location-pin-alt size-22"></i></p>
-                      <!-- <p class="mb-4">Tara, Serbia</p> -->
-                      <ion-button class="link" fill="clear" (click)="navCtrl.navigateForward('payement', {queryParams:{item:coach, reason: 'coaching', offre:'tarzan'}});">S'abonner</ion-button>
-                      <div class="img-wrap img-2">
-                        <img src="https://assets.codepen.io/1462889/grass.png" alt="">
-                      </div>
-                      <div class="img-wrap img-4">
-                        <img src="https://assets.codepen.io/1462889/camp.png" alt="">
-                      </div>
-                      <div class="img-wrap img-5">
-                        <img src="https://assets.codepen.io/1462889/Ivy.png" alt="">
-                      </div>
-                      <div class="img-wrap img-7">
-                        <img src="https://assets.codepen.io/1462889/IvyRock.png" alt="">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </ion-card> -->
   </div>
 </ion-content>

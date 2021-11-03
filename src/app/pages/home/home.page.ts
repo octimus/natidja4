@@ -54,13 +54,15 @@ export class HomePage implements OnInit {
   public nbrResultat: any;
   public disponibility:any = {};
   public coachs:any[] = [];
+  public myCoachs:any[] = [];
   public courses: any[] = [];
   public octicoin: number = null;
   public bgClasse = "bg-img";
+  public level: any;
 
   public coursesType: "cours"|"exos"|""|"exams" = "";
   public slidesOpt: any = {
-    slidesPerView: 2.5,
+    slidesPerView: 3.5,
     spaceBetween: -15,
     loop:true,
     coverflowEffect: {
@@ -159,18 +161,25 @@ export class HomePage implements OnInit {
     slidesPerView: 1,
   };
   scrollTopValue: any;
+  supportWsp: any;
+  cadeau_money: any;
+  cadeau_money_limit: any;
+  cadeaux: [] = [];
+  updateLevel: boolean = false;
 
   logScrollStart(event){
     
   }
   logScrolling(event){
     // console.log(event.detail);
-    if(this.scrollTopValue < event.detail.scrollTop)
-    {
-      this.slider.slideNext()
-    }
-    else{
-      this.slider.slidePrev()
+    if(this.slider){
+      if(this.scrollTopValue < event.detail.scrollTop)
+      {
+        this.slider.slideNext()
+      }
+      else{
+        this.slider.slidePrev()
+      }
     }
     this.scrollTopValue = event.detail.scrollTop;
   }
@@ -188,7 +197,7 @@ export class HomePage implements OnInit {
   slideOpts = {
     initialSlide: 1,
     speed: 500,
-    loop: true,
+    loop: false,
   };
   kids: any = [];
   msgCountTimer: NodeJS.Timeout;
@@ -207,6 +216,7 @@ export class HomePage implements OnInit {
       // this.coachs.push({nom: "testeur", prix_tarzan: 250, prix_technicien: 500, id: 2, slogan:"lorem ipsumm dolor sumet", });
     this.platform.ready().then(() => {
       //récuperation du background
+      // this.storage.clear()
       this.settings.getBackGround().then(bg => this.bgClasse = bg);
       this.settings.getPremium().then((data)=>{
         this.premium = data;
@@ -226,6 +236,12 @@ export class HomePage implements OnInit {
           this.userProfile.telephone = tel;
         });
       })
+
+      this.userData.checkHasSeenTutorial().then((val)=>{
+        if(!val){
+          this.navCtrl.navigateForward('sliders');
+        }
+      })
       // this.ga.startTrackerWithId('UA-102358517-3')
       // .then(() => {
       //   console.log('Google analytics is ready now');
@@ -237,7 +253,6 @@ export class HomePage implements OnInit {
 
      
       // watch network for a connection
-      // alert("ça marche");
       this.codePushState = false;
       this.launchCodePush();
       
@@ -263,8 +278,7 @@ export class HomePage implements OnInit {
             this.userProfile.userId = reponse;
           })
         }else{
-          console.log({d: d});
-          
+          console.log(d);
         }
       })
 
@@ -279,10 +293,10 @@ export class HomePage implements OnInit {
           })
 
         }, (error) => {
-          // alert("erreur " + JSON.stringify(error));
+          alert("erreur " + JSON.stringify(error));
         });
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
       
       // stop connect watch
@@ -303,6 +317,7 @@ export class HomePage implements OnInit {
       })
       this.userData.getId().then((reponse)=>{
         this.userProfile.userId = reponse;
+        this.getListCoursExos(null, true);
       })
       this.userData.getTelephone().then((reponse)=>{
         this.userProfile.telephone = reponse;
@@ -361,12 +376,24 @@ export class HomePage implements OnInit {
     // this.lecture("Direct");
 
     this.route.queryParams.forEach(d => {
-      // alert(JSON.stringify(d))
+      if(d.changeSchool){
+        this.examen = d.exam;
+        if(d.exam=="AUTRES")
+        {
+          this.ecole = d.ecole;
+        }
+      }
       if(d?.refresh)
+      {  
         this.doRefresh(null);
+      }
     })
   }
-
+  slider4Level(){
+    this.navCtrl.navigateForward('sliders').then(() => {
+      this.updateLevel = true;
+    });
+  }
   async presentPopover(ev: any, obj: any) {
     const popover = await this.popoverController.create({
       component: CoachDetailsComponent,
@@ -386,21 +413,16 @@ export class HomePage implements OnInit {
         let resultat;
         try
         {
-          // alert("http :"+response.data)
-          response.data = (response.data).trim()
-          resultat = JSON.parse(response.data);
+          resultat = response?.data ? JSON.parse(response.data.trim()) : response;
 
           this.btnsRecherche = resultat;
 
         }catch(err)
         {
-          // alert(JSON.stringify(err))
-          // alert(response.data);
           return false;
         }
 
       }, (err)=>{
-        // alert((err))
         
       })
   }
@@ -410,9 +432,7 @@ export class HomePage implements OnInit {
         let resultat;
         try
         {
-          // alert("http :"+response.data)
-          response.data = (response.data).trim()
-          resultat = JSON.parse(response.data);
+          resultat = response?.data ? JSON.parse(response.data.trim()) : response;
 
           this.settings.setBtns(resultat);
           // this.btns = resultat;
@@ -434,7 +454,6 @@ export class HomePage implements OnInit {
     let ecole = this.ecole;
     if(!ecole)
       return;
-    console.log(`loading kids for ${ecole.id}`);
     
     if(!ecole?.id){
       console.error({ecole: ecole})
@@ -446,8 +465,7 @@ export class HomePage implements OnInit {
       this.kids = k ?? [];
     })
     this.api.postData("action_mobile.php", {action:"json_mykids", telephone:tel, ecole:ecole.id}).subscribe((d)=>{
-      console.log({kids_:d.data});
-      let k: Object = JSON.parse(d.data.trim());
+      let k: Object = d?.data ? JSON.parse(d.data.trim()) : d;
 
       if(JSON.stringify(k) != JSON.stringify(this.kids)){
         this.kids = k;
@@ -455,11 +473,19 @@ export class HomePage implements OnInit {
       }
     }, (err) => {
       // alert(JSON.stringify(err))
-      console.log(err);
+      console.error(err);
       
     });
   }
+  async getLevel(){
+    this.level = await this.userData.getLevel();
+  }
   ionViewDidEnter(){
+    if(this.updateLevel){
+      this.getLevel();
+      this.getListCoursExos(null, true);
+      this.updateLevel = !this.updateLevel;
+    }
     if(this.etudiants.length > 0)
     {
       this.etudiants = [];
@@ -480,7 +506,8 @@ export class HomePage implements OnInit {
       { action: "charger_url", ile: this.ile, recherche: this.recherche, examen: this.examen, ecole:this.ecole?.id, classe:this.classe?.id }, {})
       .subscribe(response => {
 
-          this.url = JSON.parse((response.data).trim());
+        this.url = response?.data ? JSON.parse(response.data.trim()) : response;
+
       }, (error) => {
         // this.showAlert("Problème de connexion", "Veuillez verifier votre connexion à internet.");
         // this.etudiants = this.etudiantsOriginal;
@@ -631,7 +658,6 @@ export class HomePage implements OnInit {
   // }
 
   public openVieScolaire(item) {
-    console.log({kid:item});
     
     this.navCtrl.navigateForward('vie-scolaire', {queryParams:{
         item: item
@@ -697,13 +723,12 @@ export class HomePage implements OnInit {
     this.chatService.getCount(tel).then((data) => {
       try {
         let json = JSON.parse(data.data);
-        console.log(json)
         this.msgCount = json.data.nbr_msg;
         this.notifCount = json.data.nbr_notifs;
         this.coursCount = json.data.nbr_cours;
         this.msgAccueil = json.data?.msg_accueil;
       } catch (error) {
-        console.log(data.data)
+        console.error(data)
       }      
       
     });
@@ -720,15 +745,23 @@ export class HomePage implements OnInit {
       { action: "charger_years", ecole:this.ecole, examen:this.examen, telephone:this.userProfile?.telephone }, {})
       .subscribe(response => {
 
+        // alert(JSON.stringify(response))
         try {
           // alert(response.data);
-          let donnees = JSON.parse(response.data.trim());
+          let donnees = typeof(response?.data) === "string" ? JSON.parse(response.data.trim()) : response;
           this.canActivateNotes = donnees.can_activate_notes;
           this.notifCount = donnees.notif_count;
+          this.supportWsp = donnees.support_wsp;
           
           if(donnees.octicoin)
             this.octicoin = donnees.octicoin;
           this.demander_don = donnees.demander_don;
+
+          if(donnees.cadeaux){
+            this.cadeaux = donnees.cadeaux;
+            this.cadeau_money = donnees.cadeau_money;
+            this.cadeau_money_limit = donnees.max_money;
+          }
         }
         catch (error) {
           // alert(error);
@@ -748,27 +781,25 @@ export class HomePage implements OnInit {
       .subscribe(response => {
         try {
           // var objet;
-          // alert(response.data)
-          let dat = response.data.trim();
+          let dat = response?.data ? JSON.parse(response.data.trim()) : response;
 
-          this.disponibility = JSON.parse(dat);
+          this.disponibility = typeof(dat)=="string" ? JSON.parse(dat) : dat;
           
         }
         catch (error) {
           if(response.data)
           {
-            // alert(error);
-            // this.showAlert('Erreur', response.data);
+            alert(error);
+            this.showAlert('Erreur', response.data);
           }
         }
       }, (error) => {
-        console.log(error);
+        console.error(error);
         
         this.showAlert("Problème de connexion", "");
       });
   }
   public filtrer(emptyIt?: boolean, event?:any) {
-    console.log(this.userProfile)
     if(typeof(emptyIt) == "undefined")
       emptyIt = true;
     this.loading = true;
@@ -785,6 +816,7 @@ export class HomePage implements OnInit {
         this.selectYear.open();
       } catch (error) {
         alert(error)
+        console.error(error)
       }
       return;
     }
@@ -805,14 +837,29 @@ export class HomePage implements OnInit {
         this.loaded = true;
         try {
           // var objet;
-          let dat = response.data.trim();
-          let jsonData = JSON.parse(dat);
+          let dat = response?.status ? response.data : response;
+
+          let jsonData = typeof(dat)=="string" ? JSON.parse(dat.trim()) : dat;
+          jsonData = typeof(jsonData)=="string" ? JSON.parse(jsonData) : jsonData;
           this.nbrResultat = jsonData.nbr_resultat;
 
+          let data;
+          if(jsonData?.data?.data)
+          {
+            data = jsonData.data.data
+          }
+          else if(jsonData?.data){
+            data = typeof(jsonData.data)=="string" ? JSON.parse(jsonData.data) : jsonData.data;
+          }
+          console.log(data);
+          if(data.data){
+            data = data.data;
+          }
+          
           if(this.etudiants.length == 0)
-            this.etudiants = jsonData.data;
+            this.etudiants = data;
           else
-            this.etudiants = [...this.etudiants, ...jsonData.data];
+            this.etudiants = [...this.etudiants, ...data];
 
           if (this.etudiants.length == 1)
           {
@@ -831,7 +878,8 @@ export class HomePage implements OnInit {
           event.target.complete();
         }
         this.loading = false;
-        this.showAlert("Problème de connexion", JSON.stringify(error));
+        let msg = error.error ?? JSON.stringify(error);
+        this.showAlert("Erreur", msg.text);
         this.connexionError = 1;
         if(this.examen == "AUTRES")
         {
@@ -869,7 +917,7 @@ export class HomePage implements OnInit {
         this.connexionError = 0;
         try {
 
-          let dat = response.data.trim();
+          let dat = response?.data ? JSON.parse(response.data.trim()) : response;
 
           this.slidesPub = JSON.parse(dat);
 
@@ -895,29 +943,60 @@ export class HomePage implements OnInit {
     // this.ga.trackEvent('Bouton Login de l accueil', 'Tapped Action', 'Item Tapped is '+item, 0);
     this.navCtrl.navigateForward(page)
   }
-  
+  lineCount(str: string){
+    return str?.split(/\r\n|\n|\r/).length;
+  }
   openCours(item:any){
     this.navCtrl.navigateForward("cours-details", {
       queryParams:item
     })
   }
-  ngOnInit(event: any = null) {
-    this.getListCoursExos(null, true);
-    this.coachService.getList(this.coachs.length).then((data)=>{
+  async ngOnInit(event: any = null) {
+    this.myCoachs = await this.coachService.getLocalListSubscribed() ?? [];
+    this.userData.getLevel().then((level) => {
+      console.log(level);
+      this.level = level;
+      
+      this.userData.getId().then((id) => {
+        this.coachService.getList(this.coachs.length, {subscriber: id}).then((data)=>{
+          console.log({d: data})
+          if(data){
+            try {
+              const json = typeof(data.data) === "string" ? JSON.parse(data.data) : data;
+              console.log(json)
+              if(json.status == "ok"){
+                this.myCoachs = json.data;
+                this.coachService.setLocalListSubsribed(this.myCoachs);
+              }
+            } catch (error) {
+              console.error(error)
+              // alert(data.data)
+              console.log({coachs:data})
+            }
+          }
+        }).finally(()=>{
+          if(event)
+            event.target.complete();
+    
+          this.charger();
+        })
+      })
+    })
+  }
+  setComprehension(item, value: number){
+    item.loadingComprehension = true;
+    this.coursService.setComprehension(item, value).then((data)=>{
+      let json;
       try {
-        const json = JSON.parse(data.data);
-        if(json.status == "ok"){
-          this.coachs = json.data;
-        }
+        json = JSON.parse(data.data);
       } catch (error) {
-        console.error(error)
-        console.log({coachs:data.data})
+        alert(data.data)
       }
-    }).finally(()=>{
-      if(event)
-        event.target.complete();
-
-      this.charger();
+      if(json.status == "ok"){
+        item.comprehension = value;
+      }
+    }).finally(() => {
+      item.loadingComprehension = false;
     })
   }
   getListTemplate(){
@@ -936,28 +1015,31 @@ export class HomePage implements OnInit {
     //   }
     // });
     if(this.coursesType == "exams")
-      return;
+    return;
       
       let offset: number = event != null ? this.courses.length : 0
       if(offset == 0){
         this.storage.get("leconsExos").then((data) => {
+          if(data)
           this.courses = [...this.courses,...data];
         })
       }
     this.coursService.getListCoaching(this.coursesType, offset).then((data)=>{
-      try {
-        const json = JSON.parse(data.data);
-        console.log({exo:json});
-        this.storage.set("leconsExos", json.data);
-        
-        if(json.status == "ok"){
-          if(vider)
-            this.courses = [];
-          this.courses = [...this.courses,...json.data];
+      if(data){
+        try {
+          const json = typeof(data.data) == "string" ? JSON.parse(data.data) : data;
+          console.log({exo:json});
+          this.storage.set("leconsExos", json.data);
+          
+          if(json.status == "ok"){
+            if(vider)
+              this.courses = [];
+            this.courses = [...this.courses,...json.data];
+          }
+        } catch (error) {
+          console.error(error);
+          console.log(data);
         }
-      } catch (error) {
-        console.error(error);
-        console.log(data.data);
       }
     }, (error) => {
       console.log("error on loading courses...");
@@ -971,14 +1053,13 @@ export class HomePage implements OnInit {
   }
 
   async validerExo(item){
-    // console.log({iiittteeeeeeeeem:item});
     let l = await this.loadingCtrl.create({
       message:"Validation..."
     });
     l.present();
     this.coursService.validerExo(item.id).then((data) => {
       try {
-        const json = JSON.parse(data.data)
+        const json = typeof(data?.data) === "string" ? JSON.parse(data.data) : data;
         console.log({response_validation: json})
 
         if(json.status == "ok"){
@@ -1000,9 +1081,15 @@ export class HomePage implements OnInit {
       l.dismiss();
     })
   }
+  co(i){
+    console.log(i);
+    
+  }
+  getQuestions(resp: any[]): Array<any>{
+    return resp?.filter((elt) => elt.question);
+  }
   public async sendResponse(q, elt: any, last=0, item: any = {}){
     // console.log(slide);
-    console.log(q)
     if(q?.validated_time != null){
       let slides: IonSlides = elt.parentNode.parentNode.parentNode.parentNode.parentNode;
       slides.getActiveIndex().then(async index=>{
@@ -1028,18 +1115,29 @@ export class HomePage implements OnInit {
       return;
     }
     q.loading = true;
-    console.log({reponse: rep});
+    console.log({q: q});
     this.coursService.sendResponse(rep, q).then((data)=>{
-      const json = JSON.parse(data.data);
-      q.content = rep;
-      if(json.status == "ok"){
-        if(last == 1){
-          this.validerExo(item)
+      let  json;
+      try {
+        console.log(data)
+        json = typeof(data?.data) == "string" ? JSON.parse(data.data) : data;
+        q.content = rep;
+        if(json.status == "ok"){
+          if(last == 1){
+            this.validerExo(item)
+          }
+          elt.parentNode.parentNode.parentNode.parentNode.parentNode.slideNext();
         }
-        elt.parentNode.parentNode.parentNode.parentNode.parentNode.slideNext();
+        else{
+          this.alertCtrl.create({message: json.status, buttons: ["ok"]}).then(a => a.present());
+        }
+      } catch (error) {
+        this.alertCtrl.create({message: data.data, buttons: ["ok"], cssClass:"alert-danger"}).then(a => a.present());
       }
     }, (err)=>{
-      this.alertCtrl.create({message:err.error, buttons: ["OK"]}).then(a => a.present());
+      console.error(err)
+      let e = err.error
+      this.alertCtrl.create({header:e.error,message:e.text, buttons: ["OK"]}).then(a => a.present());
     }).finally(()=>{
       q.loading = false;
     })
@@ -1049,7 +1147,8 @@ export class HomePage implements OnInit {
     return c;
   }
   doRefresh(event){
-    this.ngOnInit(event)
+    this.ngOnInit(event);
+    this.getListCoursExos(null, true);
   }
   isLast(questions: any[], q): boolean{
     if(questions.length == 1) return true;

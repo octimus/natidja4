@@ -12,7 +12,7 @@ import { HTTP } from '@ionic-native/http/ngx';
 import { Network } from '@ionic-native/network/ngx';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { IonicStorageModule } from '@ionic/storage';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
@@ -29,6 +29,9 @@ import { PreviewAnyFile } from '@ionic-native/preview-any-file/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { NgxIonicImageViewerModule } from 'ngx-ionic-image-viewer';
 import { Sim } from '@ionic-native/sim/ngx';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { CoachService } from './services/coach/coach.service';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -43,7 +46,7 @@ import { Sim } from '@ionic-native/sim/ngx';
   providers: [
     StatusBar, Camera, Crop, InAppBrowser, SMS, SmsRetriever, ChatService, CoursService, PreviewAnyFile,
     SplashScreen, HTTP, NavParams, Network, CallNumber, FileTransfer, FileChooser, File, Sim,
-    OneSignal, 
+    OneSignal, BarcodeScanner, FormBuilder, CoachService, SocialSharing,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

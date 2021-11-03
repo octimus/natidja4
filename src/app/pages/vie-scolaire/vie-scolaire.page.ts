@@ -56,7 +56,7 @@ export class VieScolairePage implements OnInit {
         {
           try {
             
-            this.vieScolaire = JSON.parse(data.data);
+            this.vieScolaire = typeof(data?.data) === "string" ? JSON.parse(data.data) : data?.data ? data.data : data;
             let notifs = this.vieScolaire.notifications;
             this.coursCount = notifs?.cours;
             this.notesCount = notifs?.notes;

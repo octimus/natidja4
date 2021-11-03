@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Platform, IonRouterOutlet, NavController, AlertController, MenuController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { UserDataService } from './services/user-data/user-data.service';
-import { ActivatedRoute } from '@angular/router';
 import { OneSignal } from "@ionic-native/onesignal/ngx";
 import { SettingsService } from './services/settings/settings.service';
+import { ApiService } from './services/api/api.service';
 
 
 @Component({
@@ -47,19 +47,21 @@ export class AppComponent implements OnInit {
   public logedIn: any = false;
   public bgClasse: any;
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
+  public httpNative: boolean;
 
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen, private settings: SettingsService,
     private statusBar: StatusBar, private userData: UserDataService,
     public navCtrl: NavController, private oneSignal: OneSignal, 
-    private alertController: AlertController, private menu: MenuController
+    private alertController: AlertController, private menu: MenuController, 
+    private socialSharing: SocialSharing, private api: ApiService
   ) {
     this.platform.backButton.subscribeWithPriority(-1, () => {
       if (window.location.pathname == "/home") {
         navigator['app'].exitApp();
       }else{
-        this.navCtrl.navigateRoot("/home");
+        // this.navCtrl.navigateRoot("/home");
         // alert(window.location.pathname)
       }
     });
@@ -123,8 +125,7 @@ export class AppComponent implements OnInit {
 
       try {
 
-        this.oneSignal.startInit('63a027f1-577b-413e-afb0-73556af4a679'
-          , '482029657546');
+        this.oneSignal.startInit('63a027f1-577b-413e-afb0-73556af4a679');
 
         this.oneSignal.inFocusDisplaying(this.oneSignal.OSInFocusDisplayOption.InAppAlert);
 
@@ -166,7 +167,25 @@ export class AppComponent implements OnInit {
     this.userData.logout();
   }
 
+  async share(){
+    let userId = await this.userData.getId();
+    this.socialSharing.share("Ameliorer votre methode de revision avec Natidja", "Natidja", null, `https://natidja.app/referal/${userId}`).then((data) =>{
+      
+    }, (err) => {
+      alert(err)
+    })
+  }
+
+  public change(val){
+    console.log(val)
+    this.api.setNativeHttp(val);
+  }
+
   ngOnInit() {
+    this.api.getNativeHttp().then((response) => {
+      this.httpNative = response;
+      console.debug(response);
+    });
     const path = window.location.pathname.split('folder/')[1];
     if (path !== undefined) {
       this.selectedIndex = this.appPages.findIndex(page => page.title.toLowerCase() === path.toLowerCase());

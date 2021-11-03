@@ -1,0 +1,149 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="transparent">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Révisions</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [class]="'ion-text-center'+' '+bgClasse">
+  <ion-segment [value]="coursesType" (ionChange)="segmentChanged($event)" mode="ios" color="tertiary" swipe-gesture="true">
+      <ion-segment-button value="">
+          <ion-label>tous</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="cours">
+          <ion-label>cours</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="exos">
+          <ion-label>exos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="sujets">
+          <ion-label>sujets</ion-label>
+      </ion-segment-button>
+  </ion-segment>
+    <!-- <div class="circle-element top"></div>
+    <div class="circle-element bottom"></div> -->
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.8" pullMin="60" pullMax="120">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+    <div class="ion-text-left courses">
+      <h3 class="ion-padding-horizontal">
+        <ion-label>
+            <!-- <ion-icon slot="start" [name]="queryParams?.matiere.ionicon" *ngIf="queryParams?.matiere?.ionicon" [color]="queryParams?.matiere.color"></ion-icon> -->
+            {{queryParams?.matiere?.nom}}
+        </ion-label>
+      </h3>
+      <ion-card class="ion-no-margin-vertical" [class.ion-text-right]="item.direction == 'rtl'" 
+      mode="ios" [class.rtl]="item.direction == 'rtl'" *ngFor="let item of getListTemplate()">
+          <app-file-component [src]="item.url" [poster]="item.poster" [title]="item.titre" [scheme]="'dark'" alt="contenu" *ngIf="item.url"></app-file-component>
+          <ion-item>
+              <ion-icon [name]="item.type == 'cours' ? 'library-outline' : 'barbell-outline'" color="primary" slot="start"></ion-icon>
+              <ion-label>{{item.type == 'exos' ? 'Exo' : 'Cours'}}</ion-label>
+              <ion-button fill="outline" slot="end" (click)="openCours(item)">
+                  <ion-label>Ouvrir</ion-label>
+                  <ion-badge color="light" mode="ios" *ngIf="item.nbr_comments && item.nbr_comments != 0">{{item.nbr_comments}}</ion-badge>
+              </ion-button>
+
+              <ion-avatar style="width: 32px;height:32px;" slot="end">
+                  <img [src]="item.photo_coach" 
+                  (click)="presentPopover($event, {photo:item.photo_coach,nom:item.nom_coach, label_offre:item.coach_label_offre,label_offre2:item.coach_label_offre2,
+                      id:item?.id_coach, prix_hebdo:item?.coach_prix_hebdo, slogan:item.slogan, 
+                      prix_tarzan:item.coach_prix_tarzan, prix_technicien: item.coach_prix_technicien, nom_matiere: item.nom, classe:item.classe})"/>
+              </ion-avatar>
+          </ion-item>
+          <ion-card-header>
+              <ion-note>{{item.date | moment : ''}}</ion-note>
+              <ion-card-title>
+                  <span>{{item.titre}}</span>
+              </ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="size-animation">
+              <div [innerHtml]="item.content | textHtml" *ngIf="item.showMore" (click)="item.showMore = !item.showMore"></div>
+              <div [innerHtml]="trimString(item.content, 100) | textHtml" *ngIf="!item.showMore" (click)="item.showMore = !item.showMore"></div>
+              <ion-slides mode="ios" [pager]="false" scrollbar="false" [options]="questionSlides" class="ion-no-padding ion-text-left">
+                  <ion-slide *ngFor="let q of getQuestions(item.responses); let i = index;" class="ion-text-left ion-no-padding">
+                      <div>
+                          <h4 (click)="co(item.responses)">
+                              {{q.question}}
+                          </h4>
+                          <ion-item class="ion-no-padding"  *ngIf="logedIn">
+                              <ion-textarea [rows]="lineCount(q?.content)+1" *ngIf="q.others?.length <= 1" name="response" [value]="q.content" type="text" 
+                              placeholder="Saisissez votre réponse ici" [disabled]="q?.validated_time != null" 
+                              [class.hidden]="q?.validated_time != null"></ion-textarea>
+
+                              <ion-text [innerHtml]="q?.content | textHtml" slot="start" [color]="q.isCorrect > 50 ? 'primary' : 'danger'" *ngIf="q?.validated_time != null"></ion-text>
+
+                              <ion-radio-group *ngIf="q.others?.length > 1" name="response" [value]="q.content" [class.hidden]="q?.validated_time != null">
+                                  <ion-item *ngFor="let o of q.others">
+                                      <ion-label class="ion-text-wrap" color="dark">{{o.content}}</ion-label>
+                                      <ion-radio [value]="o.content"></ion-radio>
+                                  </ion-item>
+                              </ion-radio-group>
+                              <ion-icon style="margin:auto;" slot="end" *ngIf="q?.isCorrect != null" 
+                              [color]="q?.isCorrect > 50 ? 'success' : 'danger'" 
+                              [name]="q?.isCorrect > 50 ? 'checkmark-circle' : 'close-circle'">
+                              </ion-icon>
+                              <p *ngIf="q?.loading == true" class="text-center loader">
+                                  <ion-icon name="heart" size="small" color="danger"></ion-icon><br>
+                              </p>
+                              <ion-button [class.hidden]="q?.loading == true" (click)="sendResponse(q, $event.target)" 
+                              class="send-btn" slot="end" fill="clear" *ngIf="!isLast(item.responses, q) || isValidated(item.responses)">
+                                  <ion-icon slot="icon-only" [name]="q?.content ? 'arrow-forward-outline' : 'send'"></ion-icon>
+                              </ion-button>
+                              <ion-button  [class.hidden]="q?.loading == true" 
+                              (click)="sendResponse(q, $event.target, 1, item)" class="send-btn" slot="end" fill="clear" 
+                              *ngIf="isLast(item.responses, q) && !isValidated(item.responses)">
+                                  <ion-icon slot="icon-only" [name]="'paper-plane-outline'"></ion-icon>
+                              </ion-button>
+                          </ion-item>
+                          <ion-text color="primary" *ngIf="q?.isCorrect != null">
+                              {{q?.correct}}
+                          </ion-text>
+                          <ion-button color="warning" (click)="navCtrl.navigateForward('login');" *ngIf="!logedIn" fill="clear">
+                              <ion-icon slot="start" name="log-in-outline"></ion-icon>
+                              Corriger les exercices
+                          </ion-button>
+                      </div>
+                  </ion-slide>
+              </ion-slides>
+              
+              <div *ngIf="logedIn && item.type == 'cours'" class="comprehension">
+                  <h2 style="font-weight: bold;">À quel % avez-vous compris ?</h2>
+                  <ion-item class="ion-no-padding">
+                      <ion-button size="small" [color]="item?.comprehension == 0 ? 'danger' : ''" (click)="setComprehension(item, 0)" fill="outline">
+                          0%
+                      </ion-button>
+                      <ion-button size="small" [color]="item?.comprehension == 25 ? 'danger' : ''" (click)="setComprehension(item, 25)" fill="outline">
+                          25%
+                      </ion-button>
+                      <ion-button size="small" [color]="item?.comprehension == 50 ? 'warning' : ''" (click)="setComprehension(item, 50)" fill="outline">
+                          50%
+                      </ion-button>
+                      <ion-button size="small" [color]="item?.comprehension == 75 ? 'success' : ''" (click)="setComprehension(item, 75)" fill="outline">
+                          75%
+                      </ion-button>
+                      <ion-button size="small" [color]="item?.comprehension == 100 ? 'success' : ''" (click)="setComprehension(item, 100)" fill="outline">
+                          100%
+                      </ion-button>
+                  </ion-item>
+                  <p *ngIf="item?.loadingComprehension == true" class="text-center loader ion-text-center">
+                      <ion-icon name="heart" size="small" color="danger"></ion-icon><br>
+                  </p>
+              </div>
+
+          </ion-card-content>
+      </ion-card>
+      <ion-infinite-scroll threshold="100px" (ionInfinite)="getListCoursExos($event)" *ngIf="courses.length > 0 && coursesType != 'exams'">
+          <ion-infinite-scroll-content
+          loadingSpinner="bubbles"
+          loadingText="Chargement...">
+          </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </div>
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="supportWsp">
+        <ion-fab-button href="https://wa.me/{{supportWsp}}">
+            <ion-icon name="logo-whatsapp"></ion-icon>
+        </ion-fab-button>
+    </ion-fab>
+</ion-content>

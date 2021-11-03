@@ -3,7 +3,12 @@
 
 /** Ionic CSS Variables **/
 
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600&display=swap');
+
+
 :root {
+  --ion-text-color: #4b4b4b;
+  --ion-font-family: 'Nunito', sans-serif;
   --ion-color-primary: #457b9d;
   --ion-color-primary-rgb: 69,123,157;
   --ion-color-primary-contrast: #ffffff;
@@ -66,6 +71,13 @@
   --ion-color-light-contrast-rgb: 0,0,0;
   --ion-color-light-shade: #d3dcd2;
   --ion-color-light-tint: #f2fbf1;
+
+  --ion-color-transparent: #f0faef00;
+  --ion-color-transparent-rgb: 240,250,239;
+  --ion-color-transparent-contrast: #000000;
+  --ion-color-transparent-contrast-rgb: 0,0,0;
+  --ion-color-transparent-shade: #d3dcd2;
+  --ion-color-transparent-tint: #f2fbf1;
 }
 
 @media (prefers-color-scheme: dark) {

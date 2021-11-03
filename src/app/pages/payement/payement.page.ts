@@ -47,6 +47,7 @@ export class PayementPage implements OnInit {
   public mvola_self_accept: boolean;
   public appropriate_num_id: number;
   private id_ecole: number = null;
+  public logedIn: boolean;
 
   @ViewChild('sender') senderInput: any;
   raison: string;
@@ -87,7 +88,7 @@ export class PayementPage implements OnInit {
     const callBack = (data)=>{
 
       try{
-        let json = JSON.parse(data.data);
+        let json = data?.data ? JSON.parse(data.data) : data;
         if(json.msgTitle || json.msg){
           this.alertCtrl.create({subHeader: json.msgTitle, message:json.msg, buttons:["OK"]})
           .then((d)=>{
@@ -106,7 +107,7 @@ export class PayementPage implements OnInit {
         }
       }
       catch(error){
-        alert(data.data)
+        alert(JSON.stringify(data))
       }
     }
 
@@ -142,7 +143,7 @@ export class PayementPage implements OnInit {
             const callBack = (data)=>{
               console.log({appro_payed: data});
               
-              let json = JSON.parse(data.data);
+              let json = data?.data ? JSON.parse(data.data) : data;
               this.alertCtrl.create({subHeader: json.msgTitle, message:json.msg, buttons:["OK"]})
               .then((d)=>{
                 if(json.status == "ok"){
@@ -216,6 +217,15 @@ export class PayementPage implements OnInit {
     this.storage.get("telephone").then(t => {
       this.user_phone = t;
     });
+    this.userData.getId().then((data) => {
+      if(data)
+        this.logedIn = true;
+      else
+      {  
+        this.logedIn = false;
+        this.navCtrl.navigateForward("sliders");
+      }
+    })
     // this.smsRetriever.getAppHash().then((r)=>{
     //   this.appHash = r;
     // })
@@ -277,17 +287,24 @@ export class PayementPage implements OnInit {
   ionViewDidEnter(){
 
   }
-  public loadPhone(id) {
-
+  public async loadPhone(id) {
+    let appHash = "";
+    try {
+      // appHash = await this.smsRetriever.getAppHash();
+      // console.log({appHash:appHash});
+    } catch (error) {
+      // console.error(error);
+      // this.loader.dismiss();
+    }
     this.loader.present();
 
-    this.api.postData2("action_mobile.php",
-      { action: "charger_phone", reason:this.reason, numero: this.item.num, item:this.item,
+    this.api.postData("action_mobile.php",
+      { action: "charger_phone", reason:this.reason, numero: this.item.num, item:this.item, app_hash:appHash,
       annee:this.item.year, exam:this.item.exam, ile:this.item.ile, id_membre: this.userId ?? id }, {})
       .subscribe(response => {
         this.loader.dismiss();
         try {
-          let dataJSON = JSON.parse(response.data)
+          let dataJSON = response?.data ? JSON.parse(response.data) : response;
           this.phoneNumber = dataJSON.number;
           this.price.all = dataJSON.price;
           this.price.mvola = dataJSON.price_mvola;
@@ -318,7 +335,7 @@ export class PayementPage implements OnInit {
         }
         catch (error) {
           alert(error)
-          alert(response.data);
+          alert(response?.data ?? response);
           this.showAlert(error, "Il y'a eu une erreur");
         }
         // this.loadPubs();
@@ -326,6 +343,8 @@ export class PayementPage implements OnInit {
         this.loader.dismiss();
         this.showAlert("Problème de connexion", JSON.stringify(error));
         // this.etudiants = this.etudiantsOriginal;
+      }, ()=>{
+        this.loader.dismiss();
       });
   }
 
@@ -446,7 +465,7 @@ export class PayementPage implements OnInit {
     if(!this.user_phone){
       this.user_phone = await this.storage.get("telephone");
     }
-    this.paymentLink = `https://natidja.app/payment/checkout.php?numero=${this.item.num ?? this.item.id}&examen=`+this.item.exam+"&annee="+this.item.year+"&ile="
+    this.paymentLink = `https://natidja.app/payment/checkout.php?transaction=${this.idTransaction}&numero=${this.item.num ?? this.item.id}&examen=`+this.item.exam+"&annee="+this.item.year+"&ile="
     +this.item.ile+"&id_membre="+this.userId+`&id_ecole=${this.id_ecole ?? 0}&reason=${this.reason}&telephone=${this.user_phone}`;
     const browser = this.iab.create(this.paymentLink);
     browser.show();
@@ -474,7 +493,7 @@ export class PayementPage implements OnInit {
       console.log(data);
       
       load.dismiss();
-      let json = JSON.parse(data.data.trim());
+      let json = data?.data ? JSON.parse(data.data.trim()) : data;
 
       if(json["status"]=="ok"){
         this.alertCtrl.create({message:"Votre paiement a correctement été effectué. Merci!", buttons:["Ok"]}).then(a=>{

@@ -1,9 +1,38 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>coach-search</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-searchbar placeholder="Écrivez un nom" inputmode="text" type="text" (ionChange)="load($event)" [debounce]="250" showCancelButton="focus"></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <ion-list>
+    <ion-item *ngFor="let item of coachs" (click)="navCtrl.navigateForward('coach-profile', {queryParams:item});">
+      <ion-avatar slot="start">
+        <img [src]="item.photo" />
+      </ion-avatar>
+      <ion-label>
+        <h4>
+          {{item.nom}}
+        </h4>
+        <div *ngIf="item.nbrExos || item.nbrLecons">
+          <ion-button color="primary" mode="ios" size="small" fill="clear" *ngIf="item.nbrExos">
+            <ion-icon slot="start" name="barbell-outline"></ion-icon>
+            {{item.nbrExos}}
+          </ion-button>
+          <ion-button color="primary" mode="ios" size="small" fill="clear" *ngIf="item.nbrLecons">
+            <ion-icon slot="start" name="library-outline"></ion-icon>
+            {{item.nbrLecons}}
+          </ion-button>
+        </div>
+        <ion-note>{{item.nom_matiere}} - {{item.nom_classe}}</ion-note>
+      </ion-label>
+      <ion-note slot="end" *ngIf="item.subscription">
+        expire<br>
+        <ion-badge color="primary" mode="ios" style="font-size:80%;">{{item.subscription.expiry_date | moment: ''}}</ion-badge>
+      </ion-note>
+    </ion-item>
+  </ion-list>
 </ion-content>

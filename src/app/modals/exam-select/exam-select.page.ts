@@ -40,10 +40,7 @@ export class ExamSelectPage implements OnInit {
         let resultat;
         try
         {
-          // alert("http :"+response.data)
-          let r = response.data;
-          r = (r).trim()
-          resultat = JSON.parse(r);
+          resultat = response?.data ? JSON.parse(response.data.trim()) : response;
 
           this.settings.setBtns(resultat);
           // this.btns = resultat;
@@ -70,9 +67,9 @@ export class ExamSelectPage implements OnInit {
           this.connexionError = 0;
           try {
 
-            let dat = response.data.trim();
+            let dat = response?.data ? JSON.parse(response.data.trim()) : response;
 
-            this.slidesPub = JSON.parse(dat);
+            this.slidesPub = dat;
 
           }
           catch (error) {
@@ -131,7 +128,7 @@ export class ExamSelectPage implements OnInit {
         this.connexionError = 0;
         this.loading = false;
         try {
-          let donnees = JSON.parse(response.data.trim());
+          let donnees = response?.data ? JSON.parse(response.data.trim()) : response;
 
           if(JSON.stringify(this.schools) != JSON.stringify(donnees.schools)){
             this.schools = donnees.schools;

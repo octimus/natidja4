@@ -10,6 +10,9 @@ ion-item-divider ion-label{
 .cours-content video{
     max-height: 250px;
 }
+.comprehension ion-button{
+    margin: auto;
+}
 .commentForm .comment {
     background: rgba(255, 255, 255, 0.267);
     box-shadow: 0px 2px 3px 1px rgba(151, 146, 146, 0.205);
@@ -25,6 +28,9 @@ ion-item-divider ion-label{
 .courses ion-card .rtl{
     direction:rtl;
     text-align: right!important;
+}
+ion-card-header{
+    direction:ltr;
 }
 form ion-col{
     padding: 0!important;
@@ -67,6 +73,8 @@ form ion-col{
   }
 .visitor {
     text-align: left;
+    direction: ltr;
+    display: none;
     padding: 0;
     margin-bottom: 15px;
 }
